@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier {{ produit.nom }} — Espace Vendeur{% endblock %}
+
+{% block content %}
+<div class="container mt-4 fade-in" style="max-width:760px;">
+
+    <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-sm btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left me-1"></i> Retour à la liste
+    </a>
+
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary bg-opacity-10 py-3">
+            <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-pencil me-2"></i>Modifier le Produit</h4>
+            <p class="text-muted small mb-0 mt-1">Modifiez les informations du produit <strong>{{ produit.nom }}</strong>.</p>
+        </div>
+        <div class="card-body p-4">
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'vendeur_modifier_produit' produit.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <!-- Nom -->
+                    <div class="col-12">
+                        <label for="nom" class="form-label fw-semibold">Nom du produit <span class="text-danger">*</span></label>
+                        <input type="text" name="nom" id="nom" class="form-control" value="{{ produit.nom }}" required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea name="description" id="description" class="form-control" rows="3">{{ produit.description|default:'' }}</textarea>
+                    </div>
+
+                    <!-- Catégorie + Marque -->
+                    <div class="col-md-6">
+                        <label for="categorie" class="form-label fw-semibold">Catégorie <span class="text-danger">*</span></label>
+                        <select name="categorie" id="categorie" class="form-select" required>
+                            <option value="">-- Choisir une catégorie --</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if cat.id == produit.categorie_id %}selected{% endif %}>{{ cat.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="marque" class="form-label fw-semibold">Marque</label>
+                        <input type="text" name="marque" id="marque" class="form-control" value="{{ produit.marque|default:'' }}">
+                    </div>
+
+                    <!-- Prix + Prix promo -->
+                    <div class="col-md-6">
+                        <label for="prix" class="form-label fw-semibold">Prix (FCFA) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" name="prix" id="prix" class="form-control" step="0.01" min="0" value="{{ produit.prix }}" required>
+                            <span class="input-group-text">FCFA</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="prix_promotion" class="form-label fw-semibold">Prix Promo (FCFA)</label>
+                        <div class="input-group">
+                            <input type="number" name="prix_promotion" id="prix_promotion" class="form-control" step="0.01" min="0"
+                                value="{% if produit.prix_promotion %}{{ produit.prix_promotion }}{% endif %}"
+                                placeholder="Vide = pas de promotion">
+                            <span class="input-group-text">FCFA</span>
+                        </div>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="col-md-6">
+                        <label for="stock" class="form-label fw-semibold">Stock <span class="text-danger">*</span></label>
+                        <input type="number" name="stock" id="stock" class="form-control" min="0" value="{{ produit.stock }}" required>
+                    </div>
+
+                    <!-- Image actuelle + nouvelle -->
+                    <div class="col-md-6">
+                        <label for="image" class="form-label fw-semibold">Nouvelle image (optionnel)</label>
+                        {% if produit.image %}
+                        <div class="mb-2">
+                            <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" style="height:50px; border-radius:6px;">
+                            <small class="text-muted ms-2">Image actuelle</small>
+                        </div>
+                        {% endif %}
+                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                    </div>
+
+                    <!-- Options -->
+                    <div class="col-12">
+                        <div class="d-flex gap-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="actif" id="actif" {% if produit.actif %}checked{% endif %}>
+                                <label class="form-check-label fw-semibold" for="actif">Produit actif</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="vedette" id="vedette" {% if produit.vedette %}checked{% endif %}>
+                                <label class="form-check-label fw-semibold" for="vedette">⭐ Produit vedette</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold shadow-sm">
+                            <i class="bi bi-check-circle me-2"></i> Enregistrer les modifications
+                        </button>
+                        <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-outline-secondary ms-2 px-4 py-2">
+                            Annuler
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

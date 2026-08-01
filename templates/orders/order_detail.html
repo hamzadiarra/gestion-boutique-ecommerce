@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Commande #{{ commande.id }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2>
+        📦 Détail de la commande #{{ commande.id }}
+    </h2>
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <span>
+                <strong>Date :</strong>
+                {{ commande.date_creation|date:"d/m/Y à H:i" }}
+            </span>
+
+            <span class="badge 
+                {% if commande.statut == 'en_attente' %}bg-warning text-dark
+                {% elif commande.statut == 'confirmee' %}bg-info
+                {% elif commande.statut == 'expediee' %}bg-primary
+                {% elif commande.statut == 'livree' %}bg-success
+                {% endif %}">
+                {{ commande.get_statut_display }}
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité</th>
+                        <th>Sous-total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for item in commande.items.all %}
+
+                    <tr>
+                        <td>
+                            {{ item.produit.nom }}
+                        </td>
+                        <td>
+                            {{ item.prix }} FCFA
+                        </td>
+                        <td>
+                            {{ item.quantite }}
+                        </td>
+                        <td>
+                            {{ item.sous_total }} FCFA
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+                <tfoot>
+                    <tr class="table-dark">
+                        <th colspan="3" class="text-end">
+                            Total :
+                        </th>
+                        <th>
+                            {{ commande.total }} FCFA
+                        </th>
+                    </tr>
+                </tfoot>
+
+            </table>
+
+            {% if commande.note %}
+            <div class="card bg-light border-0 mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Note d'achat :</h6>
+                    <p class="mb-0 text-secondary italic">{{ commande.note }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if commande.payment %}
+
+            <div class="alert alert-success">
+                <strong>Paiement :</strong>
+                {{ commande.payment.get_methode_display }} —
+                {{ commande.payment.get_statut_display }}
+            </div>
+
+            {% else %}
+
+            <a href="{% url 'payment_form' commande.id %}"
+               class="btn btn-success no-print">
+                Payer cette commande 💳
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <a href="{% url 'my_orders' %}" class="btn btn-secondary mt-3 no-print">
+        ← Retour à mes commandes
+    </a>
+
+    <button onclick="window.print()" class="btn btn-outline-dark mt-3 ms-2 no-print">
+        <i class="bi bi-printer"></i> Imprimer le bon d'achat
+    </button>
+
+</div>
+
+{% endblock %}

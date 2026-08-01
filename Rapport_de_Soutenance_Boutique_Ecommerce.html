@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport de Soutenance — Boutique E-Commerce Multi-Rôles</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #2d3748;
+            line-height: 1.6;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 50px 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .cover-page {
+            text-align: center;
+            padding: 60px 20px 40px;
+            border-bottom: 3px solid #e2e8f0;
+            margin-bottom: 50px;
+        }
+
+        .cover-title {
+            font-size: 26pt;
+            font-weight: 800;
+            color: #1a202c;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .cover-subtitle {
+            font-size: 14pt;
+            color: #4a5568;
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+
+        .cover-meta {
+            display: inline-block;
+            text-align: left;
+            background: #f7fafc;
+            padding: 20px 30px;
+            border-radius: 12px;
+            border-left: 5px solid #3182ce;
+            margin-bottom: 20px;
+        }
+
+        .cover-meta p {
+            margin: 6px 0;
+            font-size: 11pt;
+        }
+
+        h1 {
+            font-size: 18pt;
+            color: #2b6cb0;
+            border-bottom: 2px solid #ebf8ff;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 14pt;
+            color: #2d3748;
+            margin-top: 30px;
+        }
+
+        h3 {
+            font-size: 12pt;
+            color: #4a5568;
+        }
+
+        p,
+        li {
+            font-size: 11pt;
+            color: #4a5568;
+        }
+
+        ul,
+        ol {
+            padding-left: 25px;
+        }
+
+        code {
+            background-color: #edf2f7;
+            color: #c53030;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 10pt;
+        }
+
+        pre {
+            background: #1a202c;
+            color: #f7fafc;
+            padding: 18px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 9.5pt;
+            line-height: 1.4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 10pt;
+        }
+
+        th {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            font-weight: 700;
+        }
+
+        .alert-box {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .cover-page {
+                page-break-after: always;
+            }
+
+            h1 {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="cover-page">
+            <div class="cover-title">RAPPORT DE SOUTENANCE DE FIN D'ÉTUDES</div>
+            <div class="cover-subtitle">CONCEPTION ET IMPLÉMENTATION D'UNE APPLICATION E-COMMERCE ET DE CAISSE
+                ENREGISTREUSE MULTI-RÔLES</div>
+
+            <div class="cover-meta">
+                <p><strong>Auteur :</strong> Hamza</p>
+                <p><strong>Diplôme :</strong> Licence / Master en Génie Informatique & Développement Web</p>
+                <p><strong>Technologie :</strong> Python 3.12 / Django 6 / Bootstrap 5 / Chart.js</p>
+                <p><strong>Année Académique :</strong> 2025 – 2026</p>
+            </div>
+        </div>
+
+        <h1>1. INTRODUCTION GÉNÉRALE ET CONTEXTE DU PROJET</h1>
+        <h2>1.1 Contexte du marché du E-Commerce au Mali</h2>
+        <p>Le secteur du commerce au Mali connaît une transformation numérique rapide portée par l'adoption massive des
+            solutions Mobile Money (Orange Money, Wave, Moov Money). Les acheteurs exigent désormais la possibilité de
+            consulter et commander des articles en ligne 24h/24. Cependant, les boutiques physiques demeurent le cœur de
+            l'activité commerciale locale.</p>
+
+        <h2>1.2 Problématique Métier</h2>
+        <p>Les commerçants font face à une rupture organisationnelle entre la gestion de la boutique physique et la
+            gestion du site e-commerce :</p>
+        <ul>
+            <li>Incohérences et ruptures de stock entre les ventes au comptoir et les commandes en ligne.</li>
+            <li>Absence de visibilité financière unifiée regroupant les encaissements en espèces et les paiements
+                électroniques.</li>
+            <li>Surcharge de travail pour l'administrateur contraint de gérer seul le catalogue et la trésorerie.</li>
+            <li>Difficultés de calcul automatique des marges commerciales, de la TVA et des seuils de rentabilité.</li>
+        </ul>
+
+        <h1>2. ARCHITECTURE TECHNIQUE (PATTERN MVT)</h1>
+        <p>Le projet adopte le modèle <strong>MVT (Model-View-Template)</strong> natif de Django :</p>
+        <ul>
+            <li><strong>Model (Modèle) :</strong> Gestion des données et relations via l'ORM Django (SQLite /
+                PostgreSQL).</li>
+            <li><strong>View (Vue) :</strong> Contrôle d'accès et traitement des règles métier Python.</li>
+            <li><strong>Template (Gabarit) :</strong> Rendu dynamique frontend HTML5, CSS3, Bootstrap 5 et Chart.js.
+            </li>
+        </ul>
+
+        <h1>3. MODÈLE DE DONNÉES & BASE DE DONNÉES</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Modèle</th>
+                    <th>Rôle / Description</th>
+                    <th>Relations Clés</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Profile</code></td>
+                    <td>Extension d'utilisateur gérant le rôle (Admin, Vendeur, Comptable, Client)</td>
+                    <td>OneToOne avec <code>User</code></td>
+                </tr>
+                <tr>
+                    <td><code>Vente</code></td>
+                    <td>Enregistrement des ventes physiques effectuées en caisse par les vendeurs</td>
+                    <td>ForeignKey <code>User</code> et <code>Product</code></td>
+                </tr>
+                <tr>
+                    <td><code>Order</code></td>
+                    <td>Commandes en ligne passées par les clients et confirmées par les vendeurs</td>
+                    <td>ForeignKey <code>User</code> (Client et Confirmateur)</td>
+                </tr>
+                <tr>
+                    <td><code>Payment</code></td>
+                    <td>Règlements électroniques associés aux commandes web</td>
+                    <td>OneToOne avec <code>Order</code></td>
+                </tr>
+                <tr>
+                    <td><code>JournalActivite</code></td>
+                    <td>Audit Log de sécurité consignant chaque action sensible et adresse IP</td>
+                    <td>ForeignKey <code>User</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h1>4. ESPACES MÉTIER ET DÉCORATEURS DE SÉCURITÉ</h1>
+        <p>Chaque rôle dispose d'un espace hermétique contrôlé par des décorateurs de sécurité Python sur-mesure
+            (<code>@comptable_required</code>, <code>@vendeur_required</code>, <code>@admin_required</code>) :</p>
+
+        <pre><code>def comptable_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        profile = getattr(request.user, 'profile', None)
+        if request.user.is_superuser or (profile and profile.role in ('comptable', 'admin')):
+            return view_func(request, *args, **kwargs)
+        messages.error(request, "Accès refusé — Espace réservé aux comptables.")
+        return redirect('home')
+    return _wrapped_view</code></pre>
+
+        <h1>5. MODULE COMPTABLE & CALCULATRICE FINANCIÈRE</h1>
+        <p>Le dashboard comptable propose un pilotage complet :</p>
+        <ul>
+            <li><strong>Cartes de Revenus :</strong> Suivi automatisé Aujourd'hui, Ce Mois, Cette Année et Global.</li>
+            <li><strong>Ventilation des flux :</strong> Comparaison directe Ventes Physiques en Caisse vs Paiements Web.
+            </li>
+            <li><strong>Graphique 7 jours (Chart.js) :</strong> Visualisation dynamique des encaissements.</li>
+            <li><strong>Calculatrice Financière :</strong> Formules intégrées de calcul de TVA (18%), Marge commerciale,
+                Bénéfice Net, Seuil de Rentabilité et Projections de croissance.</li>
+        </ul>
+
+        <div class="alert-box">
+            <strong>💡 Note pour la Soutenance :</strong> Le document complet avec le guide pas à pas pour votre
+            démonstration orale devant le jury est également lisible directement dans votre navigateur web en ouvrant ce
+            fichier HTML.
+        </div>
+
+    </div>
+
+</body>
+
+</html>

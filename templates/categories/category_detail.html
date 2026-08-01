@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ categorie.nom }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2>{{ categorie.nom }}</h2>
+
+    <p class="text-muted">
+        {{ categorie.description }}
+    </p>
+
+    <hr>
+
+    <div class="row">
+
+        {% for produit in produits %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow h-100">
+
+                {% if produit.image %}
+                <img src="{{ produit.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        {{ produit.nom }}
+                    </h5>
+
+                    <p class="card-text">
+                        {{ produit.description|truncatewords:15 }}
+                    </p>
+
+                    <h4 class="text-primary">
+                        {{ produit.prix }} FCFA
+                    </h4>
+
+                    <a href="{% url 'product_detail' produit.slug %}" class="btn btn-primary w-100">
+                        Voir le produit
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="alert alert-warning">
+            Aucun produit disponible dans cette catégorie.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

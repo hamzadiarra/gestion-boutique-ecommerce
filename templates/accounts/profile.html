@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Profil — Gestion Boutique{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-10 col-lg-8">
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="card border-0 shadow-sm overflow-hidden">
+
+            <!-- Bandeau haut coloré -->
+            <div style="height: 110px; background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);"></div>
+
+            <div class="card-body px-4 pb-4">
+
+                <!-- Photo de profil -->
+                <div class="d-flex align-items-end mb-3" style="margin-top: -60px;">
+                    <div class="position-relative me-4">
+                        {% if profil.photo %}
+                        <img src="{{ profil.photo.url }}"
+                             alt="Photo de profil"
+                             class="rounded-circle border border-4 border-white shadow-sm"
+                             style="width: 110px; height: 110px; object-fit: cover;">
+                        {% else %}
+                        <div class="rounded-circle border border-4 border-white shadow-sm bg-primary d-flex align-items-center justify-content-center"
+                             style="width: 110px; height: 110px;">
+                            <span class="text-white fw-bold" style="font-size: 2.5rem;">
+                                {{ profil.utilisateur.username|first|upper }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-1">
+                        <h4 class="fw-bold mb-0">
+                            {{ profil.utilisateur.get_full_name|default:profil.utilisateur.username }}
+                        </h4>
+                        <span class="text-muted small">@{{ profil.utilisateur.username }}</span>
+                    </div>
+                </div>
+
+                <!-- Infos du profil -->
+                <div class="row g-3 mt-2">
+
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-envelope me-1"></i>Adresse e-mail</div>
+                            <div class="fw-semibold">{{ profil.utilisateur.email|default:"Non renseignée" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i>Téléphone</div>
+                            <div class="fw-semibold">{{ profil.telephone|default:"Non renseigné" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Adresse</div>
+                            <div class="fw-semibold">{{ profil.adresse|default:"Non renseignée" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-building me-1"></i>Ville</div>
+                            <div class="fw-semibold">{{ profil.ville|default:"Non renseignée" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-mailbox me-1"></i>Code postal</div>
+                            <div class="fw-semibold">{{ profil.code_postal|default:"—" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="p-3 rounded-3 bg-light">
+                            <div class="text-muted small mb-1"><i class="bi bi-calendar3 me-1"></i>Membre depuis</div>
+                            <div class="fw-semibold">{{ profil.date_creation|date:"d F Y" }}</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <a href="{% url 'profile_edit' %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-1"></i> Modifier le profil
+                    </a>
+                    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-shield-lock me-1"></i> Changer le mot de passe
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+{% endblock %}

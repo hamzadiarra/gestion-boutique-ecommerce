@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestion Boutique E-commerce — Votre boutique en ligne moderne et sécurisée">
+
+
+    <title>
+        {% block title %}
+        Gestion Boutique
+        {% endblock %}
+    </title>
+
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+
+    {% load static %}
+
+
+    <!-- CSS personnalisé -->
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Theme Init (Anti-flicker) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+</head>
+
+
+<body>
+
+    <!-- PARTICULES FLOTTANTES -->
+    <div id="particles-container" class="particles-container"></div>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" id="main-navbar">
+
+
+        <div class="container">
+
+
+            <!-- Logo -->
+
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+                <span class="brand-icon">🛒</span>
+                <span class="brand-text">Gestion Boutique</span>
+            </a>
+
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <!-- Accueil -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="/">
+
+                            <i class="bi bi-house"></i>
+                            Accueil
+
+                        </a>
+
+                    </li>
+
+                    <!-- Produits -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{% url 'product_list' %}">
+
+                            <i class="bi bi-bag"></i>
+                            Produits
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- Catégories -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{% url 'category_list' %}">
+
+                            <i class="bi bi-grid"></i>
+                            Catégories
+
+                        </a>
+
+                    </li>
+
+                    <!-- Panier (visible pour clients) -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="{% url 'cart_detail' %}">
+                            <i class="bi bi-cart"></i>
+                            <span>Panier 🛒</span>
+                            {% if cart_items_count > 0 %}
+                            <span class="badge bg-danger rounded-pill" style="font-size: 0.75rem;">{{ cart_items_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+
+                    <!-- Wishlist -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wishlist' %}">
+                            <i class="bi bi-heart-fill text-danger"></i> Favoris
+                        </a>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="{% url 'notification_list' %}">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ unread_notifications_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+
+                    <!-- Commandes -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_orders' %}">
+                            <i class="bi bi-box-seam"></i> Mes commandes
+                        </a>
+                    </li>
+
+                    {% if user.is_staff or user.profile and user.profile.role == 'admin' %}
+                    <!-- Admin Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link text-warning fw-bold" href="{% url 'admin_dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> Dashboard Admin
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_staff or user.profile and user.profile.role == 'vendeur' or user.profile and user.profile.role == 'admin' %}
+                    <!-- Vendeur Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link text-info fw-bold" href="{% url 'vendeur_dashboard' %}">
+                            <i class="bi bi-shop"></i> Espace Vendeur
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_staff or user.profile and user.profile.role == 'comptable' or user.profile and user.profile.role == 'admin' %}
+                    <!-- Comptable Dashboard & Calculs -->
+                    <li class="nav-item">
+                        <a class="nav-link text-success fw-bold" href="{% url 'comptable_dashboard' %}">
+                            <i class="bi bi-graph-up"></i> Dashboard Comptable
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning fw-bold" href="{% url 'comptable_calculs' %}">
+                            <i class="bi bi-calculator"></i> Calculs Financiers
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <!-- Compte utilisateur -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span>{{ user.username }}</span>
+                            {% if user.profile %}
+                            <span class="badge ms-1
+                                {% if user.profile.role == 'admin' %}bg-danger
+                                {% elif user.profile.role == 'vendeur' %}bg-info
+                                {% elif user.profile.role == 'comptable' %}bg-warning text-dark
+                                {% else %}bg-success{% endif %}
+                                rounded-pill" style="font-size: 0.65rem;">
+                                {{ user.profile.get_role_display }}
+                            </span>
+                            {% elif user.is_superuser or user.is_staff %}
+                            <span class="badge ms-1 bg-danger rounded-pill" style="font-size: 0.65rem;">
+                                Admin
+                            </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{% url 'profile' %}">
+                                    <i class="bi bi-person text-primary"></i> Mon profil
+                                </a>
+                            </li>
+                            {% if user.is_superuser or user.is_staff or user.profile and user.profile.role == 'admin' %}
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/admin/" target="_blank">
+                                    <i class="bi bi-shield-lock text-warning"></i> Admin Django
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger fw-bold d-flex align-items-center gap-2" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right fs-5"></i> Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Bouton Déconnexion Directe -->
+                    <li class="nav-item ms-1">
+                        <a class="nav-link btn btn-outline-danger btn-sm text-danger text-white-hover px-2 py-1 ms-1 d-flex align-items-center gap-1"
+                           href="{% url 'logout' %}" title="Se déconnecter">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="d-none d-xl-inline">Déconnexion</span>
+                        </a>
+                    </li>
+
+
+                    {% else %}
+
+
+                    <!-- Connexion -->
+
+
+                    <li class="nav-item">
+
+
+                        <a class="nav-link" href="{% url 'login' %}">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+
+                            Connexion
+
+                        </a>
+
+
+                    </li>
+
+                    <!-- Inscription -->
+
+
+                    <li class="nav-item">
+
+
+                        <a class="nav-link" href="{% url 'register' %}">
+
+
+                            <i class="bi bi-person-plus"></i>
+
+                            Inscription
+
+
+                        </a>
+
+
+                    </li>
+
+
+                    {% endif %}
+
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item ms-2">
+                        <button class="nav-link btn btn-link dark-mode-toggle" id="darkModeToggle"
+                            title="Mode sombre/clair">
+                            <i class="bi bi-moon-stars-fill theme-icon" id="darkModeIcon"></i>
+                        </button>
+                    </li>
+
+                </ul>
+
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!-- MESSAGES DJANGO -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+            {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>
+            {% elif message.tags == 'error' or message.tags == 'danger' %}<i
+                class="bi bi-exclamation-triangle-fill me-2"></i>
+            {% elif message.tags == 'warning' %}<i class="bi bi-exclamation-circle-fill me-2"></i>
+            {% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+    <!-- CONTENU -->
+
+    {% block content %}
+
+    {% endblock %}
+
+
+    <!-- ============================================= -->
+    <!-- FOOTER PREMIUM -->
+    <!-- ============================================= -->
+
+    <footer class="footer" id="site-footer">
+        <div class="container">
+            <div class="row g-4">
+
+                <!-- Colonne 1 : À propos -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand mb-3">
+                        <span class="fs-4">🛒</span>
+                        <span class="fs-5 fw-bold text-white ms-2">Gestion Boutique</span>
+                    </div>
+                    <p class="footer-text small">
+                        Votre boutique e-commerce moderne et sécurisée. Nous proposons des produits de qualité
+                        avec un service client exceptionnel et une livraison rapide.
+                    </p>
+                    <div class="footer-social d-flex gap-3 mt-3">
+                        <a href="#" class="footer-social-link" title="Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" title="Twitter / X">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" title="Instagram">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%20Gestion%20Boutique" target="_blank" class="footer-social-link" title="WhatsApp (+223 92 33 14 29)" rel="noopener noreferrer">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" title="YouTube">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Colonne 2 : Liens Rapides -->
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="footer-title text-white fw-bold mb-3">Liens Rapides</h6>
+                    <ul class="footer-links list-unstyled">
+                        <li><a href="/"><i class="bi bi-chevron-right me-1"></i>Accueil</a></li>
+                        <li><a href="{% url 'product_list' %}"><i class="bi bi-chevron-right me-1"></i>Produits</a></li>
+                        <li><a href="{% url 'category_list' %}"><i class="bi bi-chevron-right me-1"></i>Catégories</a>
+                        </li>
+                        <li><a href="{% url 'cart_detail' %}"><i class="bi bi-chevron-right me-1"></i>Panier</a></li>
+                    </ul>
+                </div>
+
+                <!-- Colonne 3 : Mon Compte -->
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="footer-title text-white fw-bold mb-3">Mon Compte</h6>
+                    <ul class="footer-links list-unstyled">
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}"><i class="bi bi-chevron-right me-1"></i>Mon profil</a></li>
+                        <li><a href="{% url 'my_orders' %}"><i class="bi bi-chevron-right me-1"></i>Mes commandes</a>
+                        </li>
+                        <li><a href="{% url 'wishlist' %}"><i class="bi bi-chevron-right me-1"></i>Mes favoris</a></li>
+                        {% else %}
+                        <li><a href="{% url 'login' %}"><i class="bi bi-chevron-right me-1"></i>Connexion</a></li>
+                        <li><a href="{% url 'register' %}"><i class="bi bi-chevron-right me-1"></i>Inscription</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Colonne 4 : Contact -->
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="footer-title text-white fw-bold mb-3">Contact</h6>
+                    <ul class="footer-contact list-unstyled">
+                        <li class="d-flex align-items-start mb-2">
+                            <i class="bi bi-geo-alt-fill text-primary me-2 mt-1"></i>
+                            <span>Bamako, Mali</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-2">
+                            <i class="bi bi-telephone-fill text-primary me-2 mt-1"></i>
+                            <span>
+                                <a href="https://api.whatsapp.com/send?phone=22392331429" target="_blank" class="text-white text-decoration-none" title="Contacter sur WhatsApp">+223 92 33 14 29</a>
+                            </span>
+                        </li>
+                        <li class="d-flex align-items-start mb-2">
+                            <i class="bi bi-envelope-fill text-primary me-2 mt-1"></i>
+                            <span>contact@gestionboutique.ml</span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-clock-fill text-primary me-2 mt-1"></i>
+                            <span>Lun - Sam : 8h00 — 20h00</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Séparateur -->
+            <hr class="footer-divider my-4">
+
+            <!-- Copyright -->
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="footer-copyright mb-0 small">
+                        © 2026 <strong class="text-white">Gestion Boutique</strong> — Tous droits réservés.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                    <div class="footer-badges d-flex justify-content-center justify-content-md-end gap-2 flex-wrap">
+                        <span class="badge bg-dark border border-secondary px-3 py-2">
+                            <i class="bi bi-shield-check me-1"></i>Sécurisé SSL
+                        </span>
+                        <span class="badge bg-dark border border-secondary px-3 py-2">
+                            <i class="bi bi-credit-card me-1"></i>Paiement sécurisé
+                        </span>
+                        <span class="badge bg-dark border border-secondary px-3 py-2">
+                            <i class="bi bi-truck me-1"></i>Livraison rapide
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+
+    <!-- BOUTON WHATSAPP FLOTTANT -->
+    <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%2C%20je%20souhaite%20des%20informations%20sur%20votre%20boutique."
+       target="_blank"
+       rel="noopener noreferrer"
+       class="whatsapp-float-btn"
+       title="Contactez-nous sur WhatsApp (+223 92 33 14 29)">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Animations JS -->
+    <script src="{% static 'js/animations.js' %}"></script>
+
+</body>
+
+</html>

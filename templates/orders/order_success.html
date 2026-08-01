@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Commande réussie
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="alert alert-success">
+
+        <h3>
+            Votre commande est confirmée 🎉
+        </h3>
+
+        <p>
+            Numéro de commande :
+            {{ commande.id }}
+        </p>
+
+        <p>
+            Statut :
+            {{ commande.get_statut_display }}
+        </p>
+
+    </div>
+
+
+    <a href="{% url 'product_list' %}" 
+       class="btn btn-primary">
+        Continuer mes achats
+    </a>
+
+</div>
+
+{% endblock %}

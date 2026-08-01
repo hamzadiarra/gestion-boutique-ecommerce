@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Mes commandes
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2>
+        Mes commandes 📦
+    </h2>
+
+
+    {% if commandes %}
+
+    <table class="table table-bordered mt-4">
+
+        <thead>
+
+            <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+        {% for commande in commandes %}
+
+            <tr>
+
+                <td>
+                    #{{ commande.id }}
+                </td>
+
+
+                <td>
+                    {{ commande.date_creation }}
+                </td>
+
+
+                <td>
+                    {{ commande.get_statut_display }}
+                </td>
+
+
+                <td>
+                    {{ commande.total }} FCFA
+                </td>
+
+
+                <td>
+
+                    <a href="{% url 'order_detail' commande.id %}"
+                       class="btn btn-info btn-sm">
+                        Voir
+                    </a>
+
+
+                    {% if not commande.payment %}
+
+                    <a href="{% url 'payment_form' commande.id %}"
+                       class="btn btn-success btn-sm">
+                        Payer 💳
+                    </a>
+
+                    {% else %}
+
+                    <span class="badge bg-success">
+                        Payé
+                    </span>
+
+                    {% endif %}
+
+
+                </td>
+
+
+            </tr>
+
+
+        {% endfor %}
+
+
+        </tbody>
+
+
+    </table>
+
+
+    {% else %}
+
+        <div class="alert alert-info">
+            Vous n'avez aucune commande.
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+
+{% endblock %}

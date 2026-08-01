@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Paiement
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2>
+        Paiement de la commande #{{ commande.id }} 💳
+    </h2>
+
+
+    <p>
+        Montant à payer :
+        <strong>
+            {{ commande.total }} FCFA
+        </strong>
+    </p>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <label class="form-label">
+            Choisir un moyen de paiement :
+        </label>
+
+
+        <select name="methode" class="form-select">
+
+            <option value="especes">
+                Espèces
+            </option>
+
+            <option value="orange_money">
+                Orange Money
+            </option>
+
+            <option value="wave">
+                Wave
+            </option>
+
+            <option value="carte">
+                Carte bancaire
+            </option>
+
+            <option value="moov_money">
+                Moov Money
+            </option>
+
+        </select>
+
+
+        <button class="btn btn-success mt-3">
+
+            Payer maintenant 💰
+
+        </button>
+
+
+    </form>
+
+
+</div>
+
+{% endblock %}

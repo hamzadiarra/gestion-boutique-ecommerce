@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Créer un compte — Gestion Boutique{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-8 col-lg-6">
+
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Créer un compte</h2>
+            <p class="text-muted">Rejoignez notre communauté et profitez de nos offres exclusives.</p>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label fw-semibold">
+                            Nom d'utilisateur <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="id_username" name="username" class="form-control" placeholder="" required
+                            autocomplete="username" value="{{ username|default:'' }}">
+                        <div class="form-text text-muted small">Lettres, chiffres et underscore uniquement.</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="id_first_name" class="form-label fw-semibold">Prénom</label>
+                            <input type="text" id="id_first_name" name="first_name" class="form-control" placeholder=""
+                                autocomplete="given-name" value="{{ first_name|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_last_name" class="form-label fw-semibold">Nom</label>
+                            <input type="text" id="id_last_name" name="last_name" class="form-control" placeholder=""
+                                autocomplete="family-name" value="{{ last_name|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label fw-semibold">
+                            Adresse e-mail <span class="text-danger">*</span>
+                        </label>
+                        <input type="email" id="id_email" name="email" class="form-control" placeholder="@gmail.com"
+                            required autocomplete="email" value="{{ email|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_telephone" class="form-label fw-semibold">Numéro de téléphone</label>
+                        <input type="tel" id="id_telephone" name="telephone" class="form-control" placeholder="+223 "
+                            autocomplete="tel" value="{{ telephone|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_role" class="form-label fw-semibold">
+                            Rôle / Type de compte <span class="text-danger">*</span>
+                        </label>
+                        <select id="id_role" name="role" class="form-select" required>
+                            <option value="client" {% if selected_role == 'client' %}selected{% endif %}>Client (Acheteur)</option>
+                            <option value="vendeur" {% if selected_role == 'vendeur' %}selected{% endif %}>Vendeur (Professionnel)</option>
+                        </select>
+                        <div class="form-text text-muted small">Choisissez votre type de compte.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_photo" class="form-label fw-semibold">Photo de profil</label>
+                        <input type="file" id="id_photo" name="photo" class="form-control" accept="image/*">
+                        <div class="form-text text-muted small">Optionnel — JPG, PNG, max 5 Mo.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label fw-semibold">
+                            Mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" id="id_password1" name="password1" class="form-control"
+                                placeholder="Au moins 6 caractères" required autocomplete="new-password">
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-pw1" tabindex="-1">
+                                <i class="bi bi-eye" id="icon-pw1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_password2" class="form-label fw-semibold">
+                            Confirmer le mot de passe <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" id="id_password2" name="password2" class="form-control"
+                                placeholder="Répétez votre mot de passe" required autocomplete="new-password">
+                            <button class="btn btn-outline-secondary" type="button" id="toggle-pw2" tabindex="-1">
+                                <i class="bi bi-eye" id="icon-pw2"></i>
+                            </button>
+                        </div>
+                        <div id="pw-match-feedback" class="form-text small mt-1"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <i class="bi bi-person-check me-2"></i>Créer mon compte
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+        <p class="text-center text-muted mt-3 small">
+            Vous avez déjà un compte ?
+            <a href="{% url 'login' %}" class="text-primary fw-semibold text-decoration-none">Se connecter</a>
+        </p>
+
+    </div>
+</div>
+</div>
+
+<script>
+    // Afficher / masquer les mots de passe
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bi bi-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'bi bi-eye';
+        }
+    }
+    document.getElementById('toggle-pw1').addEventListener('click', function () {
+        togglePassword('id_password1', 'icon-pw1');
+    });
+    document.getElementById('toggle-pw2').addEventListener('click', function () {
+        togglePassword('id_password2', 'icon-pw2');
+    });
+
+    // Vérification en temps réel de la concordance des mots de passe
+    const pw1 = document.getElementById('id_password1');
+    const pw2 = document.getElementById('id_password2');
+    const feedback = document.getElementById('pw-match-feedback');
+
+    function checkMatch() {
+        if (pw2.value.length === 0) {
+            feedback.textContent = '';
+            pw2.classList.remove('is-valid', 'is-invalid');
+            return;
+        }
+        if (pw1.value === pw2.value) {
+            feedback.textContent = '✓ Les mots de passe correspondent.';
+            feedback.className = 'form-text small mt-1 text-success';
+            pw2.classList.add('is-valid');
+            pw2.classList.remove('is-invalid');
+        } else {
+            feedback.textContent = '✗ Les mots de passe ne correspondent pas.';
+            feedback.className = 'form-text small mt-1 text-danger';
+            pw2.classList.add('is-invalid');
+            pw2.classList.remove('is-valid');
+        }
+    }
+
+    pw1.addEventListener('input', checkMatch);
+    pw2.addEventListener('input', checkMatch);
+</script>
+
+{% endblock %}

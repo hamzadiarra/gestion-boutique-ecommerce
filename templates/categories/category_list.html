@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Catégories{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">Nos catégories</h2>
+
+    <div class="row">
+
+        {% for categorie in categories %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow h-100">
+
+                {% if categorie.image %}
+                <img src="{{ categorie.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5>{{ categorie.nom }}</h5>
+
+                    <p>{{ categorie.description|truncatewords:20 }}</p>
+
+                    <a href="{% url 'category_detail' categorie.slug %}" class="btn btn-primary">
+                        Voir les produits
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>Aucune catégorie disponible.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

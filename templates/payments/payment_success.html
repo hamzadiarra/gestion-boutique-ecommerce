@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Paiement réussi
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container mt-5">
+
+
+<div class="alert alert-success">
+
+<h3>
+Paiement effectué avec succès 🎉
+</h3>
+
+
+<p>
+Commande :
+#{{ paiement.commande.id }}
+</p>
+
+
+<p>
+Montant :
+{{ paiement.montant }} FCFA
+</p>
+
+
+<p>
+Méthode :
+{{ paiement.get_methode_display }}
+</p>
+
+
+<p>
+Statut :
+{{ paiement.get_statut_display }}
+</p>
+
+
+</div>
+
+
+<a href="{% url 'my_orders' %}"
+class="btn btn-primary">
+
+Voir mes commandes
+
+</a>
+
+
+</div>
+
+
+{% endblock %}

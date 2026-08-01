@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Calculs Financiers — Espace Comptable{% endblock %}
+
+{% block content %}
+<style>
+  .calc-hero {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 60%, #1a1a2e 100%);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    color: #fff;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .calc-hero::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(102,126,234,0.15);
+  }
+
+  .calc-tab-btn {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all .2s;
+    width: 100%;
+    text-align: left;
+  }
+  .calc-tab-btn:hover, .calc-tab-btn.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea15, #764ba215);
+    box-shadow: 0 4px 16px rgba(102,126,234,.15);
+  }
+  .calc-tab-btn .icon { font-size: 2rem; }
+  .calc-tab-btn .label { font-weight: 700; font-size: .9rem; color: #344767; }
+  .calc-tab-btn .desc  { font-size: .75rem; color: #7b809a; }
+
+  .calc-form-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    padding: 2rem;
+    border: none;
+    transition: all .2s;
+  }
+
+  .result-card {
+    border-radius: 16px;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { opacity: .8; font-size: .9rem; }
+
+  .stat-chip {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-radius: 10px;
+    padding: .5rem 1.2rem;
+    font-size: .8rem;
+    font-weight: 600;
+  }
+
+  .proj-bar-wrap { height: 12px; background: rgba(255,255,255,.1); border-radius: 6px; margin-top: 4px; }
+  .proj-bar { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #38ef7d, #11998e); }
+</style>
+
+<div class="container mt-4 fade-in">
+
+  <!-- Hero -->
+  <div class="calc-hero">
+    <div class="row align-items-center">
+      <div class="col">
+        <a href="{% url 'comptable_dashboard' %}" class="btn btn-sm btn-outline-light mb-2 opacity-75">
+          <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+        <h2 class="fw-bold mb-1">🧮 Calculatrice Financière</h2>
+        <p class="mb-0 opacity-75">Effectuez vos calculs financiers en temps réel — {{ aujourd_hui|date:"d F Y" }}</p>
+      </div>
+      <div class="col-auto d-none d-md-block">
+        <div class="d-flex flex-column gap-2">
+          <div class="stat-chip text-center">
+            <i class="bi bi-cash-stack me-1"></i>
+            CA mois : {{ ca_mois|floatformat:0 }} FCFA
+          </div>
+          <div class="stat-chip text-center" style="background:linear-gradient(135deg,#11998e,#38ef7d);">
+            <i class="bi bi-cart me-1"></i>
+            Panier moyen : {{ panier_moyen|floatformat:0 }} FCFA
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages erreur -->
+  {% if resultat and resultat.erreur %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ resultat.erreur }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endif %}
+
+  <div class="row g-4">
+
+    <!-- Colonne gauche : Sélection du calcul -->
+    <div class="col-lg-4">
+      <div class="mb-3">
+        <h6 class="text-muted fw-semibold mb-3 text-uppercase" style="letter-spacing:.05em; font-size:.75rem;">
+          Choisir un calcul
+        </h6>
+        <div class="d-flex flex-column gap-2">
+
+          <button type="button" class="calc-tab-btn {% if type_calcul == 'tva' or not type_calcul %}active{% endif %}"
+            onclick="showCalc('tva', this)">
+            <div class="d-flex align-items-center gap-3">
+              <span class="icon">🧾</span>
+              <div>
+                <div class="label">Calcul TVA</div>
+                <div class="desc">HT → TVA → TTC</div>
+              </div>
+            </div>
+          </button>
+
+          <button type="button" class="calc-tab-btn {% if type_calcul == 'marge' %}active{% endif %}"
+            onclick="showCalc('marge', this)">
+            <div class="d-flex align-items-center gap-3">
+              <span class="icon">📊</span>
+              <div>
+                <div class="label">Marge Bénéficiaire</div>
+                <div class="desc">Taux de marge & markup</div>
+              </div>
+            </div>
+          </button>
+
+          <button type="button" class="calc-tab-btn {% if type_calcul == 'benefice_net' %}active{% endif %}"
+            onclick="showCalc('benefice_net', this)">
+            <div class="d-flex align-items-center gap-3">
+              <span class="icon">💰</span>
+              <div>
+                <div class="label">Bénéfice Net</div>
+                <div class="desc">CA - Charges - Impôts</div>
+              </div>
+            </div>
+          </button>
+
+          <button type="button" class="calc-tab-btn {% if type_calcul == 'seuil' %}active{% endif %}"
+            onclick="showCalc('seuil', this)">
+            <div class="d-flex align-items-center gap-3">
+              <span class="icon">🎯</span>
+              <div>
+                <div class="label">Seuil de Rentabilité</div>
+                <div class="desc">Point mort financier</div>
+              </div>
+            </div>
+          </button>
+
+          <button type="button" class="calc-tab-btn {% if type_calcul == 'projection' %}active{% endif %}"
+            onclick="showCalc('projection', this)">
+            <div class="d-flex align-items-center gap-3">
+              <span class="icon">📈</span>
+              <div>
+                <div class="label">Projection de Revenus</div>
+                <div class="desc">Croissance sur N périodes</div>
+              </div>
+            </div>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne droite : Formulaire + Résultats -->
+    <div class="col-lg-8">
+
+      <!-- FORM TVA -->
+      <div id="form-tva" class="calc-section {% if type_calcul == 'marge' or type_calcul == 'benefice_net' or type_calcul == 'seuil' or type_calcul == 'projection' %}d-none{% endif %}">
+        <div class="calc-form-card">
+          <h5 class="fw-bold mb-1">🧾 Calcul de la TVA</h5>
+          <p class="text-muted small mb-4">Calculez la TVA et le montant TTC à partir du montant hors taxe.</p>
+          <form method="POST" action="{% url 'comptable_calculs' %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_calcul" value="tva">
+            <div class="row g-3">
+              <div class="col-md-7">
+                <label class="form-label fw-semibold">Montant HT (FCFA) <span class="text-danger">*</span></label>
+                <input type="number" name="montant_ht" class="form-control form-control-lg" step="0.01" min="0"
+                  placeholder="Ex: 100000" required value="{{ request.POST.montant_ht }}">
+              </div>
+              <div class="col-md-5">
+                <label class="form-label fw-semibold">Taux TVA (%)</label>
+                <select name="taux_tva" class="form-select form-select-lg">
+                  <option value="18" {% if request.POST.taux_tva == '18' or not request.POST.taux_tva %}selected{% endif %}>18% (standard Mali)</option>
+                  <option value="0" {% if request.POST.taux_tva == '0' %}selected{% endif %}>0% (exonéré)</option>
+                  <option value="5" {% if request.POST.taux_tva == '5' %}selected{% endif %}>5%</option>
+                  <option value="10" {% if request.POST.taux_tva == '10' %}selected{% endif %}>10%</option>
+                  <option value="20" {% if request.POST.taux_tva == '20' %}selected{% endif %}>20%</option>
+                </select>
+              </div>
+              <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold">
+                  <i class="bi bi-calculator me-2"></i> Calculer
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORM MARGE -->
+      <div id="form-marge" class="calc-section {% if type_calcul != 'marge' %}d-none{% endif %}">
+        <div class="calc-form-card">
+          <h5 class="fw-bold mb-1">📊 Calcul de Marge Bénéficiaire</h5>
+          <p class="text-muted small mb-4">Calculez la marge commerciale et le taux de markup d'un produit.</p>
+          <form method="POST" action="{% url 'comptable_calculs' %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_calcul" value="marge">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Prix d'achat (FCFA) <span class="text-danger">*</span></label>
+                <input type="number" name="prix_achat" class="form-control form-control-lg" step="0.01" min="0"
+                  placeholder="Ex: 50000" required value="{{ request.POST.prix_achat }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Prix de vente (FCFA) <span class="text-danger">*</span></label>
+                <input type="number" name="prix_vente" class="form-control form-control-lg" step="0.01" min="0"
+                  placeholder="Ex: 75000" required value="{{ request.POST.prix_vente }}">
+              </div>
+              <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold">
+                  <i class="bi bi-calculator me-2"></i> Calculer
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORM BENEFICE NET -->
+      <div id="form-benefice_net" class="calc-section {% if type_calcul != 'benefice_net' %}d-none{% endif %}">
+        <div class="calc-form-card">
+          <h5 class="fw-bold mb-1">💰 Calcul du Bénéfice Net</h5>
+          <p class="text-muted small mb-4">Déduisez charges et impôts pour obtenir le résultat net.</p>
+          <form method="POST" action="{% url 'comptable_calculs' %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_calcul" value="benefice_net">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Chiffre d'affaires (FCFA) <span class="text-danger">*</span></label>
+                <input type="number" name="chiffre_affaires" class="form-control" step="0.01" min="0"
+                  placeholder="{{ ca_mois|floatformat:0 }}" required value="{{ request.POST.chiffre_affaires|default:ca_mois|floatformat:0 }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Taux TVA (%)</label>
+                <select name="taux_tva2" class="form-select">
+                  <option value="18" selected>18%</option>
+                  <option value="0">0%</option>
+                  <option value="5">5%</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Charges fixes (FCFA)</label>
+                <input type="number" name="charges_fixes" class="form-control" step="0.01" min="0"
+                  placeholder="Loyer, salaires..." value="{{ request.POST.charges_fixes|default:0 }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Charges variables (FCFA)</label>
+                <input type="number" name="charges_variables" class="form-control" step="0.01" min="0"
+                  placeholder="Matières, transport..." value="{{ request.POST.charges_variables|default:0 }}">
+              </div>
+              <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold">
+                  <i class="bi bi-calculator me-2"></i> Calculer
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORM SEUIL -->
+      <div id="form-seuil" class="calc-section {% if type_calcul != 'seuil' %}d-none{% endif %}">
+        <div class="calc-form-card">
+          <h5 class="fw-bold mb-1">🎯 Calcul du Seuil de Rentabilité</h5>
+          <p class="text-muted small mb-4">Trouvez le chiffre d'affaires minimum pour être rentable.</p>
+          <form method="POST" action="{% url 'comptable_calculs' %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_calcul" value="seuil">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Charges fixes totales (FCFA) <span class="text-danger">*</span></label>
+                <input type="number" name="charges_fixes2" class="form-control form-control-lg" step="0.01" min="0"
+                  placeholder="Ex: 500000" required value="{{ request.POST.charges_fixes2 }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Taux de marge sur CV (%) <span class="text-danger">*</span></label>
+                <input type="number" name="taux_marge2" class="form-control form-control-lg" step="0.01" min="0.01" max="100"
+                  placeholder="Ex: 40" required value="{{ request.POST.taux_marge2 }}">
+                <div class="form-text">= (PV - CV) / PV × 100</div>
+              </div>
+              <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold">
+                  <i class="bi bi-calculator me-2"></i> Calculer
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORM PROJECTION -->
+      <div id="form-projection" class="calc-section {% if type_calcul != 'projection' %}d-none{% endif %}">
+        <div class="calc-form-card">
+          <h5 class="fw-bold mb-1">📈 Projection de Revenus</h5>
+          <p class="text-muted small mb-4">Projetez vos revenus sur plusieurs périodes avec un taux de croissance.</p>
+          <form method="POST" action="{% url 'comptable_calculs' %}">
+            {% csrf_token %}
+            <input type="hidden" name="type_calcul" value="projection">
+            <div class="row g-3">
+              <div class="col-md-5">
+                <label class="form-label fw-semibold">CA de départ (FCFA)</label>
+                <input type="number" name="ca_actuel" class="form-control" step="0.01" min="0"
+                  value="{{ request.POST.ca_actuel|default:ca_mois|floatformat:0 }}">
+                <div class="form-text">Par défaut : CA du mois en cours</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Taux de croissance (%)</label>
+                <input type="number" name="taux_croissance" class="form-control" step="0.1"
+                  placeholder="Ex: 5" value="{{ request.POST.taux_croissance|default:5 }}">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Nombre de périodes</label>
+                <select name="nb_periodes" class="form-select">
+                  <option value="3" {% if request.POST.nb_periodes == '3' %}selected{% endif %}>3 mois</option>
+                  <option value="6" {% if request.POST.nb_periodes == '6' %}selected{% endif %}>6 mois</option>
+                  <option value="12" {% if not request.POST.nb_periodes or request.POST.nb_periodes == '12' %}selected{% endif %}>12 mois</option>
+                </select>
+              </div>
+              <div class="col-12 mt-2">
+                <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold">
+                  <i class="bi bi-calculator me-2"></i> Projeter
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Résultats -->
+      {% if resultat and not resultat.erreur %}
+      <div class="result-card mt-4">
+        <div class="d-flex align-items-center gap-2 mb-4">
+          <span style="font-size:2rem;">{{ resultat.emoji }}</span>
+          <div>
+            <h5 class="mb-0 fw-bold">Résultats — {{ resultat.type }}</h5>
+            <small class="opacity-75">Calculé le {% now "d/m/Y à H:i" %}</small>
+          </div>
+        </div>
+
+        {% for ligne in resultat.lignes %}
+        <div class="result-row">
+          <span class="result-label">{{ ligne.label }}</span>
+          <span class="{{ ligne.color }}">{{ ligne.valeur }}</span>
+        </div>
+        {% endfor %}
+
+        <!-- Tableau de projections si présent -->
+        {% if resultat.projections %}
+        <div class="mt-4">
+          <h6 class="fw-semibold mb-3 opacity-75">Détail des projections :</h6>
+          {% for p in resultat.projections %}
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="small opacity-75">Période {{ p.periode }}</span>
+              <span class="fw-semibold small text-success">{{ p.valeur|floatformat:0 }} FCFA</span>
+            </div>
+            <div class="proj-bar-wrap">
+              {% if resultat.max_projection %}
+              
+              {% widthratio p.valeur resultat.max_projection 100 as pct %}
+
+              <div class="proj-bar" style="width: {{ pct }}%; transition: width .5s;"></div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showCalc(name, btn) {
+    // Masquer tous les formulaires
+    document.querySelectorAll('.calc-section').forEach(el => el.classList.add('d-none'));
+    // Retirer la classe active de tous les boutons
+    document.querySelectorAll('.calc-tab-btn').forEach(el => el.classList.remove('active'));
+    // Afficher le formulaire sélectionné
+    document.getElementById('form-' + name).classList.remove('d-none');
+    // Activer le bouton
+    btn.classList.add('active');
+  }
+</script>
+
+{% endblock %}

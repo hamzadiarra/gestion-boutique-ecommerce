@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Espace Vendeur — Gestion Boutique{% endblock %}
+
+{% block content %}
+<style>
+  .vendeur-nav-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(102,126,234,.35);
+  }
+  .vendeur-nav-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(102,126,234,.45); color:#fff; }
+  .vendeur-nav-card.green { background: linear-gradient(135deg,#11998e,#38ef7d); box-shadow:0 4px 20px rgba(17,153,142,.3); }
+  .vendeur-nav-card.orange { background: linear-gradient(135deg,#f7971e,#ffd200); box-shadow:0 4px 20px rgba(247,151,30,.3); color:#333; }
+  .vendeur-nav-card.red { background: linear-gradient(135deg,#cb2d3e,#ef473a); box-shadow:0 4px 20px rgba(203,45,62,.3); }
+  .vendeur-nav-card .nav-icon { font-size:2rem; }
+  .vendeur-nav-card .nav-info .nav-label { font-size:.78rem; opacity:.8; }
+  .vendeur-nav-card .nav-info .nav-value { font-size:1.25rem; font-weight:700; }
+
+  .stat-card { border-radius:16px; padding:1.4rem; color:#fff; position:relative; overflow:hidden; }
+  .stat-card::after { content:''; position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,.1); }
+  .stat-card-success { background:linear-gradient(135deg,#11998e,#38ef7d); }
+  .stat-card-info    { background:linear-gradient(135deg,#2193b0,#6dd5ed); }
+  .stat-card-primary { background:linear-gradient(135deg,#667eea,#764ba2); }
+  .stat-icon { font-size:2.5rem; opacity:.3; }
+  .stat-value { font-size:1.6rem; font-weight:800; }
+  .stat-label { font-size:.8rem; opacity:.85; }
+
+  .badge-attente { background:#fff3cd; color:#856404; border-radius:50px; padding:2px 10px; font-size:.78rem; font-weight:600; }
+
+  .commande-card { border-left:4px solid #ffc107; border-radius:8px; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+  .commande-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.12); transform:translateY(-2px); transition:.2s; }
+</style>
+
+<div class="container mt-4 fade-in">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">🏪 Espace Vendeur</h2>
+            <p class="text-muted mb-0">Bienvenue, <strong>{{ user.username }}</strong>. Gérez vos ventes, commandes et produits.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+            <button class="btn btn-outline-dark btn-sm dark-mode-toggle" title="Changer le thème">
+                <i class="bi bi-moon-stars-fill me-1 theme-icon"></i>
+                <span class="theme-label">Thème</span>
+            </button>
+            <a href="{% url 'historique_ventes' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-clock-history me-1"></i> Historique
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-danger btn-sm fw-bold px-3 shadow-sm">
+                <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
+            </a>
+            <span class="badge bg-info p-2 d-flex align-items-center fs-6">🏪 Vendeur</span>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Navigation rapide (rôles vendeur) -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <a href="{% url 'vendeur_commandes' %}" class="vendeur-nav-card">
+                <i class="bi bi-bag-check nav-icon"></i>
+                <div class="nav-info">
+                    <div class="nav-label">Commandes clients</div>
+                    <div class="nav-value">
+                        {{ nb_commandes_attente }}
+                        {% if nb_commandes_attente > 0 %}<span class="badge bg-warning text-dark ms-1">!</span>{% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'vendeur_liste_produits' %}" class="vendeur-nav-card green">
+                <i class="bi bi-box-seam nav-icon"></i>
+                <div class="nav-info">
+                    <div class="nav-label">Mes produits</div>
+                    <div class="nav-value">Gérer</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'vendeur_ajouter_produit' %}" class="vendeur-nav-card orange">
+                <i class="bi bi-plus-circle nav-icon"></i>
+                <div class="nav-info">
+                    <div class="nav-label">Nouveau produit</div>
+                    <div class="nav-value">Ajouter</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="{% url 'vendeur_paniers' %}" class="vendeur-nav-card red">
+                <i class="bi bi-cart3 nav-icon"></i>
+                <div class="nav-info">
+                    <div class="nav-label">Paniers clients</div>
+                    <div class="nav-value">Voir</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="stat-card stat-card-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_ventes_jour }} FCFA</div>
+                        <div class="stat-label">Ventes (Aujourd'hui)</div>
+                        <div class="small mt-1 text-white-50">{{ nb_ventes_jour }} transaction(s)</div>
+                    </div>
+                    <i class="bi bi-calendar-event stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="stat-card stat-card-info">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_ventes_mois }} FCFA</div>
+                        <div class="stat-label">Ventes (Ce Mois)</div>
+                        <div class="small mt-1 text-white-50">{{ nb_ventes_mois }} transaction(s)</div>
+                    </div>
+                    <i class="bi bi-calendar-month stat-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="stat-card stat-card-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_ventes_global }} FCFA</div>
+                        <div class="stat-label">Ventes Globales</div>
+                        <div class="small mt-1 text-white-50">{{ nb_ventes_total }} au total</div>
+                    </div>
+                    <i class="bi bi-graph-up-arrow stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Commandes en attente (extrait) -->
+    {% if commandes_en_attente %}
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-warning bg-opacity-10 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 text-warning">
+                <i class="bi bi-exclamation-circle me-2"></i>Commandes à Confirmer
+                <span class="badge bg-warning text-dark ms-2">{{ nb_commandes_attente }}</span>
+            </h5>
+            <a href="{% url 'vendeur_commandes' %}" class="btn btn-sm btn-warning fw-semibold">
+                Tout gérer <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">#</th>
+                            <th>Client</th>
+                            <th>Produits</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                            <th class="pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commande in commandes_en_attente %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-muted">#{{ commande.id }}</td>
+                            <td>
+                                <span class="fw-semibold">{{ commande.utilisateur.username }}</span><br>
+                                <small class="text-muted">{{ commande.utilisateur.email }}</small>
+                            </td>
+                            <td>
+                                {% for item in commande.items.all %}
+                                <span class="badge bg-light text-dark border me-1">{{ item.produit.nom }} x{{ item.quantite }}</span>
+                                {% endfor %}
+                            </td>
+                            <td class="fw-bold text-success">{{ commande.total }} FCFA</td>
+                            <td class="text-muted small">{{ commande.date_creation|date:"d/m/Y H:i" }}</td>
+                            <td class="pe-4">
+                                <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="confirmer">
+                                    <button type="submit" class="btn btn-success btn-sm me-1">
+                                        <i class="bi bi-check-lg"></i> Confirmer
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="annuler">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Annuler cette commande ?')">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Section enregistrer vente + dernières ventes -->
+    <div class="row g-4 mb-5">
+
+        <!-- Formulaire vente directe -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-cart-plus me-2"></i>Enregistrer une Vente</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'enregistrer_vente' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_produit" class="form-label fw-semibold">Produit <span class="text-danger">*</span></label>
+                            <select name="produit" id="id_produit" class="form-select" required>
+                                <option value="" disabled selected>-- Choisir un produit --</option>
+                                {% for produit in produits %}
+                                <option value="{{ produit.id }}">
+                                    {{ produit.nom }} — Stock: {{ produit.stock }} ({% if produit.prix_promotion %}{{ produit.prix_promotion }}{% else %}{{ produit.prix }}{% endif %} FCFA)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_quantite" class="form-label fw-semibold">Quantité <span class="text-danger">*</span></label>
+                            <input type="number" name="quantite" id="id_quantite" class="form-control" min="1" value="1" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_methode_paiement" class="form-label fw-semibold">Méthode de Paiement <span class="text-danger">*</span></label>
+                            <select name="methode_paiement" id="id_methode_paiement" class="form-select" required>
+                                <option value="especes">Espèces</option>
+                                <option value="orange_money">Orange Money</option>
+                                <option value="wave">Wave</option>
+                                <option value="carte">Carte bancaire</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_reference_client" class="form-label fw-semibold">Nom / Référence Client</label>
+                            <input type="text" name="reference_client" id="id_reference_client" class="form-control" placeholder="Nom du client (optionnel)">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_notes" class="form-label fw-semibold">Notes</label>
+                            <textarea name="notes" id="id_notes" rows="2" class="form-control" placeholder="Notes additionnelles (optionnel)"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-semibold shadow-sm">
+                            <i class="bi bi-check-circle me-2"></i> Valider l'Enregistrement
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dernières Ventes -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-list-stars me-2"></i>Dernières Ventes</h5>
+                    <a href="{% url 'historique_ventes' %}" class="btn btn-sm btn-link text-primary fw-semibold p-0 text-decoration-none">
+                        Tout voir <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if dernieres_ventes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Date</th>
+                                    <th>Produit</th>
+                                    <th>Qté</th>
+                                    <th>Total</th>
+                                    <th>Paiement</th>
+                                    <th class="pe-4">Client</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vente in dernieres_ventes %}
+                                <tr>
+                                    <td class="ps-4 text-muted small">{{ vente.date_vente|date:"d/m/Y H:i" }}</td>
+                                    <td class="fw-semibold text-dark">{{ vente.produit.nom }}</td>
+                                    <td>x{{ vente.quantite }}</td>
+                                    <td class="fw-bold text-success">{{ vente.montant_total }} FCFA</td>
+                                    <td>
+                                        <span class="badge rounded-pill
+                                            {% if vente.methode_paiement == 'especes' %}bg-secondary-subtle text-dark
+                                            {% elif vente.methode_paiement == 'orange_money' %}bg-warning-subtle text-dark
+                                            {% elif vente.methode_paiement == 'wave' %}bg-info-subtle text-dark
+                                            {% elif vente.methode_paiement == 'carte' %}bg-primary-subtle text-primary
+                                            {% endif %}">
+                                            {{ vente.get_methode_paiement_display }}
+                                        </span>
+                                    </td>
+                                    <td class="pe-4 text-muted">{{ vente.reference_client|default:"—" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-cart-x text-muted" style="font-size:3rem;"></i>
+                        <p class="text-muted mt-3 mb-0">Aucune vente enregistrée pour le moment.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

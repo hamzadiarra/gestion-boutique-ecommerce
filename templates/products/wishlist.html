@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Ma liste de souhaits{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 fade-in">
+
+    <h2 class="mb-4">❤️ Ma Liste de Souhaits</h2>
+
+    {% if messages %}
+    <div class="mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+
+        {% for produit in produits %}
+
+        <div class="col-lg-4 col-md-6 mb-4">
+
+            <div class="card shadow h-100 product-card">
+
+                {% if produit.image %}
+                <img
+                    src="{{ produit.image.url }}"
+                    class="card-img-top"
+                    style="height:260px; object-fit:cover;"
+                    alt="{{ produit.nom }}">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 260px;">
+                    <i class="bi bi-image text-muted display-4"></i>
+                </div>
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5 class="card-title fw-bold">
+                        {{ produit.nom }}
+                    </h5>
+
+                    <p class="text-muted">
+                        {{ produit.marque }}
+                    </p>
+
+                    {% if produit.prix_promotion %}
+                    <h5 class="text-danger fw-bold">
+                        {{ produit.prix_promotion }} FCFA
+                    </h5>
+                    <small class="text-decoration-line-through text-muted">
+                        {{ produit.prix }} FCFA
+                    </small>
+                    {% else %}
+                    <h5 class="text-success fw-bold">
+                        {{ produit.prix }} FCFA
+                    </h5>
+                    {% endif %}
+
+                    <p class="mt-3 text-secondary">
+                        Stock :
+                        {% if produit.stock > 0 %}
+                        <span class="text-success">
+                            En stock ({{ produit.stock }})
+                        </span>
+                        {% else %}
+                        <span class="text-danger">
+                            Rupture
+                        </span>
+                        {% endif %}
+                    </p>
+
+                </div>
+
+                <div class="card-footer bg-white border-0 d-flex justify-content-between">
+
+                    <a
+                        href="{% url 'product_detail' produit.slug %}"
+                        class="btn btn-info btn-sm text-white">
+                        <i class="bi bi-eye"></i> Voir
+                    </a>
+
+                    {% if produit.stock > 0 %}
+                    <a
+                        href="{% url 'add_to_cart' produit.id %}"
+                        class="btn btn-success btn-sm">
+                        <i class="bi bi-cart-plus"></i> Panier
+                    </a>
+                    {% endif %}
+
+                    <form action="{% url 'toggle_wishlist' produit.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Retirer
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="alert alert-info py-5 text-center">
+                <i class="bi bi-heart display-1 text-muted mb-3 d-block"></i>
+                <h4>Votre liste de souhaits est vide.</h4>
+                <p class="text-muted">Ajoutez des produits que vous aimez pour les retrouver plus tard.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary px-4 mt-3">Découvrir nos produits</a>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
