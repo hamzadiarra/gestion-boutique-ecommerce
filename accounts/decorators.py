@@ -50,7 +50,7 @@ def admin_required(view_func):
         if request.user.is_superuser:
             return view_func(request, *args, **kwargs)
 
-        if profile and (profile.role == 'admin' or request.user.is_staff):
+        if profile and profile.role == 'admin':
             return view_func(request, *args, **kwargs)
 
         messages.error(request, "⛔ Accès refusé — Espace réservé aux administrateurs.")
@@ -110,7 +110,9 @@ def comptable_required(view_func):
 
         profile = getattr(request.user, 'profile', None)
 
-        if request.user.is_superuser or request.user.is_staff:
+        # is_staff donne seulement accès à l'interface Django Admin. Il ne
+        # doit pas ouvrir l'espace financier métier.
+        if request.user.is_superuser:
             return view_func(request, *args, **kwargs)
 
         if profile and profile.role in ('comptable', 'admin'):

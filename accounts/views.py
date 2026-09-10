@@ -3,9 +3,12 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from .models import Profile
 from .forms import ProfileForm
+from orders.models import Order
+from products.models import Wishlist
 
 
 # ==========================
@@ -91,7 +94,7 @@ def register(request):
         login(request, user)
 
         role_label = profil.get_role_display()
-        messages.success(request, f"Bienvenue {username} ! Votre compte {role_label} a été créé avec succès. 🎉")
+        messages.success(request, f"Bienvenue {username} ! Votre compte {role_label} a été créé avec succès.")
 
         # Redirection selon le rôle
         if role == 'vendeur':
@@ -107,10 +110,20 @@ def register(request):
 
 def login_view(request):
 
+    next_url = request.GET.get("next", "")
+
     if request.method == "POST":
 
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+        identifiant = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        remember_me = request.POST.get("remember_me") == "on"
+        next_url = request.POST.get("next") or next_url
+
+        username = identifiant
+        if "@" in identifiant:
+            user_by_email = User.objects.filter(email__iexact=identifiant).first()
+            if user_by_email:
+                username = user_by_email.username
 
         utilisateur = authenticate(
             request,
@@ -121,10 +134,15 @@ def login_view(request):
         if utilisateur is not None:
 
             login(request, utilisateur)
+            if not remember_me:
+                request.session.set_expiry(0)
 
             # Redirection selon le rôle
-            next_url = request.GET.get("next")
-            if next_url:
+            if next_url and url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure()
+            ):
                 return redirect(next_url)
 
             profile = getattr(utilisateur, 'profile', None)
@@ -142,13 +160,19 @@ def login_view(request):
             request,
             "accounts/login.html",
             {
-                "error": "Nom d'utilisateur ou mot de passe incorrect."
+                "error": "Identifiant ou mot de passe incorrect.",
+                "username": identifiant,
+                "next": next_url,
+                "remember_me": remember_me,
             }
         )
 
     return render(
         request,
-        "accounts/login.html"
+        "accounts/login.html",
+        {
+            "next": next_url
+        }
     )
 
 
@@ -175,11 +199,15 @@ def profile_view(request):
         utilisateur=request.user
     )
 
+    recent_orders = Order.objects.filter(utilisateur=request.user).order_by("-date_creation")[:3]
     return render(
         request,
         "accounts/profile.html",
         {
-            "profil": profil
+            "profil": profil,
+            "recent_orders": recent_orders,
+            "order_count": Order.objects.filter(utilisateur=request.user).count(),
+            "wishlist_count": Wishlist.objects.filter(utilisateur=request.user).values("produits").count(),
         }
     )
 
@@ -193,26 +221,13 @@ def profile_edit(request):
 
     profil, created = Profile.objects.get_or_create(utilisateur=request.user)
 
-    if request.method == "POST":
-
-        # Mise à jour des champs texte
-        profil.telephone = request.POST.get("telephone", "").strip()
-        profil.adresse = request.POST.get("adresse", "").strip()
-        profil.ville = request.POST.get("ville", "").strip()
-        profil.code_postal = request.POST.get("code_postal", "").strip()
-
-        # Mise à jour de la photo seulement si un nouveau fichier est envoyé
-        photo = request.FILES.get("photo")
-        if photo:
-            profil.photo = photo
-
-        profil.save()
-
-        messages.success(request, "Profil mis à jour avec succès ! ✅")
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=profil)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Vos informations personnelles ont été mises à jour.")
         return redirect("profile")
 
-    # GET : on passe le profil pour préremplir les champs dans le template
-    return render(request, "accounts/profile_edit.html", {"form": profil})
+    return render(request, "accounts/profile_edit.html", {"form": form})
 
 
 # ==========================
@@ -224,9 +239,9 @@ def change_password(request):
 
     if request.method == "POST":
 
-        old_password = request.POST.get("old_password")
-        new_password1 = request.POST.get("new_password1")
-        new_password2 = request.POST.get("new_password2")
+        old_password = request.POST.get("old_password", "")
+        new_password1 = request.POST.get("new_password1", "")
+        new_password2 = request.POST.get("new_password2", "")
 
         if not request.user.check_password(old_password):
             messages.error(request, "L'ancien mot de passe est incorrect.")
@@ -246,7 +261,7 @@ def change_password(request):
         # Garder l'utilisateur connecté après le changement
         update_session_auth_hash(request, request.user)
 
-        messages.success(request, "Mot de passe modifié avec succès ! 🔒")
+        messages.success(request, "Votre mot de passe a été modifié avec succès.")
 
         return redirect("profile")
 

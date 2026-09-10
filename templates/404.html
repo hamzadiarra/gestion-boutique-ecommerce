@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Page introuvable — Gestion Boutique{% endblock %}
+{% block content %}
+<div class="container page-shell py-5"><div class="empty-state my-4"><div class="empty-state-icon"><i class="bi bi-compass"></i></div><h1 class="h3">Cette page n'existe plus</h1><p>Le lien est peut-être incorrect ou le produit a été déplacé. Revenez à la boutique pour continuer votre visite.</p><a class="btn btn-primary" href="{% url 'product_list' %}"><i class="bi bi-bag me-2"></i>Explorer la boutique</a></div></div>
+{% endblock %}

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Sum, Count
+from django.db import transaction
+from django.db.models import Sum, Count, Q
+from django.core.paginator import Paginator
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -44,6 +46,15 @@ def vendeur_dashboard(request):
     ).select_related("utilisateur").prefetch_related("items__produit").order_by("-date_creation")[:5]
 
     nb_commandes_attente = Order.objects.filter(statut="en_attente").count()
+    nb_commandes_confirmees = Order.objects.filter(statut="confirmee").count()
+    nb_ruptures = Product.objects.filter(actif=True, stock=0).count()
+    nb_stock_faible = Product.objects.filter(actif=True, stock__gt=0, stock__lte=5).count()
+    nb_produits_inactifs = Product.objects.filter(actif=False).count()
+
+    derniere_vente_id = request.session.pop("last_sale_id", None)
+    derniere_vente = None
+    if derniere_vente_id:
+        derniere_vente = mes_ventes.filter(id=derniere_vente_id).select_related("produit").first()
 
     context = {
         "total_ventes_jour": total_ventes_jour,
@@ -56,6 +67,11 @@ def vendeur_dashboard(request):
         "dernieres_ventes": dernieres_ventes,
         "commandes_en_attente": commandes_en_attente,
         "nb_commandes_attente": nb_commandes_attente,
+        "nb_commandes_confirmees": nb_commandes_confirmees,
+        "nb_ruptures": nb_ruptures,
+        "nb_stock_faible": nb_stock_faible,
+        "nb_produits_inactifs": nb_produits_inactifs,
+        "derniere_vente": derniere_vente,
     }
 
     return render(request, "dashboard/vendeur_dashboard.html", context)
@@ -82,36 +98,31 @@ def enregistrer_vente(request):
         messages.error(request, "La quantité doit être un nombre positif.")
         return redirect("vendeur_dashboard")
 
-    produit = get_object_or_404(Product, id=produit_id, actif=True)
+    with transaction.atomic():
+        produit = get_object_or_404(Product.objects.select_for_update(), id=produit_id, actif=True)
 
-    # Vérifier le stock
-    if quantite > produit.stock:
-        messages.error(
-            request,
-            f"Stock insuffisant pour « {produit.nom} » — disponible : {produit.stock}, demandé : {quantite}."
+        if quantite > produit.stock:
+            messages.error(
+                request,
+                f"Stock insuffisant pour « {produit.nom} » — disponible : {produit.stock}, demandé : {quantite}."
+            )
+            return redirect("vendeur_dashboard")
+
+        prix_unitaire = produit.prix_promotion if produit.prix_promotion else produit.prix
+        montant_total = prix_unitaire * quantite
+        vente = Vente.objects.create(
+            vendeur=request.user,
+            produit=produit,
+            quantite=quantite,
+            prix_unitaire=prix_unitaire,
+            montant_total=montant_total,
+            methode_paiement=methode_paiement,
+            reference_client=reference_client or None,
+            notes=notes or None,
         )
-        return redirect("vendeur_dashboard")
-
-    # Calculer le montant
-    prix_unitaire = produit.prix_promotion if produit.prix_promotion else produit.prix
-    montant_total = prix_unitaire * quantite
-
-    # Créer la vente
-    vente = Vente.objects.create(
-        vendeur=request.user,
-        produit=produit,
-        quantite=quantite,
-        prix_unitaire=prix_unitaire,
-        montant_total=montant_total,
-        methode_paiement=methode_paiement,
-        reference_client=reference_client or None,
-        notes=notes or None,
-    )
-
-    # Mettre à jour le stock
-    produit.stock -= quantite
-    produit.quantite_vendue += quantite
-    produit.save()
+        produit.stock -= quantite
+        produit.quantite_vendue += quantite
+        produit.save(update_fields=["stock", "quantite_vendue"])
 
     # Logger l'activité
     log_activity(
@@ -126,10 +137,8 @@ def enregistrer_vente(request):
         niveau="info"
     )
 
-    messages.success(
-        request,
-        f"✅ Vente #{vente.id} enregistrée — {produit.nom} x{quantite} = {montant_total} FCFA"
-    )
+    request.session["last_sale_id"] = vente.id
+    messages.success(request, f"Vente #{vente.id} enregistrée — {produit.nom} x{quantite} = {montant_total} FCFA")
     return redirect("vendeur_dashboard")
 
 
@@ -137,10 +146,34 @@ def enregistrer_vente(request):
 def historique_ventes(request):
     """Historique complet des ventes du vendeur."""
 
-    mes_ventes = Vente.objects.filter(vendeur=request.user)
+    mes_ventes = Vente.objects.filter(vendeur=request.user).select_related("produit")
+    recherche = request.GET.get("q", "").strip()
+    date_debut = request.GET.get("date_debut", "")
+    date_fin = request.GET.get("date_fin", "")
+    methode = request.GET.get("methode", "")
+    if recherche:
+        mes_ventes = mes_ventes.filter(Q(produit__nom__icontains=recherche) | Q(reference_client__icontains=recherche))
+    if date_debut:
+        mes_ventes = mes_ventes.filter(date_vente__date__gte=date_debut)
+    if date_fin:
+        mes_ventes = mes_ventes.filter(date_vente__date__lte=date_fin)
+    if methode:
+        mes_ventes = mes_ventes.filter(methode_paiement=methode)
+    total_filtre = mes_ventes.aggregate(total=Sum("montant_total"))["total"] or 0
+    page_obj = Paginator(mes_ventes, 12).get_page(request.GET.get("page"))
+    pagination_params = request.GET.copy()
+    pagination_params.pop("page", None)
+    previous_page_url = f"?{pagination_params.urlencode()}&page={page_obj.previous_page_number()}" if page_obj.has_previous() else ""
+    next_page_url = f"?{pagination_params.urlencode()}&page={page_obj.next_page_number()}" if page_obj.has_next() else ""
 
     return render(request, "dashboard/vendeur_historique.html", {
-        "ventes": mes_ventes,
+        "ventes": page_obj,
+        "page_obj": page_obj,
+        "recherche": recherche, "date_debut": date_debut, "date_fin": date_fin,
+        "methode": methode, "total_filtre": total_filtre,
+        "methodes_paiement": Vente._meta.get_field("methode_paiement").choices,
+        "query_params": request.GET.copy(),
+        "previous_page_url": previous_page_url, "next_page_url": next_page_url,
     })
 
 
@@ -164,9 +197,20 @@ def vendeur_commandes(request):
     else:
         commandes = Order.objects.filter(statut=statut_filtre)
 
+    recherche = request.GET.get("q", "").strip()
+    if recherche:
+        commande_q = Q(utilisateur__username__icontains=recherche) | Q(utilisateur__email__icontains=recherche)
+        if recherche.isdigit():
+            commande_q |= Q(id=int(recherche))
+        commandes = commandes.filter(commande_q)
+
     commandes = commandes.select_related(
         "utilisateur", "vendeur_confirmateur"
     ).prefetch_related("items__produit").order_by("-date_creation")
+    page_obj = Paginator(commandes, 10).get_page(request.GET.get("page"))
+    pagination_params = request.GET.copy(); pagination_params.pop("page", None)
+    previous_page_url = f"?{pagination_params.urlencode()}&page={page_obj.previous_page_number()}" if page_obj.has_previous() else ""
+    next_page_url = f"?{pagination_params.urlencode()}&page={page_obj.next_page_number()}" if page_obj.has_next() else ""
 
     # Compteurs par statut
     nb_attente = Order.objects.filter(statut="en_attente").count()
@@ -183,9 +227,25 @@ def vendeur_commandes(request):
         "nb_expediees": nb_expediees,
         "nb_livrees": nb_livrees,
         "nb_annulees": nb_annulees,
+        "page_obj": page_obj,
+        "recherche": recherche,
+        "query_params": request.GET.copy(),
+        "previous_page_url": previous_page_url, "next_page_url": next_page_url,
     }
 
     return render(request, "dashboard/vendeur_commandes.html", context)
+
+
+@vendeur_required
+def vendeur_commande_detail(request, commande_id):
+    commande = get_object_or_404(
+        Order.objects.select_related("utilisateur", "vendeur_confirmateur").prefetch_related("items__produit"),
+        id=commande_id,
+    )
+    return render(request, "dashboard/vendeur_commande_detail.html", {
+        "commande": commande,
+        "commande_sous_total": sum(item.sous_total() for item in commande.items.all()),
+    })
 
 
 @vendeur_required
@@ -197,6 +257,16 @@ def confirmer_commande(request, commande_id):
 
     commande = get_object_or_404(Order, id=commande_id)
     action = request.POST.get("action")
+
+    transitions = {
+        "confirmer": {"en_attente"},
+        "expediee": {"confirmee"},
+        "livree": {"expediee"},
+        "annuler": {"en_attente", "confirmee", "expediee"},
+    }
+    if action not in transitions or commande.statut not in transitions[action]:
+        messages.error(request, "Cette transition n'est pas disponible pour le statut actuel de la commande.")
+        return redirect("vendeur_commandes")
 
     if action == "confirmer":
         commande.statut = "confirmee"
@@ -211,28 +281,31 @@ def confirmer_commande(request, commande_id):
             request=request,
             niveau="info"
         )
-        messages.success(request, f"✅ Commande #{commande.id} confirmée avec succès !")
+        messages.success(request, f"Commande #{commande.id} confirmée avec succès.")
 
     elif action == "expediee":
         commande.statut = "expediee"
+        commande.date_expedition = timezone.now()
         commande.save()
-        messages.success(request, f"🚚 Commande #{commande.id} marquée comme expédiée.")
+        messages.success(request, f"Commande #{commande.id} marquée comme expédiée.")
 
     elif action == "livree":
         commande.statut = "livree"
+        commande.date_livraison = timezone.now()
         commande.save()
         messages.success(request, f"📦 Commande #{commande.id} marquée comme livrée.")
 
     elif action == "annuler":
-        if commande.statut == "en_attente":
-            # Remettre le stock des produits
+        with transaction.atomic():
             for item in commande.items.all():
-                item.produit.stock += item.quantite
-                item.produit.quantite_vendue -= item.quantite
-                item.produit.save()
+                produit = Product.objects.select_for_update().get(pk=item.produit_id)
+                produit.stock += item.quantite
+                produit.quantite_vendue = max(0, produit.quantite_vendue - item.quantite)
+                produit.save(update_fields=["stock", "quantite_vendue"])
 
-        commande.statut = "annulee"
-        commande.save()
+            commande.statut = "annulee"
+            commande.date_annulation = timezone.now()
+            commande.save(update_fields=["statut", "date_annulation"])
 
         log_activity(
             user=request.user,
@@ -257,20 +330,81 @@ def confirmer_commande(request, commande_id):
 def vendeur_liste_produits(request):
     """Liste des produits que le vendeur peut gérer."""
 
-    recherche = request.GET.get("q", "")
+    recherche = request.GET.get("q", "").strip()
+    categorie_id = request.GET.get("categorie", "")
+    actif = request.GET.get("actif", "")
+    stock_filtre = request.GET.get("stock", "")
+    tri = request.GET.get("tri", "recent")
     produits = Product.objects.select_related("categorie").order_by("-date_creation")
 
     if recherche:
-        produits = produits.filter(nom__icontains=recherche)
+        produits = produits.filter(Q(nom__icontains=recherche) | Q(marque__icontains=recherche))
+    if categorie_id:
+        produits = produits.filter(categorie_id=categorie_id)
+    if actif == "actif":
+        produits = produits.filter(actif=True)
+    elif actif == "inactif":
+        produits = produits.filter(actif=False)
+    if stock_filtre == "rupture":
+        produits = produits.filter(stock=0)
+    elif stock_filtre == "faible":
+        produits = produits.filter(stock__gt=0, stock__lte=5)
+    elif stock_filtre == "disponible":
+        produits = produits.filter(stock__gt=5)
+    produits = produits.order_by({"nom": "nom", "stock": "stock", "prix": "prix"}.get(tri, "-date_creation"))
+    page_obj = Paginator(produits, 12).get_page(request.GET.get("page"))
+    pagination_params = request.GET.copy(); pagination_params.pop("page", None)
+    previous_page_url = f"?{pagination_params.urlencode()}&page={page_obj.previous_page_number()}" if page_obj.has_previous() else ""
+    next_page_url = f"?{pagination_params.urlencode()}&page={page_obj.next_page_number()}" if page_obj.has_next() else ""
 
     context = {
-        "produits": produits,
+        "produits": page_obj,
+        "page_obj": page_obj,
         "recherche": recherche,
-        "nb_produits": produits.count(),
+        "nb_produits": Product.objects.count(),
         "nb_actifs": Product.objects.filter(actif=True).count(),
         "nb_rupture": Product.objects.filter(stock=0).count(),
+        "categories": Category.objects.filter(active=True).order_by("nom"),
+        "categorie_id": categorie_id, "actif": actif, "stock_filtre": stock_filtre, "tri": tri,
+        "query_params": request.GET.copy(),
+        "previous_page_url": previous_page_url, "next_page_url": next_page_url,
     }
     return render(request, "dashboard/vendeur_produits.html", context)
+
+
+@vendeur_required
+def vendeur_stock(request):
+    """Vue opérationnelle du stock vendeur."""
+    recherche = request.GET.get("q", "").strip()
+    etat = request.GET.get("etat", "")
+    actif = request.GET.get("actif", "")
+    tri = request.GET.get("tri", "stock")
+    produits = Product.objects.select_related("categorie")
+    if recherche:
+        produits = produits.filter(Q(nom__icontains=recherche) | Q(marque__icontains=recherche))
+    if etat == "rupture":
+        produits = produits.filter(stock=0)
+    elif etat == "faible":
+        produits = produits.filter(stock__gt=0, stock__lte=5)
+    elif etat == "en_stock":
+        produits = produits.filter(stock__gt=5)
+    if actif == "actif":
+        produits = produits.filter(actif=True)
+    elif actif == "inactif":
+        produits = produits.filter(actif=False)
+    produits = produits.order_by({"stock": "stock", "stock_desc": "-stock", "nom": "nom"}.get(tri, "stock"))
+    page_obj = Paginator(produits, 12).get_page(request.GET.get("page"))
+    pagination_params = request.GET.copy(); pagination_params.pop("page", None)
+    previous_page_url = f"?{pagination_params.urlencode()}&page={page_obj.previous_page_number()}" if page_obj.has_previous() else ""
+    next_page_url = f"?{pagination_params.urlencode()}&page={page_obj.next_page_number()}" if page_obj.has_next() else ""
+    return render(request, "dashboard/vendeur_stock.html", {
+        "produits": page_obj, "page_obj": page_obj, "recherche": recherche,
+        "etat": etat, "actif": actif, "tri": tri, "query_params": request.GET.copy(),
+        "nb_rupture": Product.objects.filter(stock=0).count(),
+        "nb_faible": Product.objects.filter(stock__gt=0, stock__lte=5).count(),
+        "nb_disponibles": Product.objects.filter(stock__gt=5).count(),
+        "previous_page_url": previous_page_url, "next_page_url": next_page_url,
+    })
 
 
 @vendeur_required
@@ -353,7 +487,7 @@ def vendeur_ajouter_produit(request):
             niveau="info"
         )
 
-        messages.success(request, f"✅ Produit « {nom} » ajouté avec succès !")
+        messages.success(request, f"Produit « {nom} » ajouté avec succès.")
         return redirect("vendeur_liste_produits")
 
     return render(request, "dashboard/vendeur_ajouter_produit.html", {"categories": categories})
@@ -427,7 +561,7 @@ def vendeur_modifier_produit(request, produit_id):
             niveau="info"
         )
 
-        messages.success(request, f"✅ Produit « {nom} » modifié avec succès !")
+        messages.success(request, f"Produit « {nom} » modifié avec succès.")
         return redirect("vendeur_liste_produits")
 
     return render(request, "dashboard/vendeur_modifier_produit.html", {

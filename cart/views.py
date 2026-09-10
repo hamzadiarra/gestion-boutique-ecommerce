@@ -26,28 +26,34 @@ def add_to_cart(request, product_id):
     )
 
 
+    try:
+        requested_quantity = int(request.POST.get("quantity", 1)) if request.method == "POST" else 1
+    except (TypeError, ValueError):
+        requested_quantity = 1
+    requested_quantity = max(1, requested_quantity)
+
     article, created = CartItem.objects.get_or_create(
         panier=panier,
         produit=produit,
         defaults={
             "prix": produit.prix_promotion or produit.prix,
-            "quantite": 1
+            "quantite": min(requested_quantity, produit.stock)
         }
     )
 
 
     if not created:
-        if article.quantite >= produit.stock:
+        if article.quantite + requested_quantity > produit.stock:
             messages.warning(
                 request,
                 f"Stock maximum atteint pour « {produit.nom} » ({produit.stock} disponibles)."
             )
             return redirect("cart_detail")
 
-        article.quantite += 1
+        article.quantite += requested_quantity
         article.save()
 
-    messages.success(request, f"« {produit.nom} » ajouté au panier ! 🛒")
+    messages.success(request, f"« {produit.nom} » a été ajouté au panier.")
 
     return redirect("cart_detail")
 

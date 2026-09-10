@@ -1,4 +1,8 @@
+import csv
+from decimal import Decimal
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from datetime import timedelta
@@ -8,6 +12,7 @@ from accounts.decorators import comptable_required
 from .models import Vente
 from orders.models import Order
 from payments.models import Payment
+from products.models import Product
 
 
 @comptable_required
@@ -78,6 +83,20 @@ def comptable_dashboard(request):
         nb=Count("id")
     ).order_by("-total")
 
+    methodes_globales = {}
+    for item in par_methode:
+        methodes_globales[item["methode_paiement"]] = {
+            "label": dict(Vente._meta.get_field("methode_paiement").choices).get(item["methode_paiement"], item["methode_paiement"]),
+            "total": item["total"] or 0, "nb": item["nb"] or 0,
+        }
+    for item in paiements_qs.values("methode").annotate(total=Sum("montant"), nb=Count("id")):
+        data = methodes_globales.setdefault(item["methode"], {
+            "label": dict(Payment.METHODES).get(item["methode"], item["methode"]), "total": 0, "nb": 0,
+        })
+        data["total"] += item["total"] or 0
+        data["nb"] += item["nb"] or 0
+    methodes_globales = sorted(methodes_globales.values(), key=lambda item: item["total"], reverse=True)
+
     methodes_labels = []
     methodes_totaux = []
     for m in par_methode:
@@ -125,8 +144,8 @@ def comptable_dashboard(request):
     # ====================
     # DERNIÈRES TRANSACTIONS
     # ====================
-    dernieres_ventes = ventes_qs.select_related("vendeur", "produit")[:15]
-    derniers_paiements = paiements_qs.select_related("commande__utilisateur").order_by("-date_creation")[:10]
+    dernieres_ventes = ventes_qs.select_related("vendeur", "produit").order_by("-date_vente")[:15]
+    derniers_paiements = paiements_qs.select_related("commande__utilisateur", "commande__vendeur_confirmateur").order_by("-date_creation")[:10]
 
     # ====================
     # COMMANDES NON PAYÉES (en attente de paiement)
@@ -136,6 +155,10 @@ def comptable_dashboard(request):
     ).exclude(
         payment__statut="paye"
     ).count()
+    paiements_attente = Payment.objects.filter(statut="en_attente").count()
+    paiements_echoues = Payment.objects.filter(statut="echoue").count()
+    paiements_recus = Payment.objects.filter(statut="paye").count()
+    top_produits = Product.objects.filter(quantite_vendue__gt=0).order_by("-quantite_vendue")[:8]
 
     context = {
         # Totaux combinés
@@ -160,6 +183,7 @@ def comptable_dashboard(request):
         "nb_paiements_total": rev_paiements_total["nb"] or 0,
         # Graphiques
         "par_methode": list(par_methode),
+        "methodes_globales": methodes_globales,
         "methodes_labels": methodes_labels,
         "methodes_totaux": methodes_totaux,
         "top_vendeurs": top_vendeurs,
@@ -178,9 +202,106 @@ def comptable_dashboard(request):
         "commandes_impayees": commandes_impayees,
 
         "aujourd_hui": aujourd_hui,
+        "paiements_attente": paiements_attente,
+        "paiements_echoues": paiements_echoues,
+        "paiements_recus": paiements_recus,
+        "top_produits": top_produits,
     }
 
     return render(request, "dashboard/comptable_dashboard.html", context)
+
+
+def _transaction_rows(request):
+    """Construit un registre financier homogène sans modifier les modèles existants."""
+    recherche = request.GET.get("q", "").strip().lower()
+    date_debut = request.GET.get("date_debut", "")
+    date_fin = request.GET.get("date_fin", "")
+    methode = request.GET.get("methode", "")
+    statut = request.GET.get("statut", "")
+    source = request.GET.get("source", "")
+    rows = []
+    for vente in Vente.objects.select_related("vendeur", "produit").all():
+        row = {
+            "id": f"V-{vente.id}", "date": vente.date_vente, "reference": f"V-{vente.id}",
+            "source": "directe", "source_label": "Vente directe", "statut": "paye",
+            "statut_label": "Payé", "methode": vente.methode_paiement,
+            "methode_label": vente.get_methode_paiement_display(), "montant": vente.montant_total,
+            "vendeur": vente.vendeur.get_full_name() or vente.vendeur.username,
+            "client": vente.reference_client or "Client comptoir",
+            "produit": vente.produit.nom, "commande_id": None,
+        }
+        rows.append(row)
+    for paiement in Payment.objects.select_related("commande__utilisateur", "commande__vendeur_confirmateur").all():
+        row = {
+            "id": f"P-{paiement.id}", "date": paiement.date_paiement or paiement.date_creation,
+            "reference": paiement.reference or f"P-{paiement.id}", "source": "en_ligne",
+            "source_label": "Commande en ligne", "statut": paiement.statut,
+            "statut_label": paiement.get_statut_display(), "methode": paiement.methode,
+            "methode_label": paiement.get_methode_display(), "montant": paiement.montant,
+            "vendeur": (paiement.commande.vendeur_confirmateur.get_full_name() or paiement.commande.vendeur_confirmateur.username)
+                if paiement.commande.vendeur_confirmateur else "Non attribué",
+            "client": paiement.commande.utilisateur.get_full_name() or paiement.commande.utilisateur.username,
+            "produit": "Commande #{0}".format(paiement.commande_id),
+            "commande_id": paiement.commande_id,
+        }
+        rows.append(row)
+    if recherche:
+        rows = [row for row in rows if recherche in " ".join(str(row[key]).lower() for key in ("reference", "produit", "vendeur", "client", "commande_id"))]
+    if date_debut:
+        rows = [row for row in rows if row["date"].date().isoformat() >= date_debut]
+    if date_fin:
+        rows = [row for row in rows if row["date"].date().isoformat() <= date_fin]
+    if methode:
+        rows = [row for row in rows if row["methode"] == methode]
+    if statut:
+        rows = [row for row in rows if row["statut"] == statut]
+    if source in {"directe", "en_ligne"}:
+        rows = [row for row in rows if row["source"] == source]
+    return sorted(rows, key=lambda row: row["date"], reverse=True), {
+        "recherche": recherche, "date_debut": date_debut, "date_fin": date_fin,
+        "methode": methode, "statut": statut,
+        "source": source,
+    }
+
+
+@comptable_required
+def comptable_transactions(request):
+    rows, filtres = _transaction_rows(request)
+    page_obj = Paginator(rows, 15).get_page(request.GET.get("page"))
+    total_filtre = sum((row["montant"] for row in rows), Decimal("0"))
+    return render(request, "dashboard/comptable_transactions_v2.html", {
+        "page_obj": page_obj, "total_filtre": total_filtre, **filtres,
+        "methodes": Payment.METHODES,
+        "statuts": Payment.STATUTS,
+        "sources": (("directe", "Vente directe"), ("en_ligne", "Commande en ligne")),
+    })
+
+
+@comptable_required
+def comptable_transaction_detail(request, reference):
+    rows, _ = _transaction_rows(request)
+    row = next((item for item in rows if item["reference"] == reference), None)
+    if row is None:
+        from django.http import Http404
+        raise Http404("Transaction introuvable")
+    return render(request, "dashboard/comptable_transaction_detail.html", {"row": row})
+
+
+@comptable_required
+def comptable_export_csv(request):
+    rows, _ = _transaction_rows(request)
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="transactions.csv"'
+    response.write("\ufeff")
+    writer = csv.writer(response)
+    writer.writerow(["Date", "Référence", "Type/source", "Commande", "Client", "Vendeur", "Méthode", "Statut", "Montant"])
+    for row in rows:
+        writer.writerow([
+            row["date"].strftime("%d/%m/%Y %H:%M"), row["reference"], row["source_label"],
+            row["commande_id"] or "—", row["client"], row["vendeur"], row["methode_label"],
+            row["statut_label"], row["montant"],
+        ])
+    return response
 
 
 @comptable_required

@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from orders.models import Order
 
@@ -17,6 +19,7 @@ class Payment(models.Model):
         ("en_attente", "En attente"),
         ("paye", "Payé"),
         ("echoue", "Échoué"),
+        ("annule", "Annulé"),
     ]
 
 
@@ -49,6 +52,9 @@ class Payment(models.Model):
     date_creation = models.DateTimeField(
         auto_now_add=True
     )
+
+    reference = models.CharField(max_length=80, unique=True, blank=True, null=True, editable=False)
+    date_paiement = models.DateTimeField(null=True, blank=True)
 
 
     def __str__(self):

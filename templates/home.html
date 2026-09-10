@@ -1,212 +1,77 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Accueil — Gestion Boutique{% endblock %}
-
 {% block content %}
-
-<!-- Hero Banner avec image de boutique en arrière-plan -->
-<div class="hero-section text-white mb-5 position-relative rounded-4 overflow-hidden shadow-lg fade-in">
-    <div class="hero-bg-image" style="background-image: url({% static 'images/boutique_hero_bg.png' %});"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content row align-items-center py-5 px-4 px-lg-5 position-relative">
-        <div class="col-lg-7">
-            <span class="badge bg-warning text-dark mb-3 px-3 py-2 fs-6">✨ Nouveautés disponibles</span>
-            <h1 class="display-4 fw-bold mb-3 lh-sm">
-                Découvrez Notre<br>
-                <span class="text-warning">Boutique Moderne</span>
-            </h1>
-            <p class="lead mb-4 text-white-75" style="font-size: 1.1rem; opacity: 0.9;">
-                Des collections exclusives sélectionnées avec soin. Achetez en toute simplicité,
-                payez en sécurité et profitez d'une livraison rapide.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="{% url 'product_list' %}" class="btn btn-warning btn-lg px-4 py-2 fw-semibold shadow">
-                    <i class="bi bi-bag-fill me-2"></i> Voir les produits
-                </a>
-                <a href="{% url 'category_list' %}" class="btn btn-outline-light btn-lg px-4 py-2">
-                    <i class="bi bi-grid me-2"></i> Catégories
-                </a>
+<main class="shop-home">
+    {% with hero_product=produits_vedette|first %}
+    <section class="shop-hero" aria-labelledby="hero-title">
+        <div class="shop-hero-blue-shape" aria-hidden="true"></div>
+        <div class="shop-hero-decoration shop-hero-decoration-one" aria-hidden="true"></div>
+        <div class="shop-hero-decoration shop-hero-decoration-two" aria-hidden="true"></div>
+        <div class="container shop-hero-inner">
+            <div class="shop-hero-copy">
+                <span class="shop-eyebrow shop-hero-eyebrow"><i class="bi bi-stars"></i> La sélection du moment</span>
+                <h1 id="hero-title">Des essentiels choisis pour votre quotidien.</h1>
+                <p>Découvrez des produits utiles, élégants et soigneusement sélectionnés pour rendre chaque achat plus simple.</p>
+                <div class="shop-hero-actions">
+                    <a href="{% url 'product_list' %}" class="btn shop-hero-primary">Découvrir les produits <i class="bi bi-arrow-right ms-2"></i></a>
+                    <a href="{% url 'category_list' %}" class="btn shop-hero-secondary">Voir les catégories</a>
+                </div>
+                <div class="shop-hero-proof">
+                    <span><i class="bi bi-truck"></i><strong>Livraison rapide</strong><small>Suivie jusqu'à chez vous</small></span>
+                    <span><i class="bi bi-shield-check"></i><strong>Paiement sécurisé</strong><small>Un achat en toute confiance</small></span>
+                    <span><i class="bi bi-headset"></i><strong>Support client</strong><small>Une équipe à votre écoute</small></span>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="container">
-<!-- Catégories populaires -->
-{% if categories %}
-<div class="mb-5 fade-in">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Catégories Populaires</h2>
-            <p class="text-muted mb-0 small">Trouvez ce que vous cherchez</p>
-        </div>
-        <a href="{% url 'category_list' %}" class="btn btn-sm btn-outline-primary fw-semibold">
-            Tout voir <i class="bi bi-arrow-right ms-1"></i>
-        </a>
-    </div>
-    <div class="row g-3">
-        {% for category in categories %}
-        <div class="col-md-3 col-sm-6">
-            <a href="{% url 'category_detail' category.slug %}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm h-100 overflow-hidden category-card text-center">
-                    {% if category.image %}
-                    <img src="{{ category.image.url }}" class="card-img-top" style="height: 160px; object-fit: cover;"
-                        alt="{{ category.nom }}">
+            <div class="shop-hero-visual" aria-label="Produit vedette">
+                <div class="shop-hero-halo" aria-hidden="true"></div>
+                <div class="shop-hero-product">
+                    {% if hero_product and hero_product.image %}
+                        <img src="{{ hero_product.image.url }}" alt="{{ hero_product.nom }}" fetchpriority="high">
                     {% else %}
-                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 160px;">
-                        <i class="bi bi-tag text-muted" style="font-size: 3rem;"></i>
-                    </div>
-                    {% endif %}
-                    <div class="card-body py-3">
-                        <h6 class="fw-bold text-dark mb-0">{{ category.nom }}</h6>
-                    </div>
-                </div>
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-<!-- Produits en Vedette -->
-<div class="mb-5 fade-in">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Produits en Vedette</h2>
-            <p class="text-muted mb-0 small">Nos articles les plus appréciés</p>
-        </div>
-        <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-primary fw-semibold">
-            Tous les produits <i class="bi bi-arrow-right ms-1"></i>
-        </a>
-    </div>
-    <div class="row g-4">
-        {% for produit in produits_vedette %}
-        <div class="col-lg-4 col-md-6">
-            <div class="card shadow-sm h-100 product-card border-0">
-                <div class="position-relative overflow-hidden">
-                    {% if produit.image %}
-                    <img src="{{ produit.image.url }}" class="card-img-top" style="height: 250px; object-fit: cover;"
-                        alt="{{ produit.nom }}">
-                    {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
-                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                    </div>
-                    {% endif %}
-                    <div class="position-absolute top-0 start-0 m-3 d-flex flex-column gap-2">
-                        <span class="badge bg-warning text-dark shadow-sm">⭐ Vedette</span>
-                        {% if produit.prix_promotion %}
-                        <span class="badge bg-danger shadow-sm">Promo</span>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="fw-bold text-dark mb-1">{{ produit.nom }}</h5>
-                    <p class="text-muted small mb-3">{{ produit.marque }}</p>
-
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="star-rating me-2 small">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                        </div>
-                        <small class="text-muted">({{ produit.reviews.count }} avis)</small>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            {% if produit.prix_promotion %}
-                            <h5 class="text-danger fw-bold mb-0">{{ produit.prix_promotion }} FCFA</h5>
-                            <small class="text-decoration-line-through text-muted">{{ produit.prix }} FCFA</small>
+                        {% with recent_product=nouveautes|first %}
+                            {% if recent_product and recent_product.image %}
+                                <img src="{{ recent_product.image.url }}" alt="{{ recent_product.nom }}" fetchpriority="high">
                             {% else %}
-                            <h5 class="text-success fw-bold mb-0">{{ produit.prix }} FCFA</h5>
+                                <img src="{% static 'images/boutique_hero_bg.png' %}" alt="Sélection de produits de la boutique" fetchpriority="high">
                             {% endif %}
-                        </div>
-                        <div>
-                            {% if produit.stock > 0 %}
-                            <span class="badge bg-success-subtle text-success">En stock</span>
-                            {% else %}
-                            <span class="badge bg-danger-subtle text-danger">Rupture</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer bg-white border-0 d-flex gap-2 pb-3 pt-0">
-                    <a href="{% url 'product_detail' produit.slug %}"
-                        class="btn btn-outline-primary btn-sm flex-grow-1">
-                        <i class="bi bi-eye me-1"></i> Détails
-                    </a>
-                    {% if produit.stock > 0 %}
-                    <a href="{% url 'add_to_cart' produit.id %}" class="btn btn-success btn-sm flex-grow-1">
-                        <i class="bi bi-cart-plus me-1"></i> Acheter
-                    </a>
+                        {% endwith %}
                     {% endif %}
                 </div>
+                <span class="shop-hero-floating-badge"><i class="bi bi-lightning-charge-fill"></i> Coup de cœur</span>
+                <span class="shop-hero-floating-note"><i class="bi bi-check-circle-fill"></i> Sélection vérifiée</span>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
-                <p class="text-muted mt-3">Aucun produit en vedette pour le moment.</p>
-            </div>
-        </div>
-        {% endfor %}
+    </section>
+    {% endwith %}
+
+    <!-- TEMPORAIRE — diagnostic du thème visible uniquement sur localhost -->
+    <aside id="theme-debug-panel" class="theme-debug-panel" hidden aria-live="polite">
+        <strong>Theme debug</strong>
+        <span>data-theme: <b data-theme-debug="data-theme"></b></span>
+        <span>data-bs-theme: <b data-theme-debug="data-bs-theme"></b></span>
+        <span>localStorage: <b data-theme-debug="storage"></b></span>
+        <span>toggle trouvé: <b data-theme-debug="toggle"></b></span>
+        <span>icon trouvée: <b data-theme-debug="icon"></b></span>
+    </aside>
+
+    <div class="container shop-home-content">
+        <section class="shop-trust-row" aria-label="Les engagements de la boutique">
+            <div><i class="bi bi-gem"></i><span><strong>Produits de qualité</strong><small>Choisis avec exigence</small></span></div>
+            <div><i class="bi bi-tag-fill"></i><span><strong>Meilleurs prix</strong><small>Des offres qui ont du sens</small></span></div>
+            <div><i class="bi bi-truck"></i><span><strong>Livraison rapide</strong><small>Une commande suivie</small></span></div>
+            <div><i class="bi bi-shield-lock-fill"></i><span><strong>Paiement sécurisé</strong><small>Un parcours rassurant</small></span></div>
+        </section>
+
+        {% if categories %}<section class="shop-section shop-categories-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">À explorer</span><h2>Catégories populaires</h2><p>Tout ce qu'il faut pour trouver rapidement votre prochain coup de cœur.</p></div><a href="{% url 'category_list' %}" class="shop-text-link">Voir toutes les catégories <i class="bi bi-arrow-up-right"></i></a></div><div class="shop-category-grid">{% for categorie in categories %}<a href="{% url 'category_detail' categorie.slug %}" class="shop-category-tile">{% if categorie.image %}<img src="{{ categorie.image.url }}" alt="{{ categorie.nom }}" loading="lazy">{% else %}<span class="shop-category-placeholder"><i class="bi bi-tag"></i></span>{% endif %}<span><strong>{{ categorie.nom }}</strong><small>{{ categorie.product_count }} produit{{ categorie.product_count|pluralize }}</small></span><i class="bi bi-arrow-up-right"></i></a>{% endfor %}</div></section>{% endif %}
+
+        {% if nouveautes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">Tout juste arrivé</span><h2>Les nouveautés</h2><p>Les dernières pièces ajoutées à la boutique.</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="shop-text-link">Voir les nouveautés <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in nouveautes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if promotions %}<section class="shop-promo-band"><div><span class="shop-eyebrow light">Offres sélectionnées</span><h2>Les bons produits, au bon moment.</h2><p>Profitez des prix promotionnels disponibles actuellement.</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="btn shop-hero-secondary">Voir les offres <i class="bi bi-arrow-right ms-2"></i></a></section><section class="shop-section shop-section-tight"><div class="row g-4">{% for produit in promotions %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if meilleures_ventes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">Plébiscités</span><h2>Les meilleures ventes</h2><p>Les produits qui trouvent déjà leur place chez nos clients.</p></div><a href="{% url 'product_list' %}?tri=popularite" class="shop-text-link">Voir le classement <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in meilleures_ventes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if produits_vedette %}<section class="shop-featured-callout"><div><span class="shop-eyebrow">La sélection Gestion Boutique</span><h2>Des produits choisis avec exigence.</h2><p>Explorez notre sélection vedette et trouvez ce qui vous correspond vraiment.</p><a href="{% url 'product_list' %}" class="btn btn-primary">Découvrir toute la boutique <i class="bi bi-arrow-right ms-2"></i></a></div><div class="shop-featured-art"><i class="bi bi-bag-heart"></i><span>Simple.<br>Utile.<br>À vous.</span></div></section>{% endif %}
     </div>
-</div>
-
-<!-- Nos Engagements -->
-<div class="row g-4 mb-5 fade-in">
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 py-4 px-3 bg-white engagement-card">
-            <div class="card-body text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-primary-subtle"
-                    style="width: 68px; height: 68px;">
-                    <i class="bi bi-truck text-primary fs-2"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Livraison Rapide</h5>
-                <p class="text-secondary small mb-0">
-                    Recevez vos commandes chez vous ou en point relais dans les meilleurs délais.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 py-4 px-3 bg-white engagement-card">
-            <div class="card-body text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-success-subtle"
-                    style="width: 68px; height: 68px;">
-                    <i class="bi bi-credit-card-2-front text-success fs-2"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Paiement Sécurisé</h5>
-                <p class="text-secondary small mb-0">
-                    Wave, Orange Money, carte bancaire ou paiement à la livraison — vous choisissez.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card border-0 shadow-sm h-100 py-4 px-3 bg-white engagement-card">
-            <div class="card-body text-center">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-warning-subtle"
-                    style="width: 68px; height: 68px;">
-                    <i class="bi bi-shield-check text-warning fs-2"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Qualité Garantie</h5>
-                <p class="text-secondary small mb-0">
-                    Tous nos articles sont certifiés d'origine avec une garantie de satisfaction.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-</div>
-
+</main>
 {% endblock %}

@@ -1,73 +1,195 @@
 {% extends "base.html" %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion — Gestion Boutique{% endblock %}
 
 {% block content %}
 
-<div class="container mt-5" style="max-width:500px;">
+<style>
+    .login-page-wrap {
+        position: relative;
+        z-index: 1;
+    }
 
-    <div class="card shadow">
+    .login-panel {
+        border-top: 4px solid var(--color-primary);
+    }
 
-        <div class="card-header bg-success text-white text-center">
-            <h3>🔐 Connexion</h3>
-        </div>
+    .login-brand-mark {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+        box-shadow: var(--shadow-md);
+        font-size: 1.55rem;
+    }
 
-        <div class="card-body">
+    .login-role-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
 
-            <form method="post">
+    .login-role-pill {
+        min-height: 72px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: var(--color-body-bg);
+        padding: 0.65rem 0.5rem;
+        text-align: center;
+    }
 
-                {% csrf_token %}
+    .login-role-pill i {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--color-primary);
+        font-size: 1.15rem;
+    }
 
-                <div class="mb-3">
+    .login-role-pill span {
+        display: block;
+        color: var(--color-text);
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1.15;
+    }
 
-                    <label class="form-label">
-                        Nom d'utilisateur
-                    </label>
+    [data-theme="dark"] .login-role-pill {
+        background: var(--color-dark);
+    }
 
-                    <input
-                        type="text"
-                        name="username"
-                        class="form-control"
-                        required>
+    @media (max-width: 576px) {
+        .login-role-strip {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+</style>
 
+<div class="container login-page-wrap">
+    <div class="row justify-content-center mt-4 mb-5">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="text-center mb-4">
+                <div class="login-brand-mark mb-3">
+                    <i class="bi bi-shield-lock"></i>
                 </div>
+                <h2 class="fw-bold">Connexion</h2>
+                <p class="text-muted mb-0">Accédez à votre espace Gestion Boutique.</p>
+            </div>
 
-                <div class="mb-3">
+            <div class="card border-0 shadow-sm login-panel">
+                <div class="card-body p-4">
 
-                    <label class="form-label">
-                        Mot de passe
-                    </label>
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                    {% endif %}
 
-                    <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        required>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
 
+                        {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="id_login_identifier" class="form-label fw-semibold">
+                                Nom d'utilisateur ou e-mail <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input type="text" id="id_login_identifier" name="username" class="form-control"
+                                    placeholder="exemple: hamza ou nom@email.com" required autocomplete="username"
+                                    value="{{ username|default:'' }}">
+                            </div>
+                            <div class="form-text text-muted small">Utilisez votre nom d'utilisateur ou l'e-mail associé au compte.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label fw-semibold">
+                                Mot de passe <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent">
+                                    <i class="bi bi-key"></i>
+                                </span>
+                                <input type="password" id="id_password" name="password" class="form-control"
+                                    placeholder="Votre mot de passe" required autocomplete="current-password">
+                                <button class="btn btn-outline-secondary" type="button" id="toggle-password" tabindex="-1"
+                                    aria-label="Afficher ou masquer le mot de passe">
+                                    <i class="bi bi-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                            <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" id="id_remember_me" name="remember_me"
+                                    {% if remember_me %}checked{% endif %}>
+                                <label class="form-check-label small fw-semibold" for="id_remember_me">
+                                    Rester connecté
+                                </label>
+                            </div>
+                            <span class="text-muted small">
+                                Session sécurisée
+                            </span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        </button>
+                    </form>
+
+                    <div class="login-role-strip mt-4" aria-label="Espaces disponibles après connexion">
+                        <div class="login-role-pill">
+                            <i class="bi bi-person-check"></i>
+                            <span>Client</span>
+                        </div>
+                        <div class="login-role-pill">
+                            <i class="bi bi-shop"></i>
+                            <span>Vendeur</span>
+                        </div>
+                        <div class="login-role-pill">
+                            <i class="bi bi-calculator"></i>
+                            <span>Comptable</span>
+                        </div>
+                        <div class="login-role-pill">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Admin</span>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <button class="btn btn-success w-100">
-                    Se connecter
-                </button>
-
-            </form>
-
-            <hr>
-
-            <p class="text-center">
-
+            <p class="text-center text-muted mt-3 small">
                 Vous n'avez pas encore de compte ?
-
-                <a href="{% url 'register' %}">
-                    Créer un compte
-                </a>
-
+                <a href="{% url 'register' %}" class="text-primary fw-semibold text-decoration-none">Créer un compte</a>
             </p>
-
         </div>
-
     </div>
-
 </div>
+
+<script>
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('id_password');
+    const passwordIcon = document.getElementById('password-icon');
+
+    togglePassword.addEventListener('click', function () {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.className = 'bi bi-eye-slash';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.className = 'bi bi-eye';
+        }
+    });
+</script>
 
 {% endblock %}

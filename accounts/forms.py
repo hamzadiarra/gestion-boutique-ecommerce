@@ -51,3 +51,11 @@ class ProfileForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["telephone"].label = "Téléphone"
+        self.fields["adresse"].label = "Adresse de livraison"
+        self.fields["ville"].label = "Ville"
+        self.fields["code_postal"].label = "Code postal"
+        self.fields["photo"].label = "Photo de profil"

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from .models import Profile
+from core.admin import AdminOnlyAdmin, is_superuser
 
 
 @admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(AdminOnlyAdmin):
 
     list_display = (
         "utilisateur",
@@ -26,4 +27,16 @@ class ProfileAdmin(admin.ModelAdmin):
         "date_creation",
     )
 
-    list_editable = ("role",)
+    list_select_related = ("utilisateur",)
+    readonly_fields = ("utilisateur", "date_creation", "date_modification")
+    list_per_page = 50
+
+    def has_delete_permission(self, request, obj=None):
+        return is_superuser(request.user)
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        utilisateur = obj.utilisateur
+        if not utilisateur.is_superuser:
+            utilisateur.is_staff = obj.role == "admin"
+            utilisateur.save(update_fields=("is_staff",))

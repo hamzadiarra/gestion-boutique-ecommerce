@@ -1,0 +1,73 @@
+/* Ajustement ciblé de la barre d'actions Unfold. */
+#changelist-actions > .bg-primary-600 {
+    border: 1px solid #334155;
+    border-radius: 12px;
+    background: #1e293b !important;
+    box-shadow: 0 10px 24px rgba(2, 8, 23, .28);
+}
+
+#changelist-actions .actions select {
+    min-height: 38px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    outline: none;
+    color: #f8fafc;
+    background-color: #0f172a;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+#changelist-actions .actions select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .22);
+}
+
+#changelist-actions .actions select option {
+    color: #f8fafc;
+    background: #0f172a;
+}
+
+#changelist-actions .action-counter {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border: 1px solid #475569;
+    border-radius: 999px;
+    color: #dbeafe;
+    background: #334155;
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+#changelist-actions button[name="index"] {
+    min-height: 38px;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    color: #fff;
+    background: #2563eb !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .22);
+    transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+#changelist-actions button[name="index"]:hover {
+    border-color: #1d4ed8;
+    background: #1d4ed8 !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .3);
+}
+
+#changelist-actions button[name="index"]:focus-visible,
+#changelist-actions a:focus-visible,
+#changelist-actions select:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+#changelist-actions .question a,
+#changelist-actions .clear a {
+    background: rgba(96, 165, 250, .16);
+}
+
+#changelist-actions .question a:hover,
+#changelist-actions .clear a:hover {
+    background: rgba(96, 165, 250, .26);
+}

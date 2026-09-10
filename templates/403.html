@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Accès refusé — Gestion Boutique{% endblock %}
+{% block content %}
+<div class="container page-shell py-5"><div class="empty-state my-4"><div class="empty-state-icon"><i class="bi bi-shield-lock"></i></div><h1 class="h3">Cette page n'est pas accessible</h1><p>Votre compte ne dispose pas des autorisations nécessaires pour consulter cette page.</p><a class="btn btn-primary" href="{% url 'home' %}"><i class="bi bi-arrow-left me-2"></i>Retour à la boutique</a></div></div>
+{% endblock %}

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from .models import Category
+from core.admin import AdminOnlyAdmin
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(AdminOnlyAdmin):
     list_display = (
         'nom',
         'active',
@@ -21,3 +22,4 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = (
         'active',
     )
+    list_per_page = 50

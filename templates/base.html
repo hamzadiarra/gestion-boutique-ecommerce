@@ -1,509 +1,113 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr" data-theme="light">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gestion Boutique E-commerce — Votre boutique en ligne moderne et sécurisée">
-
-
-    <title>
-        {% block title %}
-        Gestion Boutique
-        {% endblock %}
-    </title>
-
-
-    <!-- Google Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Gestion Boutique — une expérience d'achat simple, fiable et moderne.">
+    <title>{% block title %}Gestion Boutique{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
-
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-    <!-- Bootstrap Icons -->
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-
-    {% load static %}
-
-
-    <!-- CSS personnalisé -->
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
-    <!-- Theme Init (Anti-flicker) -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        })();
-    </script>
-
+    {% block extra_head %}{% endblock %}
 </head>
-
-
 <body>
+    <div id="particles-container" class="particles-container" aria-hidden="true"></div>
 
-    <!-- PARTICULES FLOTTANTES -->
-    <div id="particles-container" class="particles-container"></div>
+    <header class="site-header sticky-top" id="main-navbar">
+        <nav class="navbar navbar-expand-xl">
+            <div class="container site-header-inner">
+                <a class="site-brand" href="{% url 'home' %}" aria-label="Gestion Boutique, accueil">
+                    <span class="site-brand-mark"><i class="bi bi-bag-heart-fill"></i></span>
+                    <span class="site-brand-copy"><strong>Gestion Boutique</strong><small>Votre sélection, simplement.</small></span>
+                </a>
 
-    <!-- NAVBAR -->
+                <button class="navbar-toggler site-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-label="Ouvrir le menu">
+                    <i class="bi bi-list"></i>
+                </button>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" id="main-navbar">
+                <div class="collapse navbar-collapse" id="navbarMenu">
+                    <form class="site-search mx-xl-4" method="get" action="{% url 'product_list' %}" role="search">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Rechercher un produit, une marque..." aria-label="Rechercher dans la boutique">
+                        <button type="submit" aria-label="Lancer la recherche"><i class="bi bi-arrow-up-right"></i></button>
+                    </form>
 
+                    <ul class="navbar-nav site-nav ms-auto align-items-xl-center">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house-door"></i><span>Accueil</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}"><i class="bi bi-grid"></i><span>Boutique</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}"><i class="bi bi-tags"></i><span>Catégories</span></a></li>
+                        {% if not user.is_authenticated or user.profile.role == 'client' or user.profile.role == 'admin' %}<li class="nav-item"><a class="nav-link site-cart-link" href="{% url 'cart_detail' %}"><i class="bi bi-bag"></i><span>Panier</span>{% if cart_items_count > 0 %}<b class="site-count-badge">{{ cart_items_count }}</b>{% endif %}</a></li>{% endif %}
 
-        <div class="container">
-
-
-            <!-- Logo -->
-
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
-                <span class="brand-icon">🛒</span>
-                <span class="brand-text">Gestion Boutique</span>
-            </a>
-
-            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
-
-
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
-
-
-            <div class="collapse navbar-collapse" id="navbarMenu">
-
-                <ul class="navbar-nav ms-auto">
-
-                    <!-- Accueil -->
-
-                    <li class="nav-item">
-
-                        <a class="nav-link" href="/">
-
-                            <i class="bi bi-house"></i>
-                            Accueil
-
-                        </a>
-
-                    </li>
-
-                    <!-- Produits -->
-
-                    <li class="nav-item">
-
-                        <a class="nav-link" href="{% url 'product_list' %}">
-
-                            <i class="bi bi-bag"></i>
-                            Produits
-
-                        </a>
-
-                    </li>
-
-
-                    <!-- Catégories -->
-
-                    <li class="nav-item">
-
-                        <a class="nav-link" href="{% url 'category_list' %}">
-
-                            <i class="bi bi-grid"></i>
-                            Catégories
-
-                        </a>
-
-                    </li>
-
-                    <!-- Panier (visible pour clients) -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="{% url 'cart_detail' %}">
-                            <i class="bi bi-cart"></i>
-                            <span>Panier 🛒</span>
-                            {% if cart_items_count > 0 %}
-                            <span class="badge bg-danger rounded-pill" style="font-size: 0.75rem;">{{ cart_items_count }}</span>
+                        {% if user.is_authenticated %}
+                            {% if user.profile.role == 'client' or user.profile.role == 'admin' %}
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'my_orders' %}"><i class="bi bi-box-seam"></i><span>Commandes</span></a></li>
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'wishlist' %}"><i class="bi bi-heart"></i><span>Favoris</span></a></li>
                             {% endif %}
-                        </a>
-                    </li>
-
-                    {% if user.is_authenticated %}
-
-                    <!-- Wishlist -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'wishlist' %}">
-                            <i class="bi bi-heart-fill text-danger"></i> Favoris
-                        </a>
-                    </li>
-
-                    <!-- Notifications -->
-                    <li class="nav-item position-relative">
-                        <a class="nav-link" href="{% url 'notification_list' %}">
-                            <i class="bi bi-bell"></i>
-                            {% if unread_notifications_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ unread_notifications_count }}
-                            </span>
+                            {% if user.profile.role == 'vendeur' or user.profile.role == 'admin' %}
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'vendeur_dashboard' %}"><i class="bi bi-shop"></i><span>Vendeur</span></a></li>
                             {% endif %}
-                        </a>
-                    </li>
-
-                    <!-- Commandes -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'my_orders' %}">
-                            <i class="bi bi-box-seam"></i> Mes commandes
-                        </a>
-                    </li>
-
-                    {% if user.is_staff or user.profile and user.profile.role == 'admin' %}
-                    <!-- Admin Dashboard -->
-                    <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{% url 'admin_dashboard' %}">
-                            <i class="bi bi-speedometer2"></i> Dashboard Admin
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% if user.is_staff or user.profile and user.profile.role == 'vendeur' or user.profile and user.profile.role == 'admin' %}
-                    <!-- Vendeur Dashboard -->
-                    <li class="nav-item">
-                        <a class="nav-link text-info fw-bold" href="{% url 'vendeur_dashboard' %}">
-                            <i class="bi bi-shop"></i> Espace Vendeur
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% if user.is_staff or user.profile and user.profile.role == 'comptable' or user.profile and user.profile.role == 'admin' %}
-                    <!-- Comptable Dashboard & Calculs -->
-                    <li class="nav-item">
-                        <a class="nav-link text-success fw-bold" href="{% url 'comptable_dashboard' %}">
-                            <i class="bi bi-graph-up"></i> Dashboard Comptable
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-warning fw-bold" href="{% url 'comptable_calculs' %}">
-                            <i class="bi bi-calculator"></i> Calculs Financiers
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    <!-- Compte utilisateur -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-5"></i>
-                            <span>{{ user.username }}</span>
-                            {% if user.profile %}
-                            <span class="badge ms-1
-                                {% if user.profile.role == 'admin' %}bg-danger
-                                {% elif user.profile.role == 'vendeur' %}bg-info
-                                {% elif user.profile.role == 'comptable' %}bg-warning text-dark
-                                {% else %}bg-success{% endif %}
-                                rounded-pill" style="font-size: 0.65rem;">
-                                {{ user.profile.get_role_display }}
-                            </span>
-                            {% elif user.is_superuser or user.is_staff %}
-                            <span class="badge ms-1 bg-danger rounded-pill" style="font-size: 0.65rem;">
-                                Admin
-                            </span>
+                            {% if user.profile.role == 'comptable' or user.profile.role == 'admin' %}
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'comptable_dashboard' %}"><i class="bi bi-bar-chart-line"></i><span>Finance</span></a></li>
                             {% endif %}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
-                            <li>
-                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{% url 'profile' %}">
-                                    <i class="bi bi-person text-primary"></i> Mon profil
-                                </a>
+                            <li class="nav-item site-notification-link"><a class="nav-link" href="{% url 'notification_list' %}" aria-label="Notifications"><i class="bi bi-bell"></i>{% if unread_notifications_count > 0 %}<b class="site-count-badge site-notification-badge">{{ unread_notifications_count }}</b>{% endif %}</a></li>
+                            <li class="nav-item dropdown site-account-menu">
+                                <a class="nav-link dropdown-toggle site-account-link" href="#" data-bs-toggle="dropdown" aria-expanded="false"><span class="site-avatar"><i class="bi bi-person"></i></span><span class="d-none d-xxl-inline">{{ user.username }}</span></a>
+                                <ul class="dropdown-menu dropdown-menu-end site-dropdown">
+                                    <li class="site-dropdown-heading"><small>Connecté en tant que</small><strong>{{ user.username }}</strong></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i>Mon profil</a></li>
+                                    {% if user.profile.role == 'admin' %}<li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2"></i>Pilotage</a></li>{% endif %}
+                                    {% if user.profile.role == 'comptable' or user.profile.role == 'admin' %}<li><a class="dropdown-item" href="{% url 'comptable_calculs' %}"><i class="bi bi-calculator"></i>Outils financiers</a></li>{% endif %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i>Se déconnecter</a></li>
+                                </ul>
                             </li>
-                            {% if user.is_superuser or user.is_staff or user.profile and user.profile.role == 'admin' %}
-                            <li>
-                                <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="/admin/" target="_blank">
-                                    <i class="bi bi-shield-lock text-warning"></i> Admin Django
-                                </a>
-                            </li>
-                            {% endif %}
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2 text-danger fw-bold d-flex align-items-center gap-2" href="{% url 'logout' %}">
-                                    <i class="bi bi-box-arrow-right fs-5"></i> Déconnexion
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Bouton Déconnexion Directe -->
-                    <li class="nav-item ms-1">
-                        <a class="nav-link btn btn-outline-danger btn-sm text-danger text-white-hover px-2 py-1 ms-1 d-flex align-items-center gap-1"
-                           href="{% url 'logout' %}" title="Se déconnecter">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span class="d-none d-xl-inline">Déconnexion</span>
-                        </a>
-                    </li>
-
-
-                    {% else %}
-
-
-                    <!-- Connexion -->
-
-
-                    <li class="nav-item">
-
-
-                        <a class="nav-link" href="{% url 'login' %}">
-
-                            <i class="bi bi-box-arrow-in-right"></i>
-
-                            Connexion
-
-                        </a>
-
-
-                    </li>
-
-                    <!-- Inscription -->
-
-
-                    <li class="nav-item">
-
-
-                        <a class="nav-link" href="{% url 'register' %}">
-
-
-                            <i class="bi bi-person-plus"></i>
-
-                            Inscription
-
-
-                        </a>
-
-
-                    </li>
-
-
-                    {% endif %}
-
-                    <!-- Dark Mode Toggle -->
-                    <li class="nav-item ms-2">
-                        <button class="nav-link btn btn-link dark-mode-toggle" id="darkModeToggle"
-                            title="Mode sombre/clair">
-                            <i class="bi bi-moon-stars-fill theme-icon" id="darkModeIcon"></i>
-                        </button>
-                    </li>
-
-                </ul>
-
-
+                        {% else %}
+                            <li class="nav-item site-auth-link"><a class="nav-link" href="{% url 'login' %}">Se connecter</a></li>
+                            <li class="nav-item"><a class="btn site-cta site-cta-small" href="{% url 'register' %}">Créer un compte</a></li>
+                        {% endif %}
+                        <li class="nav-item site-theme-item"><button class="nav-link site-theme-toggle" id="darkModeToggle" type="button" title="Changer de thème" aria-label="Changer de thème"><i class="bi bi-moon-stars-fill theme-icon" id="darkModeIcon"></i></button></li>
+                    </ul>
+                </div>
             </div>
+        </nav>
+    </header>
 
-        </div>
-
-    </nav>
-
-    <!-- MESSAGES DJANGO -->
     {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
-            {% if message.tags == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>
-            {% elif message.tags == 'error' or message.tags == 'danger' %}<i
-                class="bi bi-exclamation-triangle-fill me-2"></i>
-            {% elif message.tags == 'warning' %}<i class="bi bi-exclamation-circle-fill me-2"></i>
-            {% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        <div class="site-flash-region" aria-live="polite">
+            <div class="container">
+                {% for message in messages %}
+                    <div class="alert site-alert site-alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                        <span class="site-alert-icon"><i class="bi {% if message.tags == 'success' %}bi-check2{% elif message.tags == 'error' or message.tags == 'danger' %}bi-exclamation-triangle{% elif message.tags == 'warning' %}bi-exclamation-circle{% else %}bi-info-circle{% endif %}"></i></span>
+                        <span>{{ message }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        {% endfor %}
-    </div>
     {% endif %}
 
+    <main id="main-content">{% block content %}{% endblock %}</main>
 
-    <!-- CONTENU -->
-
-    {% block content %}
-
-    {% endblock %}
-
-
-    <!-- ============================================= -->
-    <!-- FOOTER PREMIUM -->
-    <!-- ============================================= -->
-
-    <footer class="footer" id="site-footer">
+    <footer class="site-footer">
         <div class="container">
-            <div class="row g-4">
-
-                <!-- Colonne 1 : À propos -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-brand mb-3">
-                        <span class="fs-4">🛒</span>
-                        <span class="fs-5 fw-bold text-white ms-2">Gestion Boutique</span>
-                    </div>
-                    <p class="footer-text small">
-                        Votre boutique e-commerce moderne et sécurisée. Nous proposons des produits de qualité
-                        avec un service client exceptionnel et une livraison rapide.
-                    </p>
-                    <div class="footer-social d-flex gap-3 mt-3 flex-wrap">
-                        <!-- Facebook -->
-                        <a href="#" class="footer-social-link" title="Facebook">
-                            <i class="bi bi-facebook"></i>
-                        </a>
-                        <!-- Twitter / X -->
-                        <a href="#" class="footer-social-link" title="Twitter / X">
-                            <i class="bi bi-twitter-x"></i>
-                        </a>
-                        <!-- Instagram -->
-                        <a href="#" class="footer-social-link" title="Instagram">
-                            <i class="bi bi-instagram"></i>
-                        </a>
-                        <!-- YouTube -->
-                        <a href="#" class="footer-social-link" title="YouTube">
-                            <i class="bi bi-youtube"></i>
-                        </a>
-                        <!-- TikTok -->
-                        <a href="#" class="footer-social-link" title="TikTok">
-                            <i class="bi bi-tiktok"></i>
-                        </a>
-                        <!-- WhatsApp -->
-                        <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%20Gestion%20Boutique" target="_blank" class="footer-social-link" title="WhatsApp (+223 92 33 14 29)" rel="noopener noreferrer">
-                            <i class="bi bi-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Colonne 2 : Liens Rapides -->
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="footer-title text-white fw-bold mb-3">Liens Rapides</h6>
-                    <ul class="footer-links list-unstyled">
-                        <li><a href="/"><i class="bi bi-chevron-right me-1"></i>Accueil</a></li>
-                        <li><a href="{% url 'product_list' %}"><i class="bi bi-chevron-right me-1"></i>Produits</a></li>
-                        <li><a href="{% url 'category_list' %}"><i class="bi bi-chevron-right me-1"></i>Catégories</a>
-                        </li>
-                        <li><a href="{% url 'cart_detail' %}"><i class="bi bi-chevron-right me-1"></i>Panier</a></li>
-                    </ul>
-                </div>
-
-                <!-- Colonne 3 : Mon Compte -->
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="footer-title text-white fw-bold mb-3">Mon Compte</h6>
-                    <ul class="footer-links list-unstyled">
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'profile' %}"><i class="bi bi-chevron-right me-1"></i>Mon profil</a></li>
-                        <li><a href="{% url 'my_orders' %}"><i class="bi bi-chevron-right me-1"></i>Mes commandes</a>
-                        </li>
-                        <li><a href="{% url 'wishlist' %}"><i class="bi bi-chevron-right me-1"></i>Mes favoris</a></li>
-                        {% else %}
-                        <li><a href="{% url 'login' %}"><i class="bi bi-chevron-right me-1"></i>Connexion</a></li>
-                        <li><a href="{% url 'register' %}"><i class="bi bi-chevron-right me-1"></i>Inscription</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-
-                <!-- Colonne 4 : Contact + Besoin d'aide -->
-                <div class="col-lg-4 col-md-6">
-                    <h6 class="footer-title text-white fw-bold mb-3">Contact</h6>
-                    <ul class="footer-contact list-unstyled">
-                        <li class="d-flex align-items-start mb-2">
-                            <i class="bi bi-geo-alt-fill text-primary me-2 mt-1"></i>
-                            <span>Bamako, Mali</span>
-                        </li>
-                        <li class="d-flex align-items-start mb-2">
-                            <i class="bi bi-telephone-fill text-primary me-2 mt-1"></i>
-                            <span>
-                                <a href="tel:+22392331429" class="text-white text-decoration-none" title="Appeler directement">
-                                    <i class="bi bi-phone me-1"></i> +223 92 33 14 29
-                                </a>
-                            </span>
-                        </li>
-                        <li class="d-flex align-items-start mb-2">
-                            <i class="bi bi-envelope-fill text-primary me-2 mt-1"></i>
-                            <span>contact@gestionboutique.ml</span>
-                        </li>
-                        <li class="d-flex align-items-start">
-                            <i class="bi bi-clock-fill text-primary me-2 mt-1"></i>
-                            <span>Lun - Sam : 8h00 — 20h00</span>
-                        </li>
-                    </ul>
-                    
-                    <!-- ========== BESOIN D'AIDE ? ========== -->
-                    <div class="mt-4 pt-3 border-top border-secondary">
-                        <h6 class="text-white fw-bold mb-3">
-                            <i class="bi bi-question-circle-fill text-warning me-2"></i>
-                            Besoin d'aide ?
-                        </h6>
-                        <p class="footer-text small mb-3">
-                            Notre équipe est là pour vous assister 24h/24. 
-                            N'hésitez pas à nous contacter !
-                        </p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="tel:+22392331429" class="btn btn-sm btn-success">
-                                <i class="bi bi-telephone-fill me-1"></i> Appeler
-                            </a>
-                            <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%2C%20j%27ai%20besoin%20d%27aide%20sur%20votre%20boutique" 
-                               target="_blank" 
-                               class="btn btn-sm btn-success">
-                                <i class="bi bi-whatsapp me-1"></i> WhatsApp
-                            </a>
-                            <a href="mailto:contact@gestionboutique.ml" class="btn btn-sm btn-primary">
-                                <i class="bi bi-envelope me-1"></i> Email
-                            </a>
-                        </div>
-                    </div>
-                    <!-- ========== FIN BESOIN D'AIDE ========== -->
-                </div>
-
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5"><a class="site-brand site-brand-footer" href="{% url 'home' %}"><span class="site-brand-mark"><i class="bi bi-bag-heart-fill"></i></span><span class="site-brand-copy"><strong>Gestion Boutique</strong><small>Une expérience d'achat plus simple.</small></span></a><p class="site-footer-intro">Une sélection pensée pour vos envies, avec un service clair du premier clic au suivi de votre commande.</p></div>
+                <div class="col-6 col-lg-2"><h6>Boutique</h6><a href="{% url 'product_list' %}">Tous les produits</a><a href="{% url 'category_list' %}">Catégories</a><a href="{% url 'wishlist' %}">Favoris</a></div>
+                <div class="col-6 col-lg-2"><h6>Compte</h6>{% if user.is_authenticated %}<a href="{% url 'profile' %}">Mon profil</a><a href="{% url 'my_orders' %}">Mes commandes</a>{% else %}<a href="{% url 'login' %}">Connexion</a><a href="{% url 'register' %}">Inscription</a>{% endif %}<a href="{% url 'cart_detail' %}">Panier</a></div>
+                <div class="col-lg-3"><h6>Besoin d'aide ?</h6><p class="small">Notre équipe est disponible pour vous accompagner.</p><a class="site-footer-contact" href="mailto:contact@gestionboutique.ml"><i class="bi bi-envelope"></i>contact@gestionboutique.ml</a><a class="site-footer-contact" href="https://api.whatsapp.com/send?phone=22392331429" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i>Écrire sur WhatsApp</a></div>
             </div>
-
-            <!-- Séparateur -->
-            <hr class="footer-divider my-4">
-
-            <!-- Copyright -->
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="footer-copyright mb-0 small">
-                        © 2026 <strong class="text-white">Gestion Boutique</strong> — Tous droits réservés.
-                    </p>
-                </div>
-                <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-                    <div class="footer-badges d-flex justify-content-center justify-content-md-end gap-2 flex-wrap">
-                        <span class="badge bg-dark border border-secondary px-3 py-2">
-                            <i class="bi bi-shield-check me-1"></i>Sécurisé SSL
-                        </span>
-                        <span class="badge bg-dark border border-secondary px-3 py-2">
-                            <i class="bi bi-credit-card me-1"></i>Paiement sécurisé
-                        </span>
-                        <span class="badge bg-dark border border-secondary px-3 py-2">
-                            <i class="bi bi-truck me-1"></i>Livraison rapide
-                        </span>
-                    </div>
-                </div>
-            </div>
-
+            <div class="site-footer-bottom"><span>© 2026 Gestion Boutique</span><span>Une boutique pensée pour vous.</span></div>
         </div>
     </footer>
 
-
-    <!-- BOUTON WHATSAPP FLOTTANT -->
-    <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%2C%20je%20souhaite%20des%20informations%20sur%20votre%20boutique."
-       target="_blank"
-       rel="noopener noreferrer"
-       class="whatsapp-float-btn"
-       title="Contactez-nous sur WhatsApp (+223 92 33 14 29)">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <!-- Bootstrap JS -->
+    <a href="https://api.whatsapp.com/send?phone=22392331429&text=Bonjour%20Gestion%20Boutique" target="_blank" rel="noopener noreferrer" class="whatsapp-float-btn" title="Contacter la boutique sur WhatsApp"><i class="bi bi-whatsapp"></i></a>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Animations JS -->
-    <script src="{% static 'js/animations.js' %}"></script>
-
+    <script src="{% static 'js/animations.js' %}?v=theme-fix"></script>
+    {% block extra_js %}{% endblock %}
 </body>
-
 </html>

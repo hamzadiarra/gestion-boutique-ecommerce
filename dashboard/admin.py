@@ -1,9 +1,10 @@
 from django.contrib import admin
 from .models import Vente, JournalActivite
+from core.admin import FinancialReadOnlyAdmin, is_superuser
 
 
 @admin.register(Vente)
-class VenteAdmin(admin.ModelAdmin):
+class VenteAdmin(FinancialReadOnlyAdmin):
     list_display = (
         "id",
         "vendeur",
@@ -29,11 +30,14 @@ class VenteAdmin(admin.ModelAdmin):
     )
 
     date_hierarchy = "date_vente"
+    ordering = ("-date_vente",)
     readonly_fields = ("date_vente",)
+    list_select_related = ("vendeur", "produit")
+    list_per_page = 50
 
 
 @admin.register(JournalActivite)
-class JournalActiviteAdmin(admin.ModelAdmin):
+class JournalActiviteAdmin(FinancialReadOnlyAdmin):
     list_display = (
         "date",
         "utilisateur",
@@ -58,3 +62,14 @@ class JournalActiviteAdmin(admin.ModelAdmin):
 
     date_hierarchy = "date"
     readonly_fields = ("date", "utilisateur", "action", "details", "adresse_ip", "niveau")
+    list_select_related = ("utilisateur",)
+    list_per_page = 50
+
+    def has_add_permission(self, request):
+        return is_superuser(request.user)
+
+    def has_change_permission(self, request, obj=None):
+        return is_superuser(request.user)
+
+    def has_delete_permission(self, request, obj=None):
+        return is_superuser(request.user)

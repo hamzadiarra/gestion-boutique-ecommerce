@@ -33,6 +33,12 @@ class Order(models.Model):
         null=True
     )
 
+    adresse_livraison = models.TextField(blank=True, null=True)
+    ville_livraison = models.CharField(max_length=100, blank=True, null=True)
+    code_postal_livraison = models.CharField(max_length=20, blank=True, null=True)
+    mode_livraison = models.CharField(max_length=30, default="standard")
+    frais_livraison = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     vendeur_confirmateur = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -48,12 +54,16 @@ class Order(models.Model):
         verbose_name="Date de confirmation"
     )
 
+    date_expedition = models.DateTimeField(null=True, blank=True)
+    date_livraison = models.DateTimeField(null=True, blank=True)
+    date_annulation = models.DateTimeField(null=True, blank=True)
+
 
     def total(self):
         return sum(
             item.sous_total()
             for item in self.items.all()
-        )
+        ) + self.frais_livraison
 
 
     def __str__(self):

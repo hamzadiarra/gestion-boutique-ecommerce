@@ -27,6 +27,11 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Environment
+.env
+.env.*
+!.env.example
+
 # Virtual Environment
 venv/
 env/
@@ -42,6 +47,7 @@ venv.bak/
 
 # Media & Static (Optional, but usually media shouldn't be versioned)
 media/
+staticfiles/
 # static/ 
 
 # System files

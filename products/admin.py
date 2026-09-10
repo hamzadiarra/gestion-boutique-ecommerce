@@ -1,9 +1,19 @@
 from django.contrib import admin
 from .models import Product
+from core.admin import AdminOnlyAdmin
 
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+@admin.action(description="Activer les produits sélectionnés")
+def activer_produits(modeladmin, request, queryset):
+    queryset.update(actif=True)
+
+
+@admin.action(description="Désactiver les produits sélectionnés")
+def desactiver_produits(modeladmin, request, queryset):
+    queryset.update(actif=False)
+
+
+class ProductAdmin(AdminOnlyAdmin):
 
     list_display = (
         "nom",
@@ -31,7 +41,14 @@ class ProductAdmin(admin.ModelAdmin):
         "actif",
         "vedette",
     )
+    list_select_related = ("categorie",)
+    readonly_fields = ("quantite_vendue", "date_creation", "date_modification")
+    list_per_page = 50
+    actions = (activer_produits, desactiver_produits)
 
     prepopulated_fields = {
         "slug": ("nom",)
     }
+
+
+admin.site.register(Product, ProductAdmin)
