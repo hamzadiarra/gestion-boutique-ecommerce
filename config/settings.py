@@ -45,7 +45,6 @@ ALLOWED_HOSTS = env_list(
         'localhost',
         '127.0.0.1',
         '[::1]',
-        '192.168.100.147',
     ],
 )
 
@@ -56,8 +55,6 @@ CSRF_TRUSTED_ORIGINS = env_list(
         'http://localhost:8000',
         'http://127.0.0.1',
         'http://localhost',
-        'http://192.168.100.147:8000',
-        'http://192.168.100.147',
     ],
 )
 
@@ -241,6 +238,13 @@ SECURE_PROXY_SSL_HEADER = (
     if env_bool('DJANGO_SECURE_PROXY_SSL', False)
     else None
 )
+SECURE_SSL_REDIRECT = env_bool('DJANGO_SECURE_SSL_REDIRECT', False)
+SECURE_HSTS_SECONDS = int(os.getenv('DJANGO_SECURE_HSTS_SECONDS', '0') or 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool(
+    'DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS',
+    False,
+)
+SECURE_HSTS_PRELOAD = env_bool('DJANGO_SECURE_HSTS_PRELOAD', False)
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
