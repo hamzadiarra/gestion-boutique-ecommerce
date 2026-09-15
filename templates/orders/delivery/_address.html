@@ -1,0 +1,4 @@
+{% load i18n %}{% if commande.rue_porte %}<p class="mb-1"><strong>{{ commande.rue_porte }}</strong></p>{% endif %}
+{% if commande.adresse_livraison %}<p class="mb-1">{{ commande.adresse_livraison|linebreaksbr }}</p>{% endif %}
+{% if commande.ville_livraison %}<p class="mb-1">{{ commande.ville_livraison }}</p>{% endif %}
+{% if commande.repere %}<p class="mb-1">{% trans "Repère :" %} {{ commande.repere }}</p>{% endif %}

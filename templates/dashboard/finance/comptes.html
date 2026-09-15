@@ -1,0 +1,8 @@
+{% extends "dashboard/finance/base.html" %}{% load i18n %}
+{% block finance_content %}
+<header class="control-header"><h1>{% trans "Comptes financiers" %}</h1><a class="btn btn-dark" href="{% url 'comptable_compte_nouveau' %}">{% trans "Nouveau compte" %}</a></header>
+{% include "dashboard/finance/_liquidites.html" %}
+<div class="table-responsive control-panel"><table class="table control-table"><thead><tr><th>{% trans "Compte" %}</th><th>{% trans "Type" %}</th><th>{% trans "Actif" %}</th><th>{% trans "Défaut" %}</th><th>{% trans "Devise" %}</th><th>{% trans "Initial" %}</th><th>{% trans "Entrées" %}</th><th>{% trans "Sorties" %}</th><th>{% trans "Solde théorique" %}</th><th>{% trans "Dernière opération" %}</th></tr></thead><tbody>
+{% for c in comptes %}<tr><td><a href="{% url 'comptable_compte_detail' c.pk %}">{{ c.nom }}</a></td><td>{{ c.get_type_compte_display }}</td><td>{{ c.actif|yesno:"Oui,Non" }}</td><td>{{ c.est_par_defaut|yesno:"Oui,Non" }}</td><td>{{ c.devise }}</td><td>{{ c.solde_initial|floatformat:2 }}</td><td>{{ c.entrees|floatformat:2 }}</td><td>{{ c.sorties|floatformat:2 }}</td><td class="{% if c.solde < 0 %}text-danger{% endif %}">{{ c.solde|floatformat:2 }}{% if c.solde < 0 %}<small> {% trans "Solde négatif" %}</small>{% endif %}</td><td>{{ c.derniere_operation|date:"d/m/Y H:i"|default:"Aucune" }}</td></tr>{% empty %}<tr><td colspan="10">{% trans "Aucun compte. Créez vos comptes et configurez leurs valeurs d'ouverture avant de régulariser les opérations." %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

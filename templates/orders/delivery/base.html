@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% load i18n %}{% load static %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
+{% block content %}<main class="delivery-shell container py-4">
+<p class="text-muted small">{% trans "Suivi et discussion en ligne uniquement. Actualisez la page pour recevoir les nouveautés." %}</p>
+{% block delivery_content %}{% endblock %}
+</main>{% endblock %}

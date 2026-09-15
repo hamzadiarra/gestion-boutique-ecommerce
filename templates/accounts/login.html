@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load i18n %}
 
-{% block title %}Connexion — Gestion Boutique{% endblock %}
+{% block title %}{% trans "Connexion — Gestion Boutique" %}{% endblock %}
 
 {% block content %}
 
@@ -76,8 +76,8 @@
                 <div class="login-brand-mark mb-3">
                     <i class="bi bi-shield-lock"></i>
                 </div>
-                <h2 class="fw-bold">Connexion</h2>
-                <p class="text-muted mb-0">Accédez à votre espace Gestion Boutique.</p>
+                <h2 class="fw-bold">{% trans "Connexion" %}</h2>
+                <p class="text-muted mb-0">{% trans "Accédez à votre espace Gestion Boutique." %}</p>
             </div>
 
             <div class="card border-0 shadow-sm login-panel">
@@ -86,7 +86,7 @@
                     {% if error %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans "Fermer" %}"></button>
                     </div>
                     {% endif %}
 
@@ -99,78 +99,87 @@
 
                         <div class="mb-3">
                             <label for="id_login_identifier" class="form-label fw-semibold">
-                                Nom d'utilisateur ou e-mail <span class="text-danger">*</span>
+                                {% trans "Nom d'utilisateur ou e-mail" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-transparent">
                                     <i class="bi bi-person"></i>
                                 </span>
                                 <input type="text" id="id_login_identifier" name="username" class="form-control"
-                                    placeholder="exemple: hamza ou nom@email.com" required autocomplete="username"
+                                    placeholder="{% trans "nom@email.com" %}" required autocomplete="username"
                                     value="{{ username|default:'' }}">
                             </div>
-                            <div class="form-text text-muted small">Utilisez votre nom d'utilisateur ou l'e-mail associé au compte.</div>
+                            <div class="form-text text-muted small">{% trans "Utilisez votre nom d'utilisateur ou l'e-mail associé au compte." %}</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="id_password" class="form-label fw-semibold">
-                                Mot de passe <span class="text-danger">*</span>
+                                {% trans "Mot de passe" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-transparent">
                                     <i class="bi bi-key"></i>
                                 </span>
                                 <input type="password" id="id_password" name="password" class="form-control"
-                                    placeholder="Votre mot de passe" required autocomplete="current-password">
+                                    placeholder="{% trans "Votre mot de passe" %}" required autocomplete="current-password">
                                 <button class="btn btn-outline-secondary" type="button" id="toggle-password" tabindex="-1"
-                                    aria-label="Afficher ou masquer le mot de passe">
+                                    aria-label="{% trans "Afficher ou masquer le mot de passe" %}">
                                     <i class="bi bi-eye" id="password-icon"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+                        <div class="d-flex align-items-center justify-content-between gap-3 mb-2 flex-wrap">
                             <div class="form-check mb-0">
                                 <input class="form-check-input" type="checkbox" id="id_remember_me" name="remember_me"
                                     {% if remember_me %}checked{% endif %}>
                                 <label class="form-check-label small fw-semibold" for="id_remember_me">
-                                    Rester connecté
+                                    {% trans "Rester connecté" %}
                                 </label>
                             </div>
+                        </div>
+
+                        <div class="text-end mb-4">
+                            <a href="{% url 'password_reset' %}" class="text-muted small text-decoration-none">
+                                {% trans "Mot de passe oublié ?" %}
+                            </a>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
                             <span class="text-muted small">
-                                Session sécurisée
+                                {% trans "Session sécurisée" %}
                             </span>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                            <i class="bi bi-box-arrow-in-right me-2"></i>{% trans "Se connecter" %}
                         </button>
                     </form>
 
-                    <div class="login-role-strip mt-4" aria-label="Espaces disponibles après connexion">
+                    <div class="login-role-strip mt-4" aria-label="{% trans "Espaces disponibles après connexion" %}">
                         <div class="login-role-pill">
                             <i class="bi bi-person-check"></i>
-                            <span>Client</span>
+                            <span>{% trans "Client" %}</span>
                         </div>
                         <div class="login-role-pill">
                             <i class="bi bi-shop"></i>
-                            <span>Vendeur</span>
+                            <span>{% trans "Vendeur" %}</span>
                         </div>
                         <div class="login-role-pill">
                             <i class="bi bi-calculator"></i>
-                            <span>Comptable</span>
+                            <span>{% trans "Comptable" %}</span>
                         </div>
                         <div class="login-role-pill">
                             <i class="bi bi-speedometer2"></i>
-                            <span>Admin</span>
+                            <span>{% trans "Admin" %}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <p class="text-center text-muted mt-3 small">
-                Vous n'avez pas encore de compte ?
-                <a href="{% url 'register' %}" class="text-primary fw-semibold text-decoration-none">Créer un compte</a>
+                {% trans "Vous n'avez pas encore de compte ?" %}
+                <a href="{% url 'register' %}" class="text-primary fw-semibold text-decoration-none">{% trans "Créer un compte" %}</a>
             </p>
         </div>
     </div>

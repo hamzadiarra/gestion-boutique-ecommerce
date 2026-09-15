@@ -4,30 +4,6 @@
 
 const htmlElement = document.documentElement;
 const themeToggle = document.getElementById("darkModeToggle");
-const themeDebugPanel = document.getElementById("theme-debug-panel");
-
-console.log("theme script loaded");
-console.log("toggle", themeToggle);
-
-function updateThemeDebug() {
-  const isLocalDevelopment = ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
-  if (!themeDebugPanel || !isLocalDevelopment) return;
-  const debugIcon = document.getElementById("darkModeIcon");
-  const debugValues = {
-    "data-theme": htmlElement.getAttribute("data-theme") || "—",
-    "data-bs-theme": htmlElement.getAttribute("data-bs-theme") || "—",
-    storage: (() => {
-      try { return localStorage.getItem("theme") || "null"; } catch (error) { return "indisponible"; }
-    })(),
-    toggle: themeToggle ? "oui" : "non",
-    icon: debugIcon ? "oui" : "non"
-  };
-  Object.entries(debugValues).forEach(([key, value]) => {
-    const target = themeDebugPanel.querySelector(`[data-theme-debug="${key}"]`);
-    if (target) target.textContent = value;
-  });
-  themeDebugPanel.hidden = false;
-}
 
 function applyTheme(theme) {
   const safeTheme = theme === "dark" ? "dark" : "light";
@@ -37,7 +13,7 @@ function applyTheme(theme) {
   if (themeToggle) {
     const icon = document.getElementById("darkModeIcon");
     if (icon) icon.className = safeTheme === "dark" ? "bi bi-sun-fill theme-icon" : "bi bi-moon-stars-fill theme-icon";
-    const action = safeTheme === "dark" ? "Revenir au thème clair" : "Passer au thème sombre";
+    const action = safeTheme === "dark" ? (themeToggle.dataset.themeLight || "Revenir au thème clair") : (themeToggle.dataset.themeDark || "Passer au thème sombre");
     themeToggle.setAttribute("aria-label", action);
     themeToggle.setAttribute("title", action);
   }
@@ -50,16 +26,13 @@ try {
   savedTheme = "light";
 }
 applyTheme(savedTheme);
-updateThemeDebug();
 
 if (themeToggle) {
-  console.log("theme listener attached", themeToggle);
   themeToggle.addEventListener("click", function (event) {
     event.preventDefault();
     const currentTheme = htmlElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
-    updateThemeDebug();
   });
 }
 

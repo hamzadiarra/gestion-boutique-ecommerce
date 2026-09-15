@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
 from django.db.models import Avg, BooleanField, Case, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -23,11 +24,18 @@ def product_list(request):
     if recherche:
         produits = produits.filter(
             Q(nom__icontains=recherche)
+            | Q(nom_en__icontains=recherche)
             | Q(marque__icontains=recherche)
             | Q(description__icontains=recherche)
+            | Q(description_en__icontains=recherche)
         )
 
     categorie_id = request.GET.get("categorie", "")
+    try:
+        if categorie_id and not 0 < int(categorie_id) <= 9223372036854775807:
+            raise ValueError
+    except (TypeError, ValueError):
+        categorie_id = ""
     if categorie_id:
         produits = produits.filter(categorie_id=categorie_id)
 
@@ -36,12 +44,12 @@ def product_list(request):
     if min_price:
         try:
             produits = produits.filter(prix__gte=min_price)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, ValidationError):
             min_price = ""
     if max_price:
         try:
             produits = produits.filter(prix__lte=max_price)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, ValidationError):
             max_price = ""
 
     disponibilite = request.GET.get("disponibilite", "")
@@ -117,10 +125,10 @@ def toggle_wishlist(request, product_id):
     wishlist, _ = Wishlist.objects.get_or_create(utilisateur=request.user)
     if wishlist.produits.filter(id=product_id).exists():
         wishlist.produits.remove(produit)
-        messages.info(request, f"« {produit.nom} » a été retiré de votre liste de souhaits.")
+        messages.info(request, gettext("« {name} » a été retiré de votre liste de souhaits.").format(name=produit.nom))
     else:
         wishlist.produits.add(produit)
-        messages.success(request, f"« {produit.nom} » a été ajouté à votre liste de souhaits.")
+        messages.success(request, gettext("« {name} » a été ajouté à votre liste de souhaits.").format(name=produit.nom))
     referer = request.META.get("HTTP_REFERER")
     if referer:
         return redirect(referer)

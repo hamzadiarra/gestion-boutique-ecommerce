@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
@@ -17,8 +18,8 @@ class Cart(models.Model):
 
 
     class Meta:
-        verbose_name = "Panier"
-        verbose_name_plural = "Paniers"
+        verbose_name = gettext_lazy("Panier")
+        verbose_name_plural = gettext_lazy("Paniers")
 
 
     def total(self):
@@ -57,8 +58,8 @@ class CartItem(models.Model):
 
 
     class Meta:
-        verbose_name = "Article du panier"
-        verbose_name_plural = "Articles du panier"
+        verbose_name = gettext_lazy("Article du panier")
+        verbose_name_plural = gettext_lazy("Articles du panier")
 
 
     def sous_total(self):

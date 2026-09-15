@@ -1,7 +1,77 @@
-{% extends "base.html" %}
-{% block title %}Pilotage financier{% endblock %}
-{% block content %}<main class="control-page"><div class="control-shell"><header class="control-header"><div><span class="control-kicker">Finance & rapprochement</span><h1>Comptabilité</h1><p>Suivez les encaissements, les sources de revenus et les anomalies.</p></div><div class="control-actions"><a href="{% url 'comptable_transactions' %}" class="btn btn-dark"><i class="bi bi-list-check"></i> Transactions</a><a href="{% url 'comptable_export_csv' %}" class="btn btn-outline-secondary"><i class="bi bi-download"></i> Export CSV</a></div></header>
-<section class="control-kpi-grid"><div class="control-kpi control-kpi-main"><span>CA aujourd'hui</span><strong>{{ total_jour|floatformat:0 }} <small>FCFA</small></strong><em>{{ nb_transactions_jour }} transaction{{ nb_transactions_jour|pluralize }}</em></div><div class="control-kpi"><span>CA ce mois</span><strong>{{ total_mois|floatformat:0 }}</strong><em>FCFA encaissés</em></div><div class="control-kpi"><span>CA cette année</span><strong>{{ total_annee|floatformat:0 }}</strong><em>FCFA encaissés</em></div><div class="control-kpi"><span>Ventes directes</span><strong>{{ rev_ventes_total|floatformat:0 }}</strong><em>FCFA · {{ nb_ventes_total }} ventes</em></div><div class="control-kpi"><span>Paiements reçus</span><strong>{{ rev_paiements_total|floatformat:0 }}</strong><em>{{ paiements_recus }} paiements validés</em></div></section>
-<section class="control-alert-grid"><a class="control-alert control-alert-warning" href="{% url 'comptable_transactions' %}?statut=en_attente"><i class="bi bi-hourglass-split"></i><div><strong>{{ paiements_attente }}</strong><span>Paiements en attente</span></div><i class="bi bi-arrow-up-right"></i></a><a class="control-alert control-alert-danger" href="{% url 'comptable_transactions' %}?statut=echoue"><i class="bi bi-x-octagon"></i><div><strong>{{ paiements_echoues }}</strong><span>Paiements échoués</span></div><i class="bi bi-arrow-up-right"></i></a><a class="control-alert" href="{% url 'comptable_transactions' %}"><i class="bi bi-arrow-left-right"></i><div><strong>{{ nb_transactions_total }}</strong><span>Transactions à rapprocher</span></div><i class="bi bi-arrow-up-right"></i></a></section>
-<div class="control-two-col"><section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">Répartition</span><h2>Méthodes de paiement</h2></div><a href="{% url 'comptable_transactions' %}">Détail</a></div><div class="control-method-list">{% for item in par_methode %}<div><span>{{ item.methode_paiement }}</span><strong>{{ item.total|floatformat:0 }} FCFA</strong><small>{{ item.nb }} transaction{{ item.nb|pluralize }}</small></div>{% empty %}<div class="control-empty">Aucun paiement direct enregistré.</div>{% endfor %}</div></section><section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">Performance produits</span><h2>Top produits</h2></div></div><div class="control-rank-list">{% for produit in top_produits|slice:":5" %}<div><span class="control-rank">{{ forloop.counter }}</span><strong>{{ produit.nom }}</strong><small>{{ produit.stock }} en stock</small><b>{{ produit.quantite_vendue }} vendus</b></div>{% empty %}<div class="control-empty">Aucune vente disponible.</div>{% endfor %}</div></section></div>
-<section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">Activité récente</span><h2>Dernières ventes directes</h2></div><a href="{% url 'comptable_transactions' %}?source=directe">Voir toutes les transactions</a></div><div class="table-responsive"><table class="table control-table"><thead><tr><th>Date</th><th>Vendeur</th><th>Produit</th><th>Méthode</th><th class="text-end">Montant</th></tr></thead><tbody>{% for vente in dernieres_ventes|slice:":8" %}<tr><td>{{ vente.date_vente|date:"d/m/Y H:i" }}</td><td>{{ vente.vendeur.username }}</td><td>{{ vente.produit.nom }}</td><td><span class="control-method">{{ vente.get_methode_paiement_display }}</span></td><td class="text-end fw-bold">{{ vente.montant_total }} FCFA</td></tr>{% empty %}<tr><td colspan="5"><div class="control-empty">Aucune transaction.</div></td></tr>{% endfor %}</tbody></table></div></section></div></main>{% endblock %}
+{% extends "base.html" %}{% load i18n %}
+{% load finance_tags %}
+{% block title %}{% trans "Pilotage financier" %}{% endblock %}
+
+{% block content %}
+<main class="control-page">
+    <div class="control-shell">
+        {% include "dashboard/depenses/_navigation.html" %}
+        <header class="control-header">
+            <div><span class="control-kicker">{% trans "Finance & rapprochement" %}</span><h1>{% trans "Comptabilité" %}</h1><p>{% trans "Suivez les encaissements, les sources de revenus et les anomalies." %}</p></div>
+            <div class="control-actions"><a href="{% url 'comptable_transactions' %}" class="btn btn-dark"><i class="bi bi-list-check"></i> {% trans "Transactions" %}</a><a href="{% url 'comptable_export_csv' %}" class="btn btn-outline-secondary"><i class="bi bi-download"></i> {% trans "Export CSV" %}</a></div>
+        </header>
+
+        <section class="control-kpi-grid"><div class="control-kpi control-kpi-main"><span>{% trans "CA encaissé aujourd'hui" %}</span><strong>{{ total_jour|floatformat:0 }} <small>{% trans "FCFA" %}</small></strong><em>{{ nb_transactions_jour }} {% trans "transaction" %}{{ nb_transactions_jour|pluralize }}</em></div><div class="control-kpi"><span>{% trans "CA encaissé · 7 jours" %}</span><strong>{{ total_semaine|floatformat:0 }}</strong><em>{% trans "FCFA encaissés" %}</em></div><div class="control-kpi"><span>{% trans "CA encaissé · mois" %}</span><strong>{{ total_mois|floatformat:0 }}</strong><em>{% trans "FCFA encaissés" %}</em></div><div class="control-kpi"><span>{% trans "CA encaissé · année" %}</span><strong>{{ total_annee|floatformat:0 }}</strong><em>{% trans "FCFA encaissés" %}</em></div><div class="control-kpi"><span>{% trans "Ventes comptoir" %}</span><strong>{{ rev_ventes_total|floatformat:0 }}</strong><em>{{ nb_ventes_total }} {% trans "encaissées" %}</em></div><div class="control-kpi"><span>{% trans "Paiements web encaissés" %}</span><strong>{{ rev_paiements_total|floatformat:0 }}</strong><em>{{ paiements_recus }} {% trans "payés" %}</em></div><div class="control-kpi"><span>{% trans "Montant moyen encaissé" %}</span><strong>{{ montant_moyen_encaisse|floatformat:0 }}</strong><em>{% trans "FCFA par opération" %}</em></div></section>
+        <section class="control-alert-grid"><a class="control-alert control-alert-warning" href="{% url 'comptable_transactions' %}?statut=en_attente"><i class="bi bi-hourglass-split"></i><div><strong>{{ paiements_attente }}</strong><span>{% trans "Paiements en attente" %}</span></div><i class="bi bi-arrow-up-right"></i></a><a class="control-alert control-alert-danger" href="{% url 'comptable_transactions' %}?statut=echoue"><i class="bi bi-x-octagon"></i><div><strong>{{ paiements_echoues }}</strong><span>{% trans "Paiements échoués" %}</span></div><i class="bi bi-arrow-up-right"></i></a><a class="control-alert" href="{% url 'comptable_transactions' %}"><i class="bi bi-arrow-left-right"></i><div><strong>{{ nb_transactions_total }}</strong><span>{% trans "Transactions à rapprocher" %}</span></div><i class="bi bi-arrow-up-right"></i></a></section>
+
+        {% include "dashboard/depenses/_dashboard.html" %}
+        {% financial_liquidity %}
+        {% financial_closures %}
+        <section class="control-chart-grid">
+            <section class="control-panel control-chart-panel"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Évolution du chiffre d'affaires" %}</span><h2>{{ periode_label }}</h2></div><form method="get" class="control-period-form"><label class="visually-hidden" for="periode">{% trans "Période du graphique" %}</label><select id="periode" name="periode" onchange="this.form.submit()"><option value="aujourd_hui" {% if periode == 'aujourd_hui' %}selected{% endif %}>{% trans "Aujourd'hui" %}</option><option value="7_jours" {% if periode == '7_jours' %}selected{% endif %}>{% trans "7 derniers jours" %}</option><option value="mois" {% if periode == 'mois' %}selected{% endif %}>{% trans "Ce mois" %}</option><option value="annee" {% if periode == 'annee' %}selected{% endif %}>{% trans "Cette année" %}</option></select></form></div><div class="control-chart-wrap"><canvas id="caChart" aria-label="{% trans "Évolution du chiffre d'affaires" %}"></canvas>{% if not graphique_has_data %}<div class="control-chart-empty"><i class="bi bi-bar-chart"></i><p>{% trans "Aucune donnée de chiffre d'affaires sur cette période." %}</p></div>{% endif %}</div></section>
+            <section class="control-panel control-chart-panel"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Répartition" %}</span><h2>{% trans "Méthodes de paiement" %}</h2></div></div><div class="control-chart-wrap"><canvas id="methodesChart" aria-label="{% trans "Chiffre d'affaires par méthode de paiement" %}"></canvas>{% if not methodes_graphique_has_data %}<div class="control-chart-empty"><i class="bi bi-pie-chart"></i><p>{% trans "Aucune donnée de paiement sur cette période." %}</p></div>{% endif %}</div></section>
+        </section>
+
+        <div class="control-two-col"><section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Encaissements" %}</span><h2>{% trans "Moyens de paiement" %}</h2></div><a href="{% url 'comptable_transactions' %}">{% trans "Détail" %}</a></div><div class="control-method-list">{% for item in methodes_encaissees %}<div><span>{{ item.label }}</span><strong>{{ item.total|floatformat:0 }} {% trans "FCFA" %}</strong><small>{{ item.nb }} {% trans "opération" %}{{ item.nb|pluralize }}</small></div>{% endfor %}</div></section><section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Performance produits" %}</span><h2>{% trans "Top produits" %}</h2></div></div><div class="control-rank-list">{% for produit in top_produits|slice:":5" %}<div><span class="control-rank">{{ forloop.counter }}</span><strong>{{ produit.nom }}</strong><small>{{ produit.stock }} {% trans "en stock" %}</small><b>{{ produit.quantite_vendue }} {% trans "vendus" %}</b></div>{% empty %}<div class="control-empty">{% trans "Aucune vente disponible." %}</div>{% endfor %}</div></section></div>
+        <section class="control-panel"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Activité récente" %}</span><h2>{% trans "Dernières ventes comptoir" %}</h2></div><a href="{% url 'comptable_transactions' %}?source=directe">{% trans "Voir toutes les transactions" %}</a></div><div class="table-responsive"><table class="table control-table"><thead><tr><th>{% trans "Date" %}</th><th>{% trans "Vendeur" %}</th><th>{% trans "Produit" %}</th><th>{% trans "Méthode" %}</th><th class="text-end">{% trans "Montant" %}</th></tr></thead><tbody>{% for vente in dernieres_ventes %}<tr><td>{{ vente.date_vente|date:"d/m/Y H:i" }}</td><td>{{ vente.vendeur.username }}</td><td>{{ vente.produit.nom }}</td><td><span class="control-method">{{ vente.get_methode_paiement_display }}</span></td><td class="text-end fw-bold">{{ vente.montant_total }} {% trans "FCFA" %}</td></tr>{% empty %}<tr><td colspan="5"><div class="control-empty">{% trans "Aucune transaction." %}</div></td></tr>{% endfor %}</tbody></table></div></section>
+        <section class="control-panel mt-4"><div class="control-panel-head"><div><span class="control-kicker">{% trans "Activité récente" %}</span><h2>{% trans "Derniers paiements web encaissés" %}</h2></div><a href="{% url 'comptable_transactions' %}?source=en_ligne&statut=paye">{% trans "Voir les paiements" %}</a></div><div class="table-responsive"><table class="table control-table"><thead><tr><th>{% trans "Date encaissement" %}</th><th>{% trans "Commande" %}</th><th>{% trans "Client" %}</th><th>{% trans "Méthode" %}</th><th class="text-end">{% trans "Montant" %}</th></tr></thead><tbody>{% for paiement in derniers_paiements %}<tr><td>{{ paiement.date_paiement|default:paiement.date_creation|date:"d/m/Y H:i" }}</td><td>#{{ paiement.commande_id }}</td><td>{{ paiement.commande.utilisateur.get_full_name|default:paiement.commande.utilisateur.username }}</td><td>{{ paiement.get_methode_display }}</td><td class="text-end fw-bold">{{ paiement.montant }} {% trans "FCFA" %}</td></tr>{% empty %}<tr><td colspan="5"><div class="control-empty">{% trans "Aucun paiement web encaissé." %}</div></td></tr>{% endfor %}</tbody></table></div></section>
+    </div>
+</main>
+
+<script>
+(() => {
+    const lineCanvas = document.getElementById("caChart");
+    const barCanvas = document.getElementById("methodesChart");
+    const lineData = {labels: {{ graphique_labels_json|safe }}, values: {{ graphique_totaux_json|safe }}};
+    const barData = {labels: {{ methodes_graphique_labels_json|safe }}, values: {{ methodes_graphique_totaux_json|safe }}};
+
+    function setupCanvas(canvas) {
+        if (!canvas) return null;
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.max(1, rect.width * ratio);
+        canvas.height = 260 * ratio;
+        const ctx = canvas.getContext("2d");
+        ctx.scale(ratio, ratio);
+        return {ctx, width: rect.width, height: 260};
+    }
+    function colors() {
+        const styles = getComputedStyle(document.documentElement);
+        return {primary: styles.getPropertyValue("--color-primary").trim() || "#3b82f6", text: styles.getPropertyValue("--color-text-muted").trim() || "#7c8795", grid: styles.getPropertyValue("--color-border").trim() || "#e5e7eb"};
+    }
+    function drawLineChart() {
+        const chart = setupCanvas(lineCanvas);
+        if (!chart || !lineData.values.some(value => value > 0)) return;
+        const {ctx, width, height} = chart, palette = colors(), pad = {top: 18, right: 16, bottom: 34, left: 16};
+        const max = Math.max(...lineData.values, 1), innerWidth = width - pad.left - pad.right, innerHeight = height - pad.top - pad.bottom;
+        ctx.clearRect(0, 0, width, height); ctx.font = "12px sans-serif"; ctx.strokeStyle = palette.grid; ctx.fillStyle = palette.text;
+        for (let i = 0; i <= 3; i++) { const y = pad.top + innerHeight - (innerHeight * i / 3); ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(width - pad.right, y); ctx.stroke(); }
+        const point = (value, index) => ({x: pad.left + (lineData.values.length === 1 ? innerWidth / 2 : innerWidth * index / (lineData.values.length - 1)), y: pad.top + innerHeight - (value / max * innerHeight)});
+        const points = lineData.values.map(point);
+        ctx.beginPath(); points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.lineTo(points.at(-1).x, pad.top + innerHeight); ctx.lineTo(points[0].x, pad.top + innerHeight); ctx.closePath(); ctx.globalAlpha = .12; ctx.fillStyle = palette.primary; ctx.fill(); ctx.globalAlpha = 1;
+        ctx.beginPath(); points.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.strokeStyle = palette.primary; ctx.lineWidth = 3; ctx.stroke();
+        ctx.fillStyle = palette.text; ctx.textAlign = "center"; lineData.labels.forEach((label, i) => ctx.fillText(label, points[i].x, height - 9)); ctx.fillStyle = palette.primary; points.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill(); });
+    }
+    function drawBarChart() {
+        const chart = setupCanvas(barCanvas);
+        if (!chart || !barData.values.some(value => value > 0)) return;
+        const {ctx, width, height} = chart, palette = colors(), pad = {top: 18, right: 18, bottom: 22, left: 112};
+        const max = Math.max(...barData.values, 1), rowHeight = Math.min(42, (height - pad.top - pad.bottom) / barData.values.length);
+        ctx.clearRect(0, 0, width, height); ctx.font = "12px sans-serif"; ctx.textBaseline = "middle";
+        barData.values.forEach((value, index) => { const y = pad.top + index * rowHeight + 7, barWidth = (width - pad.left - pad.right) * value / max; ctx.fillStyle = palette.text; ctx.textAlign = "right"; ctx.fillText(barData.labels[index], pad.left - 10, y + (rowHeight - 14) / 2); ctx.fillStyle = palette.primary; ctx.globalAlpha = .88; ctx.fillRect(pad.left, y, Math.max(3, barWidth), rowHeight - 14); ctx.globalAlpha = 1; });
+    }
+    function drawCharts() { drawLineChart(); drawBarChart(); }
+    drawCharts(); window.addEventListener("resize", drawCharts, {passive: true});
+})();
+</script>
+{% endblock %}

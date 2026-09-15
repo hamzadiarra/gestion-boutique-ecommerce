@@ -1,0 +1,18 @@
+{% load i18n %}{% load l10n %}
+<section aria-label="{% trans "Charges et résultat opérationnel" %}" class="mb-4">
+    <div class="control-panel-head"><div><span class="control-kicker">{% trans "Décaissements" %}</span><h2>{% trans "Dépenses & résultat opérationnel" %}</h2><p>{% trans "Charges validées, rattachées à leur date de dépense. Le CA encaissé reste distinct." %}</p></div><a href="{% url 'comptable_depenses' %}">{% trans "Consulter les dépenses" %}</a></div>
+    <div class="control-kpi-grid">
+        <div class="control-kpi"><span>{% trans "Dépenses validées aujourd'hui" %}</span><strong>{{ depenses_jour|floatformat:"-2" }}</strong><em>{{ boutique.devise }}</em></div>
+        <div class="control-kpi"><span>{% trans "Dépenses validées ce mois" %}</span><strong>{{ depenses_mois|floatformat:"-2" }}</strong><em>{{ boutique.devise }}</em></div>
+        <div class="control-kpi"><span>{% trans "Dépenses validées cette année" %}</span><strong>{{ depenses_annee|floatformat:"-2" }}</strong><em>{{ boutique.devise }}</em></div>
+        <div class="control-kpi control-kpi-main"><span>{% trans "Résultat opérationnel aujourd'hui" %}</span><strong>{{ resultat_jour|floatformat:"-2" }}</strong><em>{{ boutique.devise }} {% trans ": CA encaissé moins charges validées" %}</em></div>
+        <div class="control-kpi"><span>{% trans "Résultat opérationnel ce mois" %}</span><strong>{{ resultat_mois|floatformat:"-2" }}</strong><em>{{ boutique.devise }} {% trans ": CA encaissé moins charges validées" %}</em></div>
+    </div>
+    <section class="control-panel mt-4">
+        <div class="control-panel-head"><div><span class="control-kicker">{% trans "Charges validées par catégorie" %}</span><h2>{{ periode_label }}</h2></div></div>
+        <div class="table-responsive"><table class="table control-table"><thead><tr><th>{% trans "Catégorie" %}</th><th>{% trans "Répartition relative" %}</th><th class="text-end">{% trans "Montant" %}</th></tr></thead><tbody>
+        {% for row in depenses_par_categorie %}<tr><td>{{ row.categorie__nom }}</td><td><meter style="width:100%;min-width:80px" min="0" max="{{ depenses_par_categorie.0.total|unlocalize }}" value="{{ row.total|unlocalize }}" aria-label="Charges {{ row.categorie__nom }}">{{ row.total }}</meter></td><td class="text-end">{{ row.total|floatformat:"-2" }} {{ boutique.devise }}</td></tr>
+        {% empty %}<tr><td colspan="3"><div class="control-empty">{% trans "Aucune dépense validée sur cette période." %}</div></td></tr>{% endfor %}
+        </tbody></table></div>
+    </section>
+</section>

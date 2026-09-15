@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load i18n %}
 
 
 {% block title %}
-Commande réussie
+{% trans "Commande réussie" %}
 {% endblock %}
 
 
@@ -13,16 +13,16 @@ Commande réussie
     <div class="alert alert-success">
 
         <h3>
-            Votre commande est confirmée
+            {% trans "Votre commande est confirmée" %}
         </h3>
 
         <p>
-            Numéro de commande :
+            {% trans "Numéro de commande :" %}
             {{ commande.id }}
         </p>
 
         <p>
-            Statut :
+            {% trans "Statut :" %}
             {{ commande.get_statut_display }}
         </p>
 
@@ -31,7 +31,7 @@ Commande réussie
 
     <a href="{% url 'product_list' %}" 
        class="btn btn-primary">
-        Continuer mes achats
+        {% trans "Continuer mes achats" %}
     </a>
 
 </div>

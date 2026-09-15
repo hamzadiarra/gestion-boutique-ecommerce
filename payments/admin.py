@@ -12,6 +12,9 @@ class PaymentAdmin(FinancialReadOnlyAdmin):
         "methode",
         "statut",
         "reference",
+        "provider",
+        "provider_reference",
+        "provider_status",
         "date_creation",
     )
 
@@ -19,6 +22,7 @@ class PaymentAdmin(FinancialReadOnlyAdmin):
         "statut",
         "methode",
         "date_creation",
+        "provider",
     )
 
     search_fields = (
@@ -30,5 +34,5 @@ class PaymentAdmin(FinancialReadOnlyAdmin):
     date_hierarchy = "date_creation"
     ordering = ("-date_creation",)
     list_select_related = ("commande", "commande__utilisateur")
-    readonly_fields = ("commande", "montant", "reference", "date_creation", "date_paiement")
+    readonly_fields = ("commande", "montant", "reference", "provider", "provider_reference", "provider_status", "provider_payload", "date_creation", "date_paiement", "date_confirmation")
     list_per_page = 50

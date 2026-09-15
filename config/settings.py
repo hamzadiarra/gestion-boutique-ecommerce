@@ -41,7 +41,12 @@ DEBUG = env_bool('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = env_list(
     'DJANGO_ALLOWED_HOSTS',
-    ['localhost', '127.0.0.1', '[::1]'],
+    [
+        'localhost',
+        '127.0.0.1',
+        '[::1]',
+        '192.168.100.147',
+    ],
 )
 
 CSRF_TRUSTED_ORIGINS = env_list(
@@ -51,9 +56,10 @@ CSRF_TRUSTED_ORIGINS = env_list(
         'http://localhost:8000',
         'http://127.0.0.1',
         'http://localhost',
+        'http://192.168.100.147:8000',
+        'http://192.168.100.147',
     ],
 )
-
 
 # Application definition
 
@@ -90,6 +96,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -111,12 +118,30 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notifications_processor',
                 'cart.context_processors.cart_processor',
+                'core.context_processors.boutique_settings',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+
+# ==========================================================
+# CONFIGURATION MOOV MONEY (MOOV AFRICA MALI)
+# ==========================================================
+MOOV_MONEY_API_BASE_URL = os.getenv("MOOV_MONEY_API_BASE_URL", "").strip()
+MOOV_MONEY_CLIENT_ID = os.getenv("MOOV_MONEY_CLIENT_ID", "").strip()
+MOOV_MONEY_CLIENT_SECRET = os.getenv("MOOV_MONEY_CLIENT_SECRET", "").strip()
+MOOV_MONEY_MERCHANT_CODE = os.getenv("MOOV_MONEY_MERCHANT_CODE", "").strip()
+MOOV_MONEY_WEBHOOK_SECRET = os.getenv("MOOV_MONEY_WEBHOOK_SECRET", "").strip()
+PAYMENT_PROVIDER = os.getenv("PAYMENT_PROVIDER", "").strip().lower()
+PAYMENT_PUBLIC_KEY = os.getenv("PAYMENT_PUBLIC_KEY", "").strip()
+PAYMENT_SECRET_KEY = os.getenv("PAYMENT_SECRET_KEY", "").strip()
+PAYMENT_WEBHOOK_SECRET = os.getenv("PAYMENT_WEBHOOK_SECRET", "").strip()
+CINETPAY_API_KEY = os.getenv("CINETPAY_API_KEY", "").strip()
+CINETPAY_SITE_ID = os.getenv("CINETPAY_SITE_ID", "").strip()
+CINETPAY_SECRET_KEY = os.getenv("CINETPAY_SECRET_KEY", "").strip()
 
 
 # Database
@@ -152,7 +177,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = 'fr'
+LANGUAGES = [('fr', 'Français'), ('en', 'English')]
+LOCALE_PATHS = [BASE_DIR / 'locale']
+LANGUAGE_COOKIE_NAME = 'django_language'
+LANGUAGE_COOKIE_SAMESITE = 'Lax'
+# Keep monetary display explicit and stable across languages; calculations remain Decimal.
+FORMAT_MODULE_PATH = ['config.formats']
 
 TIME_ZONE = 'Africa/Bamako'
 
@@ -168,6 +199,39 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+
+# ========================================
+# EMAIL CONFIGURATION (Reset Password Flow)
+# ========================================
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "",
+).strip()
+
+if not EMAIL_BACKEND:
+    email_host = os.getenv("EMAIL_HOST", "").strip()
+    email_port = os.getenv("EMAIL_PORT", "").strip()
+    email_host_user = os.getenv("EMAIL_HOST_USER", "").strip()
+
+    if DEBUG and not email_host:
+        EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    elif email_host and email_port and email_host_user:
+        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    else:
+        EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+EMAIL_HOST = os.getenv("EMAIL_HOST", "").strip()
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587") or 587)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "").strip()
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "").strip()
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "Gestion Boutique <noreply@gestionboutique.local>",
+).strip()
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

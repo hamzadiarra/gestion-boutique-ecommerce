@@ -1,0 +1,6 @@
+{% load i18n %}<div class="col-12"><div class="row g-3">
+<div class="col-6"><label class="form-label" for="numero_rue">{% trans "Rue" %}</label><input class="form-control" id="numero_rue" type="number" name="numero_rue" min="0" max="1000" step="1" value="{{ checkout_values.numero_rue }}"></div>
+<div class="col-6"><label class="form-label" for="numero_porte">{% trans "Porte" %}</label><input class="form-control" id="numero_porte" type="number" name="numero_porte" min="0" max="1000" step="1" value="{{ checkout_values.numero_porte }}"></div>
+<div class="col-12"><label class="form-label" for="code_postal">{% trans "Repère" %}</label><input class="form-control" id="code_postal" name="code_postal" value="{{ checkout_values.code_postal }}" placeholder="{% trans "Près de la pharmacie, porte bleue" %}"></div>
+<div class="col-12"><label class="form-label" for="telephone_livraison">{% trans "Téléphone utile à la livraison" %}</label><input class="form-control" type="tel" id="telephone_livraison" name="telephone_livraison" maxlength="20" value="{{ checkout_values.telephone_livraison }}"></div>
+</div></div>

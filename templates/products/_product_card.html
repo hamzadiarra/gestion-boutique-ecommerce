@@ -1,17 +1,17 @@
-<article class="shop-product-card">
+{% load i18n %}<article class="shop-product-card">
     <a class="shop-product-media" href="{% url 'product_detail' produit.slug %}">
-        {% if produit.image %}<img src="{{ produit.image.url }}" alt="{{ produit.nom }}" loading="lazy">{% else %}<span class="shop-product-placeholder"><i class="bi bi-image"></i></span>{% endif %}
+        {% if produit.image_is_product %}<img src="{{ produit.image.url }}" alt="{{ produit.localized_name }}" loading="lazy">{% else %}<span class="shop-product-placeholder"><i class="bi bi-image"></i></span>{% endif %}
         <span class="shop-product-badges">
-            {% if produit.prix_promotion %}<span class="shop-badge shop-badge-sale">Promo</span>{% endif %}
-            {% if produit.stock == 0 %}<span class="shop-badge shop-badge-soldout">Épuisé</span>{% elif produit.stock <= 3 %}<span class="shop-badge shop-badge-low">Stock faible</span>{% endif %}
-            {% if produit.is_new %}<span class="shop-badge shop-badge-new">Nouveau</span>{% endif %}
+            {% if produit.prix_promotion %}<span class="shop-badge shop-badge-sale">{% trans "Promo" %}</span>{% endif %}
+            {% if produit.stock == 0 %}<span class="shop-badge shop-badge-soldout">{% trans "Épuisé" %}</span>{% elif produit.stock <= 3 %}<span class="shop-badge shop-badge-low">{% trans "Stock faible" %}</span>{% endif %}
+            {% if produit.is_new %}<span class="shop-badge shop-badge-new">{% trans "Nouveau" %}</span>{% endif %}
         </span>
         <span class="shop-product-quick"><i class="bi bi-arrow-up-right"></i></span>
     </a>
     <div class="shop-product-body">
-        <div class="shop-product-meta"><span>{{ produit.categorie.nom }}</span>{% if produit.reviews.count %}<span><i class="bi bi-star-fill"></i> {{ produit.avg_rating|default:"5" }}</span>{% endif %}</div>
-        <h3><a href="{% url 'product_detail' produit.slug %}">{{ produit.nom }}</a></h3>
+        <div class="shop-product-meta"><span>{{ produit.categorie.localized_name }}</span>{% if produit.reviews.count %}<span><i class="bi bi-star-fill"></i> {{ produit.avg_rating|default:"5" }}</span>{% endif %}</div>
+        <h3><a href="{% url 'product_detail' produit.slug %}">{{ produit.localized_name }}</a></h3>
         {% if produit.marque %}<p class="shop-product-brand">{{ produit.marque }}</p>{% endif %}
-        <div class="shop-product-bottom"><div class="shop-product-price">{% if produit.prix_promotion %}<strong>{{ produit.prix_promotion }} FCFA</strong><del>{{ produit.prix }} FCFA</del>{% else %}<strong>{{ produit.prix }} FCFA</strong>{% endif %}</div>{% if produit.stock > 0 %}<a href="{% url 'add_to_cart' produit.id %}" class="shop-add-button" title="Ajouter au panier"><i class="bi bi-bag-plus"></i></a>{% else %}<span class="shop-out-label">Indisponible</span>{% endif %}</div>
+        <div class="shop-product-bottom"><div class="shop-product-price">{% if produit.prix_promotion %}<strong>{{ produit.prix_promotion }} {% trans "FCFA" %}</strong><del>{{ produit.prix }} {% trans "FCFA" %}</del>{% else %}<strong>{{ produit.prix }} {% trans "FCFA" %}</strong>{% endif %}</div>{% if produit.stock > 0 %}<a href="{% url 'add_to_cart' produit.id %}" class="shop-add-button" title="{% trans "Ajouter au panier" %}"><i class="bi bi-bag-plus"></i></a>{% else %}<span class="shop-out-label">{% trans "Indisponible" %}</span>{% endif %}</div>
     </div>
 </article>

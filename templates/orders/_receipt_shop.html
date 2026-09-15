@@ -1,0 +1,3 @@
+{% if boutique_settings.logo %}<img src="{{ boutique_settings.logo.url }}" alt="Logo {{ boutique_settings.nom }}" style="max-width:96px;max-height:64px;object-fit:contain">{% endif %}
+{% if boutique_settings.telephone %}<p>{{ boutique_settings.telephone }}</p>{% endif %}
+{% if boutique_settings.adresse %}<p>{{ boutique_settings.adresse|linebreaksbr }}</p>{% endif %}

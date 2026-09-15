@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,7 +19,7 @@ def add_to_cart(request, product_id):
 
     # Vérifier le stock
     if produit.stock <= 0:
-        messages.warning(request, f"« {produit.nom} » est en rupture de stock.")
+        messages.warning(request, gettext("« {name} » est en rupture de stock.").format(name=produit.nom))
         return redirect("product_list")
 
     panier, created = Cart.objects.get_or_create(
@@ -46,14 +47,14 @@ def add_to_cart(request, product_id):
         if article.quantite + requested_quantity > produit.stock:
             messages.warning(
                 request,
-                f"Stock maximum atteint pour « {produit.nom} » ({produit.stock} disponibles)."
+                gettext("Stock maximum atteint pour « {name} » ({stock} disponibles).").format(name=produit.nom, stock=produit.stock)
             )
             return redirect("cart_detail")
 
         article.quantite += requested_quantity
         article.save()
 
-    messages.success(request, f"« {produit.nom} » a été ajouté au panier.")
+    messages.success(request, gettext("« {name} » a été ajouté au panier.").format(name=produit.nom))
 
     return redirect("cart_detail")
 
@@ -99,7 +100,7 @@ def increase_quantity(request, item_id):
     if article.quantite >= article.produit.stock:
         messages.warning(
             request,
-            f"Stock maximum atteint pour « {article.produit.nom} »."
+            gettext("Stock maximum atteint pour « {name} ».").format(name=article.produit.nom)
         )
         return redirect("cart_detail")
 
@@ -127,7 +128,7 @@ def decrease_quantity(request, item_id):
         article.save()
     else:
         article.delete()
-        messages.info(request, "Article retiré du panier.")
+        messages.info(request, gettext("Article retiré du panier."))
 
 
     return redirect("cart_detail")
@@ -147,6 +148,6 @@ def remove_from_cart(request, item_id):
 
     article.delete()
 
-    messages.info(request, "Article retiré du panier.")
+    messages.info(request, gettext("Article retiré du panier."))
 
     return redirect("cart_detail")

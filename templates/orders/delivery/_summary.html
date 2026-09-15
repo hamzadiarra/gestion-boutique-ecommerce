@@ -1,0 +1,7 @@
+{% load i18n %}{% if commande %}<section class="container my-3 p-3 border rounded">
+<h2 class="h5">{% trans "Suivi de livraison" %}</h2>
+{% if commande.rue_porte %}<p>{{ commande.rue_porte }}</p>{% endif %}
+{% if livraison %}<p>{{ livraison.reference }} · {{ livraison.get_statut_display }} {% trans "· Livreur :" %} {% if livraison.livreur %}{{ livraison.livreur.get_full_name|default:livraison.livreur.username }}{% else %}{% trans "Non affecté" %}{% endif %}</p>
+<a class="btn btn-outline-primary" href="{% url 'livraison_detail' livraison.pk %}">{% trans "Suivre la livraison · Discussion (" %}{{ livraison.non_lus }})</a>
+{% elif gerer and commande.est_livrable and commande.statut != 'annulee' and commande.statut != 'livree' %}<form method="post" action="{% url 'livraison_initialiser' commande.pk %}">{% csrf_token %}<button class="btn btn-outline-primary">{% trans "Initialiser la livraison" %}</button></form>{% else %}<p>{% trans "Suivi logistique non initialisé." %}</p>{% endif %}
+</section>{% endif %}

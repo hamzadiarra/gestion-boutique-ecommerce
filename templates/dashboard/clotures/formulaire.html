@@ -1,0 +1,7 @@
+{% extends "dashboard/finance/base.html" %}{% load i18n %}
+{% block finance_content %}
+<h1>{% if cloture.pk %}{% trans "Modifier" %} {{ cloture.reference }}{% else %}{% trans "Nouvelle clôture" %}{% endif %}</h1>
+<p>{% trans "Le solde constaté est votre saisie humaine. Le théorique et l'écart sont calculés côté serveur, puis actualisés une dernière fois à la validation." %}</p>
+<p>{% trans "Les comptes inactifs restent disponibles, identifiés comme historiques. Un écart non nul nécessite un commentaire avant validation." %}</p>
+<form method="post" enctype="multipart/form-data" class="control-panel p-4">{% csrf_token %}{{ form.non_field_errors }}<div class="row g-3">{% for field in form %}<div class="col-md-6"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{{ field.errors }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</div>{% endfor %}</div><button class="btn btn-dark mt-3">{% trans "Enregistrer le brouillon" %}</button> <a class="btn btn-outline-secondary mt-3" href="{% url 'comptable_clotures' %}">{% trans "Retour" %}</a></form>
+{% endblock %}

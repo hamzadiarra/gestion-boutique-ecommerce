@@ -1,3 +1,4 @@
+from django.utils.translation import gettext
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Notification
@@ -21,7 +22,7 @@ def notification_list(request):
 @login_required
 def mark_as_read(request, notification_id):
     if request.method != "POST":
-        messages.info(request, "Cette action doit être confirmée depuis le centre de notifications.")
+        messages.info(request, gettext("Cette action doit être confirmée depuis le centre de notifications."))
         return redirect("notification_list")
     notification = get_object_or_404(
         Notification,
@@ -40,10 +41,10 @@ def mark_as_read(request, notification_id):
 @login_required
 def mark_all_as_read(request):
     if request.method != "POST":
-        messages.info(request, "Cette action doit être confirmée depuis le centre de notifications.")
+        messages.info(request, gettext("Cette action doit être confirmée depuis le centre de notifications."))
         return redirect("notification_list")
     request.user.notifications.filter(lu=False).update(lu=True)
-    messages.success(request, "Toutes les notifications ont été marquées comme lues.")
+    messages.success(request, gettext("Toutes les notifications ont été marquées comme lues."))
 
     referer = request.META.get('HTTP_REFERER')
     if referer:

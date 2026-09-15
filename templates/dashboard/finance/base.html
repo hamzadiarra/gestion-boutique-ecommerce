@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Comptes et journal financier" %}{% endblock %}
+{% block content %}
+<main class="control-page"><div class="control-shell">
+{% include "dashboard/depenses/_navigation.html" %}
+<p class="text-muted">{% trans "Espace en ligne uniquement. Liquidités théoriques, sans rapprochement ni reprise historique automatique." %}</p>
+{% block finance_content %}{% endblock %}
+</div></main>
+{% endblock %}

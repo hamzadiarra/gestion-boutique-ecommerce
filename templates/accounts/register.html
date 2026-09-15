@@ -1,31 +1,1797 @@
-{% extends "base.html" %}
-{% block title %}Créer un compte — Gestion Boutique{% endblock %}
+{% extends "base.html" %}{% load i18n %}
+
+{% block title %}{% trans "Créer votre compte — Gestion Boutique" %}{% endblock %}
+
 {% block content %}
+
 <style>
-.signup-page{--ink:#172033;--muted:#747c8c;--line:#e8eaf0;--violet:#5b4df3;--teal:#17b7b1;min-height:760px;padding:clamp(2.5rem,6vw,6rem) 1rem;background:radial-gradient(circle at 12% 16%,rgba(91,77,243,.09),transparent 27rem),radial-gradient(circle at 92% 84%,rgba(23,183,177,.08),transparent 25rem)}
-.signup-shell{max-width:1180px;margin:auto;display:grid;grid-template-columns:minmax(300px,.88fr) minmax(540px,1.12fr);min-height:690px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.9);border-radius:30px;overflow:hidden;box-shadow:0 24px 70px rgba(33,38,70,.12)}
-[data-theme=dark] .signup-shell{background:rgba(26,26,46,.9)}
-.signup-aside{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(2rem,4vw,4rem);color:#fff;overflow:hidden;background:linear-gradient(145deg,#211b62,#4033b9 52%,#7267f5)}
-.signup-aside:before,.signup-aside:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.16);border-radius:50%;pointer-events:none}.signup-aside:before{width:420px;height:420px;right:-190px;top:-150px;box-shadow:0 0 0 38px rgba(255,255,255,.035),0 0 0 76px rgba(255,255,255,.025)}.signup-aside:after{width:210px;height:210px;left:-115px;bottom:100px}
-.signup-aside-content,.signup-aside-footer{position:relative;z-index:1}.signup-logo{display:inline-flex;align-items:center;gap:.7rem;color:#fff;text-decoration:none;font-weight:800;letter-spacing:-.03em;font-size:1.08rem}.signup-logo-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;color:#241d70;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.14)}
-.signup-kicker{margin:4.5rem 0 1rem;color:#bfc5ff;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em}.signup-aside h1{max-width:380px;margin-bottom:1.2rem;font-size:clamp(2rem,4vw,3.45rem);line-height:1.04;letter-spacing:-.055em}.signup-aside-lead{max-width:350px;color:rgba(255,255,255,.72);line-height:1.75}.signup-benefits{display:grid;gap:.9rem;margin-top:2.3rem}.signup-benefit{display:flex;align-items:center;gap:.8rem;color:rgba(255,255,255,.88);font-size:.86rem}.signup-benefit i{width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.23);border-radius:50%;color:#9df4df;font-size:.8rem}.signup-aside-footer{display:flex;align-items:center;gap:.7rem;color:rgba(255,255,255,.62);font-size:.75rem}.signup-avatar-stack{display:flex}.signup-avatar-stack span{width:25px;height:25px;display:grid;place-items:center;margin-right:-7px;border:2px solid #4b3fc6;border-radius:50%;color:#fff;background:#a29aff;font-size:.58rem;font-weight:800}
-.signup-form-panel{padding:clamp(2rem,5vw,4.3rem);color:var(--ink);background:var(--color-card-bg)}[data-theme=dark] .signup-form-panel{--ink:#f3f4f8;--muted:#a7adba;--line:rgba(255,255,255,.12)}.signup-form-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:2.6rem}.signup-eyebrow{margin-bottom:.55rem;color:var(--violet);font-size:.72rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.signup-form-top h2{margin:0;font-size:clamp(1.55rem,3vw,2.2rem);letter-spacing:-.045em}.signup-secure-note{color:var(--muted);font-size:.75rem;white-space:nowrap}.signup-secure-note i{color:var(--teal);margin-right:.25rem}
-.signup-progress{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:2.8rem}.signup-progress-item{position:relative;color:var(--muted);font-size:.72rem;font-weight:700}.signup-progress-item:before{content:attr(data-number);width:30px;height:30px;display:grid;place-items:center;margin-bottom:.65rem;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:var(--color-card-bg);font-size:.72rem;transition:all .25s ease}.signup-progress-item:not(:last-child):after{content:"";position:absolute;top:15px;left:39px;width:calc(100% - 42px);height:1px;background:var(--line)}.signup-progress-item.active,.signup-progress-item.completed{color:var(--violet)}.signup-progress-item.active:before,.signup-progress-item.completed:before{border-color:var(--violet);color:#fff;background:var(--violet);box-shadow:0 5px 14px rgba(91,77,243,.22)}.signup-progress-item.completed:not(:last-child):after{background:var(--violet)}
-.signup-step-heading{margin-bottom:1.8rem}.signup-step-heading h3{margin-bottom:.35rem;color:var(--ink);font-size:1.25rem;letter-spacing:-.03em}.signup-step-heading p{margin:0;color:var(--muted);font-size:.86rem}.signup-role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem}.signup-role-option{position:relative;cursor:pointer}.signup-role-option input{position:absolute;opacity:0;pointer-events:none}.signup-role-card{min-height:205px;display:flex;flex-direction:column;justify-content:space-between;padding:1.35rem;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(91,77,243,.025),transparent);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}.signup-role-card:hover{transform:translateY(-3px);border-color:rgba(91,77,243,.45);box-shadow:0 14px 28px rgba(45,39,108,.08)}.signup-role-option input:checked+.signup-role-card{border-color:var(--violet);background:linear-gradient(145deg,rgba(91,77,243,.11),rgba(23,183,177,.05));box-shadow:0 0 0 3px rgba(91,77,243,.1)}.signup-role-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;color:var(--violet);background:rgba(91,77,243,.1);font-size:1.35rem}.signup-role-option:nth-child(2) .signup-role-icon{color:#079b96;background:rgba(23,183,177,.12)}.signup-role-card strong{display:block;margin:1.2rem 0 .3rem;color:var(--ink);font-size:1rem}.signup-role-card small{display:block;color:var(--muted);line-height:1.55}.signup-check{align-self:flex-end;color:var(--violet);opacity:0;transition:opacity .2s}.signup-role-option input:checked+.signup-role-card .signup-check{opacity:1}
-.signup-field{margin-bottom:1.25rem}.signup-field label{display:block;margin-bottom:.5rem;color:var(--ink);font-size:.78rem;font-weight:750}.signup-field label span{color:#ee6475}.signup-input-wrap{position:relative}.signup-input-wrap>i{position:absolute;z-index:2;top:50%;left:1rem;color:#9aa1b0;transform:translateY(-50%);pointer-events:none}.signup-input{width:100%;min-height:48px;padding:.7rem 1rem .7rem 2.7rem;border:1px solid var(--line);border-radius:12px;outline:none;color:var(--ink);background:transparent;transition:border-color .2s,box-shadow .2s,background .2s}.signup-input::placeholder{color:#a8aebb}.signup-input:focus{border-color:var(--violet);background:rgba(91,77,243,.025);box-shadow:0 0 0 4px rgba(91,77,243,.09)}.signup-input.is-invalid{border-color:#ee6475}.signup-file{padding-top:.72rem;padding-bottom:.72rem;font-size:.78rem}.signup-field-hint{display:block;margin-top:.45rem;color:var(--muted);font-size:.72rem}.signup-password-meter{display:flex;gap:4px;margin-top:.7rem}.signup-password-meter span{height:4px;flex:1;border-radius:99px;background:var(--line);transition:background .2s}.signup-password-meta{display:flex;justify-content:space-between;margin-top:.45rem;color:var(--muted);font-size:.72rem}.signup-rules{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem;margin-top:.9rem;color:var(--muted);font-size:.72rem}.signup-rules span.valid{color:#159b7c}.signup-rules i{margin-right:.2rem}
-.signup-actions{display:flex;gap:.7rem;margin-top:2rem}.signup-btn{min-height:50px;border-radius:12px;font-size:.84rem;font-weight:750;transition:transform .2s,box-shadow .2s}.signup-btn:hover{transform:translateY(-2px)}.signup-btn-primary{flex:1;border:0;color:#fff;background:linear-gradient(110deg,#5144e9,#7467f5);box-shadow:0 12px 22px rgba(81,68,233,.22)}.signup-btn-primary:hover{color:#fff;box-shadow:0 16px 28px rgba(81,68,233,.3)}.signup-btn-back{border:1px solid var(--line);color:var(--muted);background:transparent}.signup-btn-back:hover{color:var(--ink);border-color:#bfc3cf}.signup-login{margin:1.5rem 0 0;color:var(--muted);text-align:center;font-size:.78rem}.signup-login a{color:var(--violet);font-weight:750;text-decoration:none}.signup-login a:hover{text-decoration:underline}.signup-alert{margin-bottom:1.4rem;border:0;border-radius:12px;font-size:.8rem}
-@media(max-width:900px){.signup-shell{grid-template-columns:1fr}.signup-aside{min-height:400px}.signup-kicker{margin-top:3rem}}@media(max-width:576px){.signup-page{padding:1.2rem .7rem 2.5rem}.signup-shell{border-radius:21px}.signup-aside{min-height:auto;padding:1.6rem}.signup-aside h1{font-size:2.15rem}.signup-kicker{margin-top:2.4rem}.signup-benefits{margin-top:1.5rem}.signup-aside-footer{margin-top:2.4rem}.signup-form-panel{padding:1.5rem 1.15rem 1.7rem}.signup-form-top{margin-bottom:2rem}.signup-secure-note{display:none}.signup-progress{margin-bottom:2rem}.signup-progress-item{font-size:.64rem}.signup-progress-item:not(:last-child):after{left:34px;width:calc(100% - 38px)}.signup-role-grid,.signup-rules{grid-template-columns:1fr}.signup-role-card{min-height:155px}.signup-actions{flex-direction:column-reverse}.signup-btn-back{min-height:44px}}
+.account-signup {
+    min-height: calc(100vh - 90px);
+    display: grid;
+    place-items: center;
+    padding: 48px 16px;
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            color-mix(in srgb, var(--color-primary) 10%, transparent),
+            transparent 32%
+        ),
+        var(--color-bg);
+}
+
+.account-signup-shell {
+    width: min(100%, 680px);
+    padding: 42px 48px;
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    background: var(--color-surface);
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .10);
+}
+
+.account-signup-head {
+    text-align: center;
+}
+
+.account-signup-head h1 {
+    margin: 12px 0 8px;
+    font-size: clamp(1.9rem, 4vw, 2.45rem);
+    font-weight: 800;
+    letter-spacing: -.04em;
+}
+
+.account-signup-head p {
+    margin: 0;
+    color: var(--color-muted);
+}
+
+/* Progression */
+
+.account-progress {
+    margin: 30px 0 38px;
+}
+
+.account-progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 14px;
+}
+
+#step-label {
+    color: var(--color-muted);
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+#step-name {
+    color: var(--color-primary);
+    font-size: .88rem;
+    font-weight: 700;
+}
+
+.account-progress-track {
+    display: flex;
+    align-items: center;
+}
+
+.account-step-dot {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: .3s ease;
+}
+
+.account-step-dot.active {
+    background: var(--color-primary);
+    box-shadow:
+        0 0 0 5px
+        color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.account-step-line {
+    height: 2px;
+    flex: 1;
+    background: var(--color-border);
+    transition: background .3s ease;
+}
+
+.account-step-line.active {
+    background: var(--color-primary);
+}
+
+/* Étapes */
+
+.account-step {
+    animation: signupStepIn .32s ease both;
+}
+
+.account-step.d-none {
+    display: none !important;
+}
+
+.account-step h2 {
+    margin: 0 0 7px;
+    font-size: 1.4rem;
+    font-weight: 750;
+}
+
+.account-step > p {
+    margin: 0 0 26px;
+    color: var(--color-muted);
+    font-size: .95rem;
+}
+
+/* Champs */
+
+.account-field {
+    margin-bottom: 19px;
+}
+
+.account-field label,
+.account-group-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+.account-field input,
+.account-field select {
+    width: 100%;
+    min-height: 50px;
+    padding: 11px 14px;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background: var(--color-bg);
+    outline: none;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.account-field input:focus,
+.account-field select:focus {
+    border-color: var(--color-primary);
+    box-shadow:
+        0 0 0 3px
+        color-mix(in srgb, var(--color-primary) 16%, transparent);
+}
+
+.account-field input.is-invalid,
+.account-field select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, .08);
+}
+
+.account-field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+    color: #dc3545;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+/* Nom / prénom */
+
+.account-name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Date */
+
+.account-birth-grid {
+    display: grid;
+    grid-template-columns: .7fr 1.4fr 1fr;
+    gap: 10px;
+}
+
+/* Genre */
+
+.account-gender-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.45fr;
+    gap: 9px;
+}
+
+.account-gender-option {
+    position: relative;
+}
+
+.account-gender-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.account-gender-option label {
+    min-height: 50px;
+    margin: 0;
+    padding: 11px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: .87rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.account-gender-option label:hover {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--color-primary) 55%,
+            var(--color-border)
+        );
+    transform: translateY(-1px);
+}
+
+.account-gender-option input:checked + label {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background:
+        color-mix(
+            in srgb,
+            var(--color-primary) 9%,
+            var(--color-surface)
+        );
+    box-shadow:
+        0 0 0 3px
+        color-mix(
+            in srgb,
+            var(--color-primary) 10%,
+            transparent
+        );
+}
+
+/* Mot de passe */
+
+.account-password-wrap {
+    position: relative;
+}
+
+.account-password-wrap input {
+    padding-right: 48px;
+}
+
+.account-password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 36px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--color-muted);
+    background: transparent;
+}
+
+.account-password-toggle:hover {
+    color: var(--color-primary);
+    background:
+        color-mix(
+            in srgb,
+            var(--color-primary) 8%,
+            transparent
+        );
+}
+
+.account-password-meter {
+    display: flex;
+    gap: 5px;
+    margin-top: 11px;
+}
+
+.account-password-meter span {
+    height: 4px;
+    flex: 1;
+    border-radius: 99px;
+    background: var(--color-border);
+    transition: background .2s ease;
+}
+
+.account-password-feedback {
+    margin-top: 8px;
+    color: var(--color-muted);
+    font-size: .8rem;
+}
+
+/* Conditions */
+
+.account-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 13px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    background:
+        color-mix(
+            in srgb,
+            var(--color-surface) 90%,
+            var(--color-primary) 3%
+        );
+}
+
+.account-terms input {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: var(--color-primary);
+}
+
+.account-terms label {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: .84rem;
+    line-height: 1.5;
+}
+
+.account-terms a {
+    color: var(--color-primary);
+    font-weight: 650;
+}
+
+/* Actions */
+
+.account-step-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.account-step-actions .btn {
+    min-height: 46px;
+    padding: 10px 21px;
+    border-radius: 11px;
+}
+
+.account-step-actions .btn-primary {
+    min-width: 128px;
+}
+
+.account-submit:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+/* Lien connexion */
+
+.account-login-link {
+    margin: 28px 0 0;
+    text-align: center;
+    color: var(--color-muted);
+    font-size: .9rem;
+}
+
+.account-login-link a {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Animation */
+
+@keyframes signupStepIn {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .account-step {
+        animation: none;
+    }
+
+    .account-gender-option label,
+    .account-field input,
+    .account-field select {
+        transition: none;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .account-signup {
+        padding: 22px 12px;
+    }
+
+    .account-signup-shell {
+        padding: 30px 20px;
+        border-radius: 18px;
+    }
+
+    .account-name-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .account-birth-grid {
+        grid-template-columns: .72fr 1.35fr .95fr;
+        gap: 7px;
+    }
+
+    .account-birth-grid select {
+        padding-left: 9px;
+        padding-right: 7px;
+        font-size: .86rem;
+    }
+
+    .account-gender-options {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .account-gender-option:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .account-step-actions {
+        justify-content: stretch;
+    }
+
+    .account-step-actions .btn {
+        flex: 1;
+    }
+}
 </style>
 
-<main class="signup-page"><div class="signup-shell">
-<aside class="signup-aside"><div class="signup-aside-content"><a class="signup-logo" href="/" aria-label="Retour à l'accueil"><span class="signup-logo-mark"><i class="bi bi-bag-heart-fill"></i></span>Gestion Boutique</a><p class="signup-kicker">Votre espace commence ici</p><h1>Donnez une nouvelle dimension à vos achats.</h1><p class="signup-aside-lead">Une expérience simple, élégante et pensée pour vous accompagner à chaque étape de votre activité.</p><div class="signup-benefits"><div class="signup-benefit"><i class="bi bi-check2"></i><span>Un espace personnalisé pour votre profil</span></div><div class="signup-benefit"><i class="bi bi-check2"></i><span>Des commandes et un suivi en toute clarté</span></div><div class="signup-benefit"><i class="bi bi-check2"></i><span>Une plateforme fiable, conçue pour durer</span></div></div></div><div class="signup-aside-footer"><div class="signup-avatar-stack"><span>AM</span><span>KS</span><span>+1k</span></div><span>Rejoignez une communauté qui avance.</span></div></aside>
-<section class="signup-form-panel"><div class="signup-form-top"><div><p class="signup-eyebrow">Bienvenue</p><h2>Créer votre compte</h2></div><span class="signup-secure-note"><i class="bi bi-shield-check"></i>Données protégées</span></div>{% if error %}<div class="alert alert-danger signup-alert" role="alert"><i class="bi bi-exclamation-circle me-2"></i>{{ error }}</div>{% endif %}
-<div class="signup-progress" aria-label="Progression de l'inscription"><div class="signup-progress-item active" data-step-indicator="1" data-number="01">Profil</div><div class="signup-progress-item" data-step-indicator="2" data-number="02">Identité</div><div class="signup-progress-item" data-step-indicator="3" data-number="03">Sécurité</div></div>
-<form method="post" enctype="multipart/form-data" novalidate id="register-form">{% csrf_token %}<input type="hidden" name="role" id="id_role" value="{{ selected_role|default:'client' }}">
-<section class="signup-step" data-step="1"><div class="signup-step-heading"><h3>Quel espace vous correspond ?</h3><p>Choisissez votre profil pour une expérience adaptée à vos besoins.</p></div><div class="signup-role-grid"><label class="signup-role-option"><input type="radio" name="account_type" value="client" {% if selected_role != 'vendeur' %}checked{% endif %}><span class="signup-role-card"><span><span class="signup-role-icon"><i class="bi bi-person-heart"></i></span><strong>Je suis un client</strong><small>Découvrez les produits, commandez facilement et suivez chaque livraison.</small></span><i class="bi bi-check-circle-fill signup-check"></i></span></label><label class="signup-role-option"><input type="radio" name="account_type" value="vendeur" {% if selected_role == 'vendeur' %}checked{% endif %}><span class="signup-role-card"><span><span class="signup-role-icon"><i class="bi bi-shop-window"></i></span><strong>Je suis un vendeur</strong><small>Développez votre activité, vos produits et vos ventes depuis un espace dédié.</small></span><i class="bi bi-check-circle-fill signup-check"></i></span></label></div><div class="signup-actions"><button type="button" class="signup-btn signup-btn-primary next-step">Continuer <i class="bi bi-arrow-right ms-2"></i></button></div></section>
-<section class="signup-step d-none" data-step="2"><div class="signup-step-heading"><h3>Parlez-nous de vous</h3><p>Quelques informations pour créer un espace qui vous ressemble.</p></div><div class="row gx-3"><div class="col-md-6"><div class="signup-field"><label for="id_username">Nom d'utilisateur <span>*</span></label><div class="signup-input-wrap"><i class="bi bi-at"></i><input type="text" id="id_username" name="username" class="signup-input" required autocomplete="username" placeholder="votre.identifiant" value="{{ username|default:'' }}"></div><small class="signup-field-hint">Lettres, chiffres et underscore uniquement.</small></div></div><div class="col-md-6"><div class="signup-field"><label for="id_email">Adresse e-mail <span>*</span></label><div class="signup-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="id_email" name="email" class="signup-input" required autocomplete="email" placeholder="vous@exemple.com" value="{{ email|default:'' }}"></div></div></div><div class="col-md-6"><div class="signup-field"><label for="id_first_name">Prénom</label><div class="signup-input-wrap"><i class="bi bi-person"></i><input type="text" id="id_first_name" name="first_name" class="signup-input" autocomplete="given-name" placeholder="Votre prénom" value="{{ first_name|default:'' }}"></div></div></div><div class="col-md-6"><div class="signup-field"><label for="id_last_name">Nom</label><div class="signup-input-wrap"><i class="bi bi-person"></i><input type="text" id="id_last_name" name="last_name" class="signup-input" autocomplete="family-name" placeholder="Votre nom" value="{{ last_name|default:'' }}"></div></div></div></div><div class="signup-field"><label for="id_telephone">Téléphone</label><div class="signup-input-wrap"><i class="bi bi-phone"></i><input type="tel" id="id_telephone" name="telephone" class="signup-input" autocomplete="tel" placeholder="+223 00 00 00 00" value="{{ telephone|default:'' }}"></div></div><div class="signup-field"><label for="id_photo">Photo de profil</label><div class="signup-input-wrap"><i class="bi bi-camera"></i><input type="file" id="id_photo" name="photo" class="signup-input signup-file" accept="image/*"></div><small class="signup-field-hint">Optionnel — JPG ou PNG, 5 Mo maximum.</small></div><div class="signup-actions"><button type="button" class="signup-btn signup-btn-back previous-step"><i class="bi bi-arrow-left me-2"></i>Retour</button><button type="button" class="signup-btn signup-btn-primary next-step">Continuer <i class="bi bi-arrow-right ms-2"></i></button></div></section>
-<section class="signup-step d-none" data-step="3"><div class="signup-step-heading"><h3>Protégez votre espace</h3><p>Créez un mot de passe solide pour garder le contrôle de votre compte.</p></div><div class="signup-field"><label for="id_password1">Mot de passe <span>*</span></label><div class="signup-input-wrap"><i class="bi bi-lock"></i><input type="password" id="id_password1" name="password1" class="signup-input" required autocomplete="new-password" placeholder="Au moins 6 caractères"><button class="btn position-absolute top-50 end-0 translate-middle-y me-2 border-0 text-muted" type="button" id="toggle-pw1" aria-label="Afficher ou masquer le mot de passe"><i class="bi bi-eye" id="icon-pw1"></i></button></div><div class="signup-password-meter" id="password-meter"><span></span><span></span><span></span><span></span></div><div class="signup-password-meta"><span id="password-strength">Saisissez un mot de passe</span><span id="password-length">0 caractère</span></div><div class="signup-rules"><span data-rule="length"><i class="bi bi-circle"></i>6 caractères minimum</span><span data-rule="letter"><i class="bi bi-circle"></i>Une lettre</span><span data-rule="number"><i class="bi bi-circle"></i>Un chiffre</span><span data-rule="special"><i class="bi bi-circle"></i>Un caractère spécial</span></div></div><div class="signup-field"><label for="id_password2">Confirmer le mot de passe <span>*</span></label><div class="signup-input-wrap"><i class="bi bi-shield-lock"></i><input type="password" id="id_password2" name="password2" class="signup-input" required autocomplete="new-password" placeholder="Répétez votre mot de passe"><button class="btn position-absolute top-50 end-0 translate-middle-y me-2 border-0 text-muted" type="button" id="toggle-pw2" aria-label="Afficher ou masquer le mot de passe"><i class="bi bi-eye" id="icon-pw2"></i></button></div><small id="pw-match-feedback" class="signup-field-hint"></small></div><div class="signup-actions"><button type="button" class="signup-btn signup-btn-back previous-step"><i class="bi bi-arrow-left me-2"></i>Retour</button><button type="submit" class="signup-btn signup-btn-primary"><i class="bi bi-check2-circle me-2"></i>Créer mon compte</button></div></section></form><p class="signup-login">Vous avez déjà un compte ? <a href="{% url 'login' %}">Se connecter <i class="bi bi-arrow-up-right"></i></a></p></section></div></main>
+
+<main class="account-signup">
+
+    <section
+        class="account-signup-shell"
+        aria-labelledby="signup-title"
+    >
+
+        <!-- En-tête -->
+
+        <header class="account-signup-head">
+
+            <span class="shop-eyebrow">
+                {% trans "Nouveau compte" %}
+            </span>
+
+            <h1 id="signup-title">
+                {% trans "Créer votre compte" %}
+            </h1>
+
+            <p>
+                {% trans "Trois étapes simples pour rejoindre Gestion Boutique." %}
+            </p>
+
+        </header>
+
+
+        <!-- Progression -->
+
+        <div class="account-progress">
+
+            <div class="account-progress-top">
+
+                <span id="step-label">
+                    {% trans "Étape" %} {{ active_step|default:1 }} {% trans "sur 3" %}
+                </span>
+
+                <span id="step-name">
+                    {% trans "Identité" %}
+                </span>
+
+            </div>
+
+            <div class="account-progress-track">
+
+                <span
+                    class="account-step-dot"
+                    data-dot="1"
+                ></span>
+
+                <span
+                    class="account-step-line"
+                    data-line="1"
+                ></span>
+
+                <span
+                    class="account-step-dot"
+                    data-dot="2"
+                ></span>
+
+                <span
+                    class="account-step-line"
+                    data-line="2"
+                ></span>
+
+                <span
+                    class="account-step-dot"
+                    data-dot="3"
+                ></span>
+
+            </div>
+
+        </div>
+
+
+        <!-- Formulaire -->
+
+        <form
+            method="post"
+            id="register-form"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+            <!-- ======================================
+                 ÉTAPE 1 — IDENTITÉ
+            ======================================= -->
+
+            <section
+                class="account-step d-none"
+                data-step="1"
+            >
+
+                <h2>
+                    {% trans "Faisons connaissance" %}
+                </h2>
+
+                <p>
+                    {% trans "Indiquez simplement votre prénom et votre nom." %}
+                </p>
+
+
+                <div class="account-name-grid">
+
+                    <div class="account-field">
+
+                        <label for="id_first_name">
+                            {% trans "Prénom" %}
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                            id="id_first_name"
+                            name="first_name"
+                            type="text"
+                            required
+                            autocomplete="given-name"
+                            placeholder="{% trans "Votre prénom" %}"
+                            value="{{ form_data.first_name|default:'' }}"
+                            class="{% if errors.first_name %}is-invalid{% endif %}"
+                        >
+
+                        {% if errors.first_name %}
+                            <div class="account-field-error">
+                                <i class="bi bi-exclamation-circle"></i>
+                                {{ errors.first_name }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="account-field">
+
+                        <label for="id_last_name">
+                            {% trans "Nom" %}
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input
+                            id="id_last_name"
+                            name="last_name"
+                            type="text"
+                            required
+                            autocomplete="family-name"
+                            placeholder="{% trans "Votre nom" %}"
+                            value="{{ form_data.last_name|default:'' }}"
+                            class="{% if errors.last_name %}is-invalid{% endif %}"
+                        >
+
+                        {% if errors.last_name %}
+                            <div class="account-field-error">
+                                <i class="bi bi-exclamation-circle"></i>
+                                {{ errors.last_name }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-step-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary next-step"
+                    >
+                        {% trans "Suivant" %}
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ======================================
+                 ÉTAPE 2 — PROFIL
+            ======================================= -->
+
+            <section
+                class="account-step d-none"
+                data-step="2"
+            >
+
+                <h2>
+                    {% trans "Quelques informations sur vous" %}
+                </h2>
+
+                <p>
+                    {% trans "Renseignez votre date de naissance et votre genre." %}
+                </p>
+
+
+                <!-- Date de naissance -->
+
+                <div class="account-field">
+
+                    <span class="account-group-label">
+                        {% trans "Date de naissance" %}
+                        <span class="text-danger">*</span>
+                    </span>
+
+
+                    <div class="account-birth-grid">
+
+                        <!-- Jour -->
+
+                        <select
+                            id="id_birth_day"
+                            name="birth_day"
+                            required
+                            class="{% if errors.birth_day or errors.date_naissance %}is-invalid{% endif %}"
+                            aria-label="{% trans "Jour de naissance" %}"
+                        >
+
+                            <option value="">
+                                {% trans "Jour" %}
+                            </option>
+
+                            {% for day in days %}
+
+                                <option
+                                    value="{{ day }}"
+                                    {% if form_data.birth_day|stringformat:"s" == day|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ day }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <!-- Mois -->
+
+                        <select
+                            id="id_birth_month"
+                            name="birth_month"
+                            required
+                            class="{% if errors.birth_month or errors.date_naissance %}is-invalid{% endif %}"
+                            aria-label="{% trans "Mois de naissance" %}"
+                        >
+
+                            <option value="">
+                                {% trans "Mois" %}
+                            </option>
+
+                            {% for value, label in mois_choices %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if form_data.birth_month|stringformat:"s" == value|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <!-- Année -->
+
+                        <select
+                            id="id_birth_year"
+                            name="birth_year"
+                            required
+                            class="{% if errors.birth_year or errors.date_naissance %}is-invalid{% endif %}"
+                            aria-label="{% trans "Année de naissance" %}"
+                        >
+
+                            <option value="">
+                                {% trans "Année" %}
+                            </option>
+
+                            {% for year in years %}
+
+                                <option
+                                    value="{{ year }}"
+                                    {% if form_data.birth_year|stringformat:"s" == year|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    {% if errors.birth_day %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.birth_day }}
+                        </div>
+
+                    {% elif errors.birth_month %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.birth_month }}
+                        </div>
+
+                    {% elif errors.birth_year %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.birth_year }}
+                        </div>
+
+                    {% elif errors.date_naissance %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.date_naissance }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Genre -->
+
+                <div class="account-field">
+
+                    <span class="account-group-label">
+                        {% trans "Genre" %}
+                        <span class="text-danger">*</span>
+                    </span>
+
+
+                    <div class="account-gender-options">
+
+                        <div class="account-gender-option">
+
+                            <input
+                                type="radio"
+                                name="genre"
+                                id="genre_homme"
+                                value="homme"
+                                {% if form_data.genre == "homme" %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label for="genre_homme">
+                                <i class="bi bi-person"></i>
+                                {% trans "Homme" %}
+                            </label>
+
+                        </div>
+
+
+                        <div class="account-gender-option">
+
+                            <input
+                                type="radio"
+                                name="genre"
+                                id="genre_femme"
+                                value="femme"
+                                {% if form_data.genre == "femme" %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label for="genre_femme">
+                                <i class="bi bi-person"></i>
+                                {% trans "Femme" %}
+                            </label>
+
+                        </div>
+
+
+                        <div class="account-gender-option">
+
+                            <input
+                                type="radio"
+                                name="genre"
+                                id="genre_non_precise"
+                                value="non_precise"
+                                {% if form_data.genre == "non_precise" %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label for="genre_non_precise">
+                                <i class="bi bi-person-dash"></i>
+                                {% trans "Ne pas préciser" %}
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if errors.genre %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.genre }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="account-step-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary previous-step"
+                    >
+                        <i class="bi bi-arrow-left me-2"></i>
+                        {% trans "Retour" %}
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary next-step"
+                    >
+                        {% trans "Suivant" %}
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ======================================
+                 ÉTAPE 3 — SÉCURITÉ
+            ======================================= -->
+
+            <section
+                class="account-step d-none"
+                data-step="3"
+            >
+
+                <h2>
+                    {% trans "Sécurisez votre compte" %}
+                </h2>
+
+                <p>
+                    {% trans "Votre adresse e-mail et votre mot de passe vous permettront d'accéder à votre espace client." %}
+                </p>
+
+
+                <!-- Email -->
+
+                <div class="account-field">
+
+                    <label for="id_email">
+                        {% trans "Adresse e-mail" %}
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        id="id_email"
+                        name="email"
+                        type="email"
+                        required
+                        autocomplete="email"
+                        placeholder="{% trans "vous@exemple.com" %}"
+                        value="{{ form_data.email|default:'' }}"
+                        class="{% if errors.email %}is-invalid{% endif %}"
+                    >
+
+                    {% if errors.email %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.email }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Mot de passe -->
+
+                <div class="account-field">
+
+                    <label for="id_password1">
+                        {% trans "Mot de passe" %}
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="account-password-wrap">
+
+                        <input
+                            id="id_password1"
+                            name="password1"
+                            type="password"
+                            required
+                            autocomplete="new-password"
+                            class="{% if errors.password1 %}is-invalid{% endif %}"
+                        >
+
+                        <button
+                            type="button"
+                            class="account-password-toggle"
+                            data-target="id_password1"
+                            aria-label="{% trans "Afficher le mot de passe" %}"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="account-password-meter">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div
+                        class="account-password-feedback"
+                        id="password-feedback"
+                    >
+                        {% trans "Utilisez un mot de passe suffisamment robuste." %}
+                    </div>
+
+
+                    {% if errors.password1 %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.password1 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Confirmation -->
+
+                <div class="account-field">
+
+                    <label for="id_password2">
+                        {% trans "Confirmer le mot de passe" %}
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="account-password-wrap">
+
+                        <input
+                            id="id_password2"
+                            name="password2"
+                            type="password"
+                            required
+                            autocomplete="new-password"
+                            class="{% if errors.password2 %}is-invalid{% endif %}"
+                        >
+
+                        <button
+                            type="button"
+                            class="account-password-toggle"
+                            data-target="id_password2"
+                            aria-label="{% trans "Afficher la confirmation" %}"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="account-field-error d-none"
+                        id="password-match-error"
+                    >
+                        <i class="bi bi-exclamation-circle"></i>
+                        {% trans "Les deux mots de passe ne correspondent pas." %}
+                    </div>
+
+
+                    {% if errors.password2 %}
+                        <div class="account-field-error">
+                            <i class="bi bi-exclamation-circle"></i>
+                            {{ errors.password2 }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Conditions -->
+
+                <div class="account-terms">
+
+                    <input
+                        type="checkbox"
+                        id="id_accept_terms"
+                        name="accept_terms"
+                        {% if form_data.accept_terms %}checked{% endif %}
+                    >
+
+                    <label for="id_accept_terms">
+
+                        {% trans "J'accepte les" %}
+
+                        <a href="#" onclick="return false;">
+                            {% trans "Conditions d'utilisation" %}
+                        </a>
+
+                        {% trans "et la" %}
+
+                        <a href="#" onclick="return false;">
+                            {% trans "Politique de confidentialité" %}
+                        </a>.
+
+                    </label>
+
+                </div>
+
+
+                {% if errors.accept_terms %}
+                    <div class="account-field-error">
+                        <i class="bi bi-exclamation-circle"></i>
+                        {{ errors.accept_terms }}
+                    </div>
+                {% endif %}
+
+
+                <!-- Actions -->
+
+                <div class="account-step-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary previous-step"
+                    >
+                        <i class="bi bi-arrow-left me-2"></i>
+                        {% trans "Retour" %}
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary account-submit"
+                        id="register-submit"
+                    >
+
+                        <span class="submit-label">
+                            {% trans "Créer mon compte" %}
+                        </span>
+
+                        <span class="submit-loading d-none">
+
+                            <span
+                                class="spinner-border spinner-border-sm me-2"
+                                aria-hidden="true"
+                            ></span>
+
+                            {% trans "Création..." %}
+
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </form>
+
+
+        <p class="account-login-link">
+
+            {% trans "Vous avez déjà un compte ?" %}
+
+            <a href="{% url 'login' %}">
+                {% trans "Se connecter" %}
+            </a>
+
+        </p>
+
+    </section>
+
+</main>
+
+
 <script>
-(()=>{const form=document.getElementById('register-form'),steps=[...document.querySelectorAll('.signup-step')],indicators=[...document.querySelectorAll('[data-step-indicator]')],role=document.getElementById('id_role');let current=1;function show(n){current=n;steps.forEach(s=>s.classList.toggle('d-none',+s.dataset.step!==n));indicators.forEach(i=>{let x=+i.dataset.stepIndicator;i.classList.toggle('active',x===n);i.classList.toggle('completed',x<n)})}function valid(n){if(n===1)return true;let ok=true;steps[n-1].querySelectorAll('input[required]').forEach(f=>{let v=f.checkValidity();f.classList.toggle('is-invalid',!v);if(!v)ok=false});return ok}document.querySelectorAll('input[name="account_type"]').forEach(r=>r.addEventListener('change',()=>role.value=r.value));document.querySelectorAll('.next-step').forEach(b=>b.addEventListener('click',()=>{if(valid(current)&&current<3)show(current+1)}));document.querySelectorAll('.previous-step').forEach(b=>b.addEventListener('click',()=>show(current-1)));function toggle(i,c){let f=document.getElementById(i),x=document.getElementById(c);f.type=f.type==='password'?'text':'password';x.className=f.type==='password'?'bi bi-eye':'bi bi-eye-slash'}document.getElementById('toggle-pw1').addEventListener('click',()=>toggle('id_password1','icon-pw1'));document.getElementById('toggle-pw2').addEventListener('click',()=>toggle('id_password2','icon-pw2'));let p=document.getElementById('id_password1'),p2=document.getElementById('id_password2'),fb=document.getElementById('pw-match-feedback');function password(){let v=p.value,r={length:v.length>=6,letter:/[A-Za-z]/.test(v),number:/\d/.test(v),special:/[^A-Za-z\d]/.test(v)},score=Object.values(r).filter(Boolean).length,labels=['Saisissez un mot de passe','À renforcer','Correct','Bon','Robuste'],colors=['#e8eaf0','#ee6475','#e7b84b','#5b4df3','#159b7c'];document.querySelectorAll('#password-meter span').forEach((b,i)=>b.style.background=i<score?colors[score]:'var(--line)');document.getElementById('password-strength').textContent=labels[score];document.getElementById('password-length').textContent=`${v.length} caractère${v.length>1?'s':''}`;Object.entries(r).forEach(([k,a])=>{let e=document.querySelector(`[data-rule="${k}"]`);e.classList.toggle('valid',a);e.querySelector('i').className=a?'bi bi-check-circle-fill':'bi bi-circle'})}function match(){if(!p2.value){fb.textContent='';p2.classList.remove('is-valid','is-invalid')}else if(p.value===p2.value){fb.textContent='Les mots de passe correspondent.';fb.style.color='#159b7c';p2.classList.add('is-valid');p2.classList.remove('is-invalid')}else{fb.textContent='Les mots de passe ne correspondent pas.';fb.style.color='#ee6475';p2.classList.add('is-invalid');p2.classList.remove('is-valid')}}p.addEventListener('input',()=>{password();match()});p2.addEventListener('input',match);form.addEventListener('submit',e=>{if(!valid(3)||p.value!==p2.value){e.preventDefault();match()}});password();show(1)})();
+(() => {
+
+    const form =
+        document.getElementById("register-form");
+
+    if (!form) {
+        return;
+    }
+
+
+    const steps = [
+        ...document.querySelectorAll(
+            ".account-step[data-step]"
+        )
+    ];
+
+    const dots = [
+        ...document.querySelectorAll(
+            "[data-dot]"
+        )
+    ];
+
+    const lines = [
+        ...document.querySelectorAll(
+            "[data-line]"
+        )
+    ];
+
+
+    const stepLabel =
+        document.getElementById("step-label");
+
+    const stepName =
+        document.getElementById("step-name");
+
+
+    const password1 =
+        document.getElementById("id_password1");
+
+    const password2 =
+        document.getElementById("id_password2");
+
+
+    const passwordFeedback =
+        document.getElementById(
+            "password-feedback"
+        );
+
+    const passwordMatchError =
+        document.getElementById(
+            "password-match-error"
+        );
+
+
+    const submitButton =
+        document.getElementById(
+            "register-submit"
+        );
+
+
+    const stepNames = {
+        1: "Identité",
+        2: "Profil",
+        3: "Sécurité"
+    };
+
+
+    let current =
+        Number("{{ active_step|default:1 }}");
+
+
+    if (![1, 2, 3].includes(current)) {
+        current = 1;
+    }
+
+
+    function showStep(stepNumber) {
+
+        current = stepNumber;
+
+
+        steps.forEach(step => {
+
+            const isCurrent =
+                Number(step.dataset.step)
+                === stepNumber;
+
+            step.classList.toggle(
+                "d-none",
+                !isCurrent
+            );
+
+        });
+
+
+        dots.forEach(dot => {
+
+            dot.classList.toggle(
+                "active",
+                Number(dot.dataset.dot)
+                <= stepNumber
+            );
+
+        });
+
+
+        lines.forEach(line => {
+
+            line.classList.toggle(
+                "active",
+                Number(line.dataset.line)
+                < stepNumber
+            );
+
+        });
+
+
+        if (stepLabel) {
+
+            stepLabel.textContent =
+                `Étape ${stepNumber} sur 3`;
+
+        }
+
+
+        if (stepName) {
+
+            stepName.textContent =
+                stepNames[stepNumber];
+
+        }
+
+
+        const firstField =
+            steps[stepNumber - 1]
+                ?.querySelector(
+                    "input:not([type='radio']):not([type='checkbox']), select"
+                );
+
+
+        if (firstField) {
+
+            window.setTimeout(
+                () => firstField.focus(),
+                120
+            );
+
+        }
+
+    }
+
+
+    function clearClientError(field) {
+
+        field.classList.remove(
+            "is-invalid"
+        );
+
+    }
+
+
+    function validateCurrentStep() {
+
+        const currentStep =
+            steps[current - 1];
+
+
+        if (!currentStep) {
+            return false;
+        }
+
+
+        let valid = true;
+
+
+        /* Étape 1 */
+
+        if (current === 1) {
+
+            const firstName =
+                document.getElementById(
+                    "id_first_name"
+                );
+
+            const lastName =
+                document.getElementById(
+                    "id_last_name"
+                );
+
+
+            [firstName, lastName]
+                .forEach(field => {
+
+                    if (!field.value.trim()) {
+
+                        field.classList.add(
+                            "is-invalid"
+                        );
+
+                        valid = false;
+
+                    } else {
+
+                        clearClientError(field);
+
+                    }
+
+                });
+
+        }
+
+
+        /* Étape 2 */
+
+        if (current === 2) {
+
+            const day =
+                document.getElementById(
+                    "id_birth_day"
+                );
+
+            const month =
+                document.getElementById(
+                    "id_birth_month"
+                );
+
+            const year =
+                document.getElementById(
+                    "id_birth_year"
+                );
+
+
+            [day, month, year]
+                .forEach(field => {
+
+                    if (!field.value) {
+
+                        field.classList.add(
+                            "is-invalid"
+                        );
+
+                        valid = false;
+
+                    } else {
+
+                        clearClientError(field);
+
+                    }
+
+                });
+
+
+            const selectedGender =
+                form.querySelector(
+                    'input[name="genre"]:checked'
+                );
+
+
+            if (!selectedGender) {
+                valid = false;
+            }
+
+        }
+
+
+        /* Étape 3 */
+
+        if (current === 3) {
+
+            const email =
+                document.getElementById(
+                    "id_email"
+                );
+
+
+            if (
+                !email.value.trim()
+                || !email.checkValidity()
+            ) {
+
+                email.classList.add(
+                    "is-invalid"
+                );
+
+                valid = false;
+
+            } else {
+
+                clearClientError(email);
+
+            }
+
+
+            if (!password1.value) {
+
+                password1.classList.add(
+                    "is-invalid"
+                );
+
+                valid = false;
+
+            } else {
+
+                clearClientError(password1);
+
+            }
+
+
+            if (
+                !password2.value
+                || password1.value
+                    !== password2.value
+            ) {
+
+                password2.classList.add(
+                    "is-invalid"
+                );
+
+
+                if (passwordMatchError) {
+
+                    passwordMatchError
+                        .classList.remove(
+                            "d-none"
+                        );
+
+                }
+
+
+                valid = false;
+
+            } else {
+
+                clearClientError(password2);
+
+
+                if (passwordMatchError) {
+
+                    passwordMatchError
+                        .classList.add(
+                            "d-none"
+                        );
+
+                }
+
+            }
+
+
+            const terms =
+                document.getElementById(
+                    "id_accept_terms"
+                );
+
+
+            if (!terms.checked) {
+                valid = false;
+            }
+
+        }
+
+
+        return valid;
+    }
+
+
+    /* Suivant */
+
+    document
+        .querySelectorAll(".next-step")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        validateCurrentStep()
+                        && current < 3
+                    ) {
+
+                        showStep(
+                            current + 1
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* Retour */
+
+    document
+        .querySelectorAll(
+            ".previous-step"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    showStep(
+                        Math.max(
+                            1,
+                            current - 1
+                        )
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* Afficher / masquer mot de passe */
+
+    document
+        .querySelectorAll(
+            ".account-password-toggle"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const input =
+                        document.getElementById(
+                            button.dataset.target
+                        );
+
+                    const icon =
+                        button.querySelector("i");
+
+
+                    if (!input) {
+                        return;
+                    }
+
+
+                    const show =
+                        input.type === "password";
+
+
+                    input.type =
+                        show
+                            ? "text"
+                            : "password";
+
+
+                    if (icon) {
+
+                        icon.className =
+                            show
+                                ? "bi bi-eye-slash"
+                                : "bi bi-eye";
+
+                    }
+
+
+                    button.setAttribute(
+                        "aria-label",
+                        show
+                            ? "Masquer le mot de passe"
+                            : "Afficher le mot de passe"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* Robustesse mot de passe */
+
+    function updatePasswordStrength() {
+
+        if (!password1) {
+            return;
+        }
+
+
+        const value =
+            password1.value;
+
+
+        const checks = [
+            value.length >= 8,
+            /[A-Za-z]/.test(value),
+            /\d/.test(value),
+            /[^A-Za-z\d]/.test(value)
+        ];
+
+
+        const score =
+            checks.filter(Boolean).length;
+
+
+        document
+            .querySelectorAll(
+                ".account-password-meter span"
+            )
+            .forEach(
+                (bar, index) => {
+
+                    bar.style.background =
+                        index < score
+                            ? "var(--color-primary)"
+                            : "var(--color-border)";
+
+                }
+            );
+
+
+        if (!passwordFeedback) {
+            return;
+        }
+
+
+        if (!value) {
+
+            passwordFeedback.textContent =
+                "Utilisez un mot de passe suffisamment robuste.";
+
+        } else if (score <= 1) {
+
+            passwordFeedback.textContent =
+                "Mot de passe faible.";
+
+        } else if (score === 2) {
+
+            passwordFeedback.textContent =
+                "Mot de passe moyen.";
+
+        } else if (score === 3) {
+
+            passwordFeedback.textContent =
+                "Bon mot de passe.";
+
+        } else {
+
+            passwordFeedback.textContent =
+                "Mot de passe robuste.";
+
+        }
+
+    }
+
+
+    password1?.addEventListener(
+        "input",
+        updatePasswordStrength
+    );
+
+
+    /* Vérification confirmation */
+
+    password2?.addEventListener(
+        "input",
+        () => {
+
+            if (!password2.value) {
+                return;
+            }
+
+
+            const matches =
+                password1.value
+                === password2.value;
+
+
+            password2.classList.toggle(
+                "is-invalid",
+                !matches
+            );
+
+
+            if (passwordMatchError) {
+
+                passwordMatchError
+                    .classList.toggle(
+                        "d-none",
+                        matches
+                    );
+
+            }
+
+        }
+    );
+
+
+    /* Submit */
+
+    form.addEventListener(
+        "submit",
+        event => {
+
+            current = 3;
+
+
+            if (!validateCurrentStep()) {
+
+                event.preventDefault();
+
+                showStep(3);
+
+                return;
+            }
+
+
+            if (submitButton) {
+
+                submitButton.disabled = true;
+
+
+                submitButton
+                    .querySelector(
+                        ".submit-label"
+                    )
+                    ?.classList.add(
+                        "d-none"
+                    );
+
+
+                submitButton
+                    .querySelector(
+                        ".submit-loading"
+                    )
+                    ?.classList.remove(
+                        "d-none"
+                    );
+
+            }
+
+        }
+    );
+
+
+    /* Affichage initial */
+
+    showStep(current);
+
+})();
 </script>
+
 {% endblock %}

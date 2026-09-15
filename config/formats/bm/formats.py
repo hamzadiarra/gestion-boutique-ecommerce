@@ -1,0 +1,8 @@
+# French presentation until reviewed by a Bamanankan language specialist.
+DATE_FORMAT = 'j F Y'
+SHORT_DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'j F Y H:i'
+SHORT_DATETIME_FORMAT = 'd/m/Y H:i'
+DECIMAL_SEPARATOR = ','
+THOUSAND_SEPARATOR = '\u00a0'
+NUMBER_GROUPING = 3

@@ -1,15 +1,16 @@
+from django.utils.translation import gettext_lazy
 from django.db import models
 from django.contrib.auth.models import User
 
 
 class Notification(models.Model):
     TYPE_CHOICES = [
-        ("commande", "Commande"),
-        ("paiement", "Paiement"),
-        ("livraison", "Livraison"),
-        ("stock", "Stock"),
-        ("compte", "Compte"),
-        ("information", "Information"),
+        ("commande", gettext_lazy("Commande")),
+        ("paiement", gettext_lazy("Paiement")),
+        ("livraison", gettext_lazy("Livraison")),
+        ("stock", gettext_lazy("Stock")),
+        ("compte", gettext_lazy("Compte")),
+        ("information", gettext_lazy("Information")),
     ]
     utilisateur = models.ForeignKey(
         User,
@@ -38,8 +39,8 @@ class Notification(models.Model):
     )
 
     class Meta:
-        verbose_name = "Notification"
-        verbose_name_plural = "Notifications"
+        verbose_name = gettext_lazy("Notification")
+        verbose_name_plural = gettext_lazy("Notifications")
         ordering = ["-date_creation"]
 
     def __str__(self):

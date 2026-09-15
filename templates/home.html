@@ -1,77 +1,57 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load i18n %}
 {% load static %}
-{% block title %}Accueil — Gestion Boutique{% endblock %}
+{% block title %}{% trans "Accueil — Gestion Boutique" %}{% endblock %}
 {% block content %}
 <main class="shop-home">
-    {% with hero_product=produits_vedette|first %}
     <section class="shop-hero" aria-labelledby="hero-title">
         <div class="shop-hero-blue-shape" aria-hidden="true"></div>
         <div class="shop-hero-decoration shop-hero-decoration-one" aria-hidden="true"></div>
         <div class="shop-hero-decoration shop-hero-decoration-two" aria-hidden="true"></div>
         <div class="container shop-hero-inner">
             <div class="shop-hero-copy">
-                <span class="shop-eyebrow shop-hero-eyebrow"><i class="bi bi-stars"></i> La sélection du moment</span>
-                <h1 id="hero-title">Des essentiels choisis pour votre quotidien.</h1>
-                <p>Découvrez des produits utiles, élégants et soigneusement sélectionnés pour rendre chaque achat plus simple.</p>
+                <span class="shop-eyebrow shop-hero-eyebrow"><i class="bi bi-stars"></i> {% trans "La sélection du moment" %}</span>
+                <h1 id="hero-title">{% trans "Des essentiels choisis pour votre quotidien." %}</h1>
+                <p>{% trans "Découvrez des produits utiles, élégants et soigneusement sélectionnés pour rendre chaque achat plus simple." %}</p>
                 <div class="shop-hero-actions">
-                    <a href="{% url 'product_list' %}" class="btn shop-hero-primary">Découvrir les produits <i class="bi bi-arrow-right ms-2"></i></a>
-                    <a href="{% url 'category_list' %}" class="btn shop-hero-secondary">Voir les catégories</a>
+                    <a href="{% url 'product_list' %}" class="btn shop-hero-primary">{% trans "Découvrir les produits" %} <i class="bi bi-arrow-right ms-2"></i></a>
+                    <a href="{% url 'category_list' %}" class="btn shop-hero-secondary">{% trans "Voir les catégories" %}</a>
                 </div>
                 <div class="shop-hero-proof">
-                    <span><i class="bi bi-truck"></i><strong>Livraison rapide</strong><small>Suivie jusqu'à chez vous</small></span>
-                    <span><i class="bi bi-shield-check"></i><strong>Paiement sécurisé</strong><small>Un achat en toute confiance</small></span>
-                    <span><i class="bi bi-headset"></i><strong>Support client</strong><small>Une équipe à votre écoute</small></span>
+                    <span><i class="bi bi-truck"></i><strong>{% trans "Livraison rapide" %}</strong><small>{% trans "Suivie jusqu'à chez vous" %}</small></span>
+                    <span><i class="bi bi-shield-check"></i><strong>{% trans "Paiement sécurisé" %}</strong><small>{% trans "Un achat en toute confiance" %}</small></span>
+                    <span><i class="bi bi-headset"></i><strong>{% trans "Support client" %}</strong><small>{% trans "Une équipe à votre écoute" %}</small></span>
                 </div>
             </div>
-            <div class="shop-hero-visual" aria-label="Produit vedette">
+            <div class="shop-hero-visual" aria-label="{% trans "Produit vedette" %}">
                 <div class="shop-hero-halo" aria-hidden="true"></div>
                 <div class="shop-hero-product">
-                    {% if hero_product and hero_product.image %}
-                        <img src="{{ hero_product.image.url }}" alt="{{ hero_product.nom }}" fetchpriority="high">
-                    {% else %}
-                        {% with recent_product=nouveautes|first %}
-                            {% if recent_product and recent_product.image %}
-                                <img src="{{ recent_product.image.url }}" alt="{{ recent_product.nom }}" fetchpriority="high">
-                            {% else %}
-                                <img src="{% static 'images/boutique_hero_bg.png' %}" alt="Sélection de produits de la boutique" fetchpriority="high">
-                            {% endif %}
-                        {% endwith %}
-                    {% endif %}
+                    <img src="{% static 'images/boutique_hero_bg.png' %}" alt="{% trans "Sélection de vêtements de la boutique" %}" fetchpriority="high">
                 </div>
-                <span class="shop-hero-floating-badge"><i class="bi bi-lightning-charge-fill"></i> Coup de cœur</span>
-                <span class="shop-hero-floating-note"><i class="bi bi-check-circle-fill"></i> Sélection vérifiée</span>
+                <span class="shop-hero-floating-badge"><i class="bi bi-lightning-charge-fill"></i> {% trans "Coup de cœur" %}</span>
+                <span class="shop-hero-floating-note"><i class="bi bi-check-circle-fill"></i> {% trans "Sélection vérifiée" %}</span>
             </div>
         </div>
     </section>
-    {% endwith %}
-
-    <!-- TEMPORAIRE — diagnostic du thème visible uniquement sur localhost -->
-    <aside id="theme-debug-panel" class="theme-debug-panel" hidden aria-live="polite">
-        <strong>Theme debug</strong>
-        <span>data-theme: <b data-theme-debug="data-theme"></b></span>
-        <span>data-bs-theme: <b data-theme-debug="data-bs-theme"></b></span>
-        <span>localStorage: <b data-theme-debug="storage"></b></span>
-        <span>toggle trouvé: <b data-theme-debug="toggle"></b></span>
-        <span>icon trouvée: <b data-theme-debug="icon"></b></span>
-    </aside>
 
     <div class="container shop-home-content">
-        <section class="shop-trust-row" aria-label="Les engagements de la boutique">
-            <div><i class="bi bi-gem"></i><span><strong>Produits de qualité</strong><small>Choisis avec exigence</small></span></div>
-            <div><i class="bi bi-tag-fill"></i><span><strong>Meilleurs prix</strong><small>Des offres qui ont du sens</small></span></div>
-            <div><i class="bi bi-truck"></i><span><strong>Livraison rapide</strong><small>Une commande suivie</small></span></div>
-            <div><i class="bi bi-shield-lock-fill"></i><span><strong>Paiement sécurisé</strong><small>Un parcours rassurant</small></span></div>
+        {% if categories %}<section class="shop-section shop-categories-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">{% trans "À explorer" %}</span><h2>{% trans "Catégories populaires" %}</h2><p>{% trans "Tout ce qu'il faut pour trouver rapidement votre prochain coup de cœur." %}</p></div><a href="{% url 'category_list' %}" class="shop-text-link">{% trans "Voir toutes les catégories" %} <i class="bi bi-arrow-up-right"></i></a></div><div class="shop-category-grid">{% for categorie in categories %}<a href="{% url 'category_detail' categorie.slug %}" class="shop-category-tile">{% if categorie.image %}<img src="{{ categorie.image.url }}" alt="{{ categorie.localized_name }}" loading="lazy">{% else %}<span class="shop-category-placeholder"><i class="bi bi-tag"></i></span>{% endif %}<span><strong>{{ categorie.localized_name }}</strong><small>{{ categorie.product_count }} {% trans "produit" %}{{ categorie.product_count|pluralize }}</small></span><i class="bi bi-arrow-up-right"></i></a>{% endfor %}</div></section>{% endif %}
+
+        {% if nouveautes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">{% trans "Tout juste arrivé" %}</span><h2>{% trans "Les nouveautés" %}</h2><p>{% trans "Les dernières pièces ajoutées à la boutique." %}</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="shop-text-link">{% trans "Voir les nouveautés" %} <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in nouveautes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if promotions %}<section class="shop-promo-band"><div><span class="shop-eyebrow light">{% trans "Offres sélectionnées" %}</span><h2>{% trans "Les bons produits, au bon moment." %}</h2><p>{% trans "Profitez des prix promotionnels disponibles actuellement." %}</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="btn shop-hero-secondary">{% trans "Voir les offres" %} <i class="bi bi-arrow-right ms-2"></i></a></section><section class="shop-section shop-section-tight"><div class="row g-4">{% for produit in promotions %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if meilleures_ventes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">{% trans "Plébiscités" %}</span><h2>{% trans "Les meilleures ventes" %}</h2><p>{% trans "Les produits qui trouvent déjà leur place chez nos clients." %}</p></div><a href="{% url 'product_list' %}?tri=popularite" class="shop-text-link">{% trans "Voir le classement" %} <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in meilleures_ventes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
+
+        {% if produits_vedette %}<section class="shop-featured-callout"><div><span class="shop-eyebrow">{% trans "La sélection Gestion Boutique" %}</span><h2>{% trans "Des produits choisis avec exigence." %}</h2><p>{% trans "Explorez notre sélection vedette et trouvez ce qui vous correspond vraiment." %}</p><a href="{% url 'product_list' %}" class="btn btn-primary">{% trans "Découvrir toute la boutique" %} <i class="bi bi-arrow-right ms-2"></i></a></div><div class="shop-featured-art"><i class="bi bi-bag-heart"></i><span>{% trans "Simple." %}<br>{% trans "Utile." %}<br>{% trans "À vous." %}</span></div></section>{% endif %}
+    </div>
+
+    <div class="container">
+        <section class="shop-trust-row" aria-label="{% trans "Les engagements de la boutique" %}">
+            <div><i class="bi bi-gem"></i><span><strong>{% trans "Produits de qualité" %}</strong><small>{% trans "Choisis avec exigence" %}</small></span></div>
+            <div><i class="bi bi-tag-fill"></i><span><strong>{% trans "Meilleurs prix" %}</strong><small>{% trans "Des offres qui ont du sens" %}</small></span></div>
+            <div><i class="bi bi-truck"></i><span><strong>{% trans "Livraison rapide" %}</strong><small>{% trans "Une commande suivie" %}</small></span></div>
+            <div><i class="bi bi-shield-lock-fill"></i><span><strong>{% trans "Paiement sécurisé" %}</strong><small>{% trans "Un parcours rassurant" %}</small></span></div>
         </section>
-
-        {% if categories %}<section class="shop-section shop-categories-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">À explorer</span><h2>Catégories populaires</h2><p>Tout ce qu'il faut pour trouver rapidement votre prochain coup de cœur.</p></div><a href="{% url 'category_list' %}" class="shop-text-link">Voir toutes les catégories <i class="bi bi-arrow-up-right"></i></a></div><div class="shop-category-grid">{% for categorie in categories %}<a href="{% url 'category_detail' categorie.slug %}" class="shop-category-tile">{% if categorie.image %}<img src="{{ categorie.image.url }}" alt="{{ categorie.nom }}" loading="lazy">{% else %}<span class="shop-category-placeholder"><i class="bi bi-tag"></i></span>{% endif %}<span><strong>{{ categorie.nom }}</strong><small>{{ categorie.product_count }} produit{{ categorie.product_count|pluralize }}</small></span><i class="bi bi-arrow-up-right"></i></a>{% endfor %}</div></section>{% endif %}
-
-        {% if nouveautes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">Tout juste arrivé</span><h2>Les nouveautés</h2><p>Les dernières pièces ajoutées à la boutique.</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="shop-text-link">Voir les nouveautés <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in nouveautes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
-
-        {% if promotions %}<section class="shop-promo-band"><div><span class="shop-eyebrow light">Offres sélectionnées</span><h2>Les bons produits, au bon moment.</h2><p>Profitez des prix promotionnels disponibles actuellement.</p></div><a href="{% url 'product_list' %}?tri=nouveautes" class="btn shop-hero-secondary">Voir les offres <i class="bi bi-arrow-right ms-2"></i></a></section><section class="shop-section shop-section-tight"><div class="row g-4">{% for produit in promotions %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
-
-        {% if meilleures_ventes %}<section class="shop-section"><div class="shop-section-heading"><div><span class="shop-eyebrow">Plébiscités</span><h2>Les meilleures ventes</h2><p>Les produits qui trouvent déjà leur place chez nos clients.</p></div><a href="{% url 'product_list' %}?tri=popularite" class="shop-text-link">Voir le classement <i class="bi bi-arrow-up-right"></i></a></div><div class="row g-4">{% for produit in meilleures_ventes %}<div class="col-sm-6 col-lg-3">{% include 'products/_product_card.html' with produit=produit %}</div>{% endfor %}</div></section>{% endif %}
-
-        {% if produits_vedette %}<section class="shop-featured-callout"><div><span class="shop-eyebrow">La sélection Gestion Boutique</span><h2>Des produits choisis avec exigence.</h2><p>Explorez notre sélection vedette et trouvez ce qui vous correspond vraiment.</p><a href="{% url 'product_list' %}" class="btn btn-primary">Découvrir toute la boutique <i class="bi bi-arrow-right ms-2"></i></a></div><div class="shop-featured-art"><i class="bi bi-bag-heart"></i><span>Simple.<br>Utile.<br>À vous.</span></div></section>{% endif %}
     </div>
 </main>
 {% endblock %}

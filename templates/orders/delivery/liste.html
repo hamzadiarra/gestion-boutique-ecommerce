@@ -1,0 +1,14 @@
+{% extends "orders/delivery/base.html" %}{% load i18n %}
+{% block title %}{% if espace_livreur %}{% trans "Mes livraisons" %}{% else %}{% trans "Supervision livraisons" %}{% endif %}{% endblock %}
+{% block delivery_content %}
+<h1>{% if espace_livreur %}{% trans "Mes livraisons" %}{% else %}{% trans "Livraisons boutique" %}{% endif %}</h1>
+<nav class="d-flex flex-wrap gap-2 my-3"><a class="btn btn-outline-primary" href="?section=a_accepter">{% trans "À accepter" %}</a><a class="btn btn-outline-primary" href="?section=a_affecter">{% trans "À affecter" %}</a><a class="btn btn-outline-primary" href="?section=en_cours">{% trans "En cours" %}</a><a class="btn btn-outline-primary" href="?section=terminees">{% trans "Terminées" %}</a><a class="btn btn-outline-primary" href="?section=echecs">{% trans "Échecs" %}</a><a class="btn btn-outline-primary" href="?section=livrees_jour">{% trans "Livrées aujourd'hui" %}</a></nav>
+<form method="get" class="delivery-filters mb-4">{{ filtre_form.as_p }}<button class="btn btn-dark">{% trans "Filtrer" %}</button></form>
+<div class="delivery-cards">{% for l in page_obj %}<article class="delivery-card"><header><h2 class="h5">{{ l.reference }}</h2><span class="badge text-bg-secondary">{{ l.get_statut_display }}</span></header><p>{% trans "Commande #" %}{{ l.commande_id }} · {{ l.commande.utilisateur.get_full_name|default:l.commande.utilisateur.username }}</p>
+{% include "orders/delivery/_address.html" with commande=l.commande %}
+{% if l.commande.telephone_livraison %}<p>{% trans "Téléphone :" %} {{ l.commande.telephone_livraison }}</p>{% endif %}
+<p>{% trans "Livreur :" %} {% if l.livreur %}{{ l.livreur.get_full_name|default:l.livreur.username }}{% else %}{% trans "Non affecté" %}{% endif %}</p>
+<small class="d-block">{% trans "Affectation :" %} {{ l.date_affectation|date:"d/m/Y H:i"|default:"En attente" }}{% if l.date_livraison %} {% trans "· Livrée le" %} {{ l.date_livraison|date:"d/m/Y H:i" }}{% endif %}</small>
+<a class="btn btn-primary w-100 mt-3" href="{% url 'livraison_detail' l.pk %}">{% trans "Voir · Discussion (" %}{{ l.non_lus }})</a></article>{% empty %}<p>{% trans "Aucune livraison dans cette sélection." %}</p>{% endfor %}</div>
+{% include "dashboard/_control_pagination.html" %}
+{% endblock %}

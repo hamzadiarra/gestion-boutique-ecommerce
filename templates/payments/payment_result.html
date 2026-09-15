@@ -1,3 +1,12 @@
-{% extends "base.html" %}
-{% block title %}Statut du paiement — Gestion Boutique{% endblock %}
-{% block content %}<main class="checkout-page"><div class="container"><div class="checkout-confirmation-page payment-result-{% if status == 'echoue' %}failed{% else %}cancelled{% endif %}"><div class="checkout-confirm-icon"><i class="bi {% if status == 'echoue' %}bi-exclamation{% else %}bi-x{% endif %}"></i></div><span class="shop-eyebrow">Paiement simulé</span><h1>{% if status == 'echoue' %}Le paiement a échoué.{% else %}Le paiement a été annulé.{% endif %}</h1><p>{% if status == 'echoue' %}Aucun montant n'a été confirmé. Vous pouvez réessayer avec un autre résultat de simulation.{% else %}La commande reste accessible, mais aucun paiement n'a été confirmé.{% endif %}</p>{% if paiement %}<div class="confirmation-reference"><span>Référence</span><strong>{{ paiement.reference }}</strong><small>{{ paiement.get_statut_display }}</small></div>{% endif %}<div class="confirmation-actions"><a href="{% url 'payment_form' commande.id %}" class="btn btn-primary">Réessayer</a><a href="{% url 'order_detail' commande.id %}" class="btn btn-outline-primary">Retour à la commande</a></div></div></div></main>{% endblock %}
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "Statut du paiement — Gestion Boutique" %}{% endblock %}
+{% block content %}
+<main class="checkout-page"><div class="container"><div class="checkout-confirmation-page">
+<div class="checkout-confirm-icon"><i class="bi bi-info-circle"></i></div>
+<span class="shop-eyebrow">{% trans "Suivi du paiement" %}</span>
+<h1>{% if status == 'en_attente' %}{% trans "Paiement en attente de confirmation." %}{% elif status == 'indisponible' %}{% trans "Moyen de paiement indisponible." %}{% elif status == 'annule' %}{% trans "Paiement non finalisé." %}{% else %}{% trans "Le paiement n'a pas été confirmé." %}{% endif %}</h1>
+<p>{{ message }}</p>
+{% if paiement %}<div class="confirmation-reference"><span>{% trans "Référence" %}</span><strong>{{ paiement.reference|default:paiement.id }}</strong><small>{{ paiement.get_methode_display }} · {{ paiement.get_statut_display }}</small></div>{% endif %}
+<div class="confirmation-actions">{% if online_ready %}<form method="post" action="{% url 'start_online_payment' commande.id %}">{% csrf_token %}<button class="btn btn-primary" type="submit">{% trans "Payer maintenant" %}</button></form>{% endif %}<a href="{% url 'payment_form' commande.id %}" class="btn btn-primary">{% trans "Choisir le paiement" %}</a><a href="{% url 'order_detail' commande.id %}" class="btn btn-outline-primary">{% trans "Retour à la commande" %}</a></div>
+</div></div></main>
+{% endblock %}

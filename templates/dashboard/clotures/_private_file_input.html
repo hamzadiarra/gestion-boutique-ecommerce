@@ -1,0 +1,8 @@
+{% load i18n %}{% if widget.is_initial %}
+<span class="d-block">{% trans "Justificatif privé enregistré. Téléchargement disponible sur le détail de la clôture." %}</span>
+{% if not widget.required %}
+<input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"{% if widget.attrs.disabled %} disabled{% endif %}{% if widget.attrs.checked %} checked{% endif %}>
+<label for="{{ widget.checkbox_id }}">{% trans "Retirer du brouillon" %}</label>
+{% endif %}
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% for name, value in widget.attrs.items %}{% if value is not False %} {{ name }}{% if value is not True %}="{{ value }}"{% endif %}{% endif %}{% endfor %}>

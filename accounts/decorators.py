@@ -1,6 +1,18 @@
+from django.utils.translation import gettext
 from django.shortcuts import redirect
 from django.contrib import messages
 from functools import wraps
+
+
+def livreur_required(view_func):
+    @wraps(view_func)
+    def wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("login")
+        if request.user.is_active and getattr(getattr(request.user, "profile", None), "role", None) == "livreur":
+            return view_func(request, *args, **kwargs)
+        return redirect("home")
+    return wrapped
 
 
 def role_required(role, redirect_url='home'):
@@ -12,13 +24,13 @@ def role_required(role, redirect_url='home'):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if not request.user.is_authenticated:
-                messages.warning(request, "Veuillez vous connecter pour accéder à cette page.")
+                messages.warning(request, gettext("Veuillez vous connecter pour accéder à cette page."))
                 return redirect('login')
 
             profile = getattr(request.user, 'profile', None)
 
             if profile is None:
-                messages.error(request, "Profil introuvable. Veuillez contacter l'administrateur.")
+                messages.error(request, gettext("Profil introuvable. Veuillez contacter l'administrateur."))
                 return redirect(redirect_url)
 
             # Les superusers ont accès à tout
@@ -28,7 +40,7 @@ def role_required(role, redirect_url='home'):
             if profile.role != role:
                 messages.error(
                     request,
-                    "⛔ Accès refusé — Vous n'avez pas les permissions nécessaires pour accéder à cette page."
+                    gettext("⛔ Accès refusé — Vous n'avez pas les permissions nécessaires pour accéder à cette page.")
                 )
                 return redirect(redirect_url)
 
@@ -42,7 +54,7 @@ def admin_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(request, "Veuillez vous connecter.")
+            messages.warning(request, gettext("Veuillez vous connecter."))
             return redirect('login')
 
         profile = getattr(request.user, 'profile', None)
@@ -53,7 +65,7 @@ def admin_required(view_func):
         if profile and profile.role == 'admin':
             return view_func(request, *args, **kwargs)
 
-        messages.error(request, "⛔ Accès refusé — Espace réservé aux administrateurs.")
+        messages.error(request, gettext("⛔ Accès refusé — Espace réservé aux administrateurs."))
         return redirect('home')
     return _wrapped_view
 
@@ -63,7 +75,7 @@ def vendeur_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(request, "Veuillez vous connecter.")
+            messages.warning(request, gettext("Veuillez vous connecter."))
             return redirect('login')
 
         profile = getattr(request.user, 'profile', None)
@@ -74,7 +86,7 @@ def vendeur_required(view_func):
         if profile and profile.role in ('vendeur', 'admin'):
             return view_func(request, *args, **kwargs)
 
-        messages.error(request, "⛔ Accès refusé — Espace réservé aux vendeurs.")
+        messages.error(request, gettext("⛔ Accès refusé — Espace réservé aux vendeurs."))
         return redirect('home')
     return _wrapped_view
 
@@ -84,7 +96,7 @@ def client_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(request, "Veuillez vous connecter.")
+            messages.warning(request, gettext("Veuillez vous connecter."))
             return redirect('login')
 
         profile = getattr(request.user, 'profile', None)
@@ -95,7 +107,7 @@ def client_required(view_func):
         if profile and profile.role in ('client', 'admin'):
             return view_func(request, *args, **kwargs)
 
-        messages.error(request, "⛔ Accès refusé — Espace réservé aux clients.")
+        messages.error(request, gettext("⛔ Accès refusé — Espace réservé aux clients."))
         return redirect('home')
     return _wrapped_view
 
@@ -105,7 +117,7 @@ def comptable_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(request, "Veuillez vous connecter.")
+            messages.warning(request, gettext("Veuillez vous connecter."))
             return redirect('login')
 
         profile = getattr(request.user, 'profile', None)
@@ -118,7 +130,7 @@ def comptable_required(view_func):
         if profile and profile.role in ('comptable', 'admin'):
             return view_func(request, *args, **kwargs)
 
-        messages.error(request, "⛔ Accès refusé — Espace réservé aux comptables.")
+        messages.error(request, gettext("⛔ Accès refusé — Espace réservé aux comptables."))
         return redirect('home')
     return _wrapped_view
 

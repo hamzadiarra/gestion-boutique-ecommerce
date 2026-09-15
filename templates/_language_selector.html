@@ -1,0 +1,26 @@
+{% load i18n %}{% get_current_language as current_language %}
+<div class="site-language-menu">
+    <button type="button" class="site-language-trigger" aria-label="{% trans 'Changer de langue' %}" aria-expanded="false" aria-controls="site-language-dropdown">
+        <i class="bi bi-globe2" aria-hidden="true"></i>
+    </button>
+    <div class="site-language-dropdown" id="site-language-dropdown" hidden>
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" name="language" value="fr"{% if current_language == 'fr' %} aria-current="true"{% endif %}>{% trans "Français" %}</button>
+            <button type="submit" name="language" value="en"{% if current_language == 'en' %} aria-current="true"{% endif %}>{% trans "English" %}</button>
+        </form>
+    </div>
+</div>
+<style>
+.site-language-menu { position:relative; margin-left:.5rem; }
+.site-language-trigger { display:grid; width:2.25rem; height:2.25rem; place-items:center; padding:0; border:1px solid transparent; border-radius:50%; color:inherit; background:transparent; }
+.site-language-trigger:hover, .site-language-trigger:focus-visible { border-color:var(--color-border); background:var(--color-surface-secondary); }
+.site-language-dropdown { position:absolute; top:calc(100% + .45rem); right:0; z-index:1050; min-width:9rem; padding:.35rem; border:1px solid var(--color-border); border-radius:.65rem; background:var(--color-surface); box-shadow:var(--shadow-lg); }
+.site-language-dropdown[hidden] { display:none; }
+.site-language-dropdown form { display:grid; gap:.15rem; margin:0; }
+.site-language-dropdown button { width:100%; padding:.45rem .65rem; border:0; border-radius:.4rem; color:var(--color-text); background:transparent; text-align:left; }
+.site-language-dropdown button:hover, .site-language-dropdown button:focus-visible, .site-language-dropdown button[aria-current="true"] { background:var(--color-surface-secondary); color:var(--color-primary); }
+</style>
+<script>
+(() => { const menu=document.querySelector('.site-language-menu'), trigger=menu&&menu.querySelector('.site-language-trigger'), dropdown=menu&&menu.querySelector('.site-language-dropdown'); if(!menu||!trigger||!dropdown)return; const close=()=>{dropdown.hidden=true;trigger.setAttribute('aria-expanded','false')}; trigger.addEventListener('click',()=>{dropdown.hidden=!dropdown.hidden;trigger.setAttribute('aria-expanded',String(!dropdown.hidden)); if(!dropdown.hidden)dropdown.querySelector('button')?.focus()}); document.addEventListener('click',event=>{if(!menu.contains(event.target))close()}); document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!dropdown.hidden){close();trigger.focus()}}); })();
+</script>

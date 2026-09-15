@@ -1,0 +1,1043 @@
+{% extends "base.html" %}{% load i18n %}
+
+{% block title %}{% trans "Reçu" %} {{ numero_recu }} {% trans "— Gestion Boutique" %}{% endblock %}
+
+{% block content %}
+
+<style>
+.receipt-page {
+    min-height: calc(100vh - 80px);
+    padding: 42px 18px 70px;
+    background:
+        radial-gradient(
+            circle at top left,
+            color-mix(in srgb, var(--color-primary) 8%, transparent),
+            transparent 34%
+        ),
+        var(--color-bg);
+}
+
+/* Barre supérieure */
+
+.receipt-toolbar {
+    width: min(100%, 920px);
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.receipt-toolbar-left,
+.receipt-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.receipt-toolbar .btn {
+    border-radius: 11px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Reçu */
+
+.receipt-card {
+    position: relative;
+    width: min(100%, 920px);
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 28px 80px rgba(15, 23, 42, .11);
+}
+
+/* Bande supérieure */
+
+.receipt-accent {
+    height: 7px;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        color-mix(in srgb, var(--color-primary) 55%, #14b8a6)
+    );
+}
+
+/* Header */
+
+.receipt-header {
+    padding: 34px 38px 28px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.receipt-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.receipt-brand-mark {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    color: #fff;
+    background: var(--color-primary);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--color-primary) 25%, transparent);
+    font-size: 1.35rem;
+}
+
+.receipt-brand-name {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -.025em;
+}
+
+.receipt-brand-subtitle {
+    margin: 4px 0 0;
+    color: var(--color-muted);
+    font-size: .86rem;
+}
+
+.receipt-identity {
+    text-align: right;
+}
+
+.receipt-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #16a34a 10%, transparent);
+    color: #15803d;
+    font-size: .75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .055em;
+}
+
+.receipt-number {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 850;
+    letter-spacing: -.035em;
+}
+
+.receipt-order-number {
+    margin-top: 5px;
+    color: var(--color-muted);
+    font-size: .87rem;
+}
+
+/* État confirmé */
+
+.receipt-status {
+    margin: 28px 38px 0;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border: 1px solid color-mix(in srgb, #16a34a 25%, var(--color-border));
+    border-radius: 15px;
+    background: color-mix(in srgb, #16a34a 7%, var(--color-surface));
+}
+
+.receipt-status-icon {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: #16a34a;
+}
+
+.receipt-status strong {
+    display: block;
+    margin-bottom: 2px;
+    color: #15803d;
+    font-size: .94rem;
+}
+
+.receipt-status span {
+    color: var(--color-muted);
+    font-size: .82rem;
+}
+
+/* Informations */
+
+.receipt-info-grid {
+    padding: 30px 38px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.receipt-info-box {
+    padding: 17px 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 15px;
+    background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+}
+
+.receipt-info-title {
+    margin-bottom: 9px;
+    color: var(--color-muted);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .055em;
+    text-transform: uppercase;
+}
+
+.receipt-info-main {
+    margin: 0;
+    font-size: .98rem;
+    font-weight: 750;
+}
+
+.receipt-info-secondary {
+    margin: 5px 0 0;
+    color: var(--color-muted);
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+/* Produits */
+
+.receipt-items {
+    padding: 0 38px 32px;
+}
+
+.receipt-section-title {
+    margin: 0 0 15px;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.receipt-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.receipt-table th {
+    padding: 12px 15px;
+    background: color-mix(in srgb, var(--color-bg) 72%, var(--color-surface));
+    color: var(--color-muted);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .045em;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.receipt-table td {
+    padding: 15px;
+    border-top: 1px solid var(--color-border);
+    vertical-align: middle;
+    font-size: .88rem;
+}
+
+.receipt-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.receipt-product-image {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 11px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+}
+
+.receipt-product-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.receipt-product-image-empty {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: var(--color-muted);
+}
+
+.receipt-product-name {
+    font-weight: 750;
+}
+
+.receipt-product-category {
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: .75rem;
+}
+
+.receipt-text-right {
+    text-align: right !important;
+}
+
+.receipt-text-center {
+    text-align: center !important;
+}
+
+/* Totaux */
+
+.receipt-summary-wrap {
+    padding: 0 38px 34px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.receipt-summary {
+    width: min(100%, 390px);
+    padding: 19px 21px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-bg) 52%, var(--color-surface));
+}
+
+.receipt-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 7px 0;
+    color: var(--color-muted);
+    font-size: .88rem;
+}
+
+.receipt-summary-row strong {
+    color: var(--color-text);
+}
+
+.receipt-summary-total {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--color-border);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.receipt-summary-total strong {
+    color: var(--color-primary);
+    font-size: 1.35rem;
+}
+
+/* Confirmation vendeur */
+
+.receipt-validation {
+    margin: 0 38px 34px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+}
+
+.receipt-validation-person {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.receipt-validation-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+
+.receipt-validation-title {
+    color: var(--color-muted);
+    font-size: .75rem;
+}
+
+.receipt-validation-name {
+    margin-top: 2px;
+    font-weight: 750;
+}
+
+.receipt-validation-date {
+    text-align: right;
+    color: var(--color-muted);
+    font-size: .82rem;
+}
+
+/* Footer */
+
+.receipt-footer {
+    padding: 26px 38px 30px;
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+}
+
+.receipt-footer-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.receipt-footer strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.receipt-footer p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: .82rem;
+}
+
+/* Responsive */
+
+@media (max-width: 680px) {
+    .receipt-page {
+        padding: 22px 10px 45px;
+    }
+
+    .receipt-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .receipt-toolbar-right .btn,
+    .receipt-toolbar-left .btn {
+        flex: 1;
+    }
+
+    .receipt-header {
+        padding: 25px 20px;
+        flex-direction: column;
+    }
+
+    .receipt-identity {
+        text-align: left;
+    }
+
+    .receipt-status {
+        margin: 20px 20px 0;
+    }
+
+    .receipt-info-grid {
+        padding: 22px 20px;
+        grid-template-columns: 1fr;
+    }
+
+    .receipt-items {
+        padding: 0 20px 25px;
+    }
+
+    .receipt-summary-wrap {
+        padding: 0 20px 25px;
+    }
+
+    .receipt-summary {
+        width: 100%;
+    }
+
+    .receipt-validation {
+        margin: 0 20px 25px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .receipt-validation-date {
+        text-align: left;
+    }
+
+    .receipt-footer {
+        padding: 24px 20px;
+    }
+
+    .receipt-table th:nth-child(2),
+    .receipt-table td:nth-child(2) {
+        display: none;
+    }
+}
+
+/* =========================================
+   IMPRESSION
+========================================= */
+
+@media print {
+
+    @page {
+        size: A4;
+        margin: 12mm;
+    }
+
+    body {
+        background: #fff !important;
+    }
+
+    body > header,
+    body > nav,
+    body > footer,
+    .navbar,
+    .receipt-toolbar {
+        display: none !important;
+    }
+
+    .receipt-page {
+        min-height: 0;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    .receipt-card {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: #fff !important;
+        color: #111827 !important;
+    }
+
+    .receipt-accent {
+        background: #2563eb !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .receipt-info-box,
+    .receipt-summary,
+    .receipt-validation,
+    .receipt-status {
+        background: #fff !important;
+    }
+
+    .receipt-brand-subtitle,
+    .receipt-order-number,
+    .receipt-info-title,
+    .receipt-info-secondary,
+    .receipt-product-category,
+    .receipt-summary-row,
+    .receipt-validation-title,
+    .receipt-validation-date,
+    .receipt-footer p {
+        color: #475569 !important;
+    }
+
+    .receipt-table-wrapper,
+    .receipt-info-box,
+    .receipt-summary,
+    .receipt-card,
+    .receipt-validation,
+    .receipt-status {
+        break-inside: avoid;
+    }
+
+    .receipt-product-image {
+        display: none;
+    }
+
+    .receipt-table th {
+        background: #f8fafc !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+</style>
+
+
+<main class="receipt-page">
+
+    <!-- Actions écran -->
+
+    <div class="receipt-toolbar">
+
+        <div class="receipt-toolbar-left">
+
+            <a
+                href="{% url 'order_detail' commande.id %}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                {% trans "Retour à la commande" %}
+            </a>
+
+        </div>
+
+        <div class="receipt-toolbar-right">
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="window.print()"
+            >
+                <i class="bi bi-printer"></i>
+                {% trans "Imprimer le reçu" %}
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Reçu -->
+
+    <article class="receipt-card">
+
+        <div class="receipt-accent"></div>
+
+
+        <!-- En-tête -->
+
+        <header class="receipt-header">
+
+            <div class="receipt-brand">
+
+                <div class="receipt-brand-mark">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+
+                <div>
+                    <h1 class="receipt-brand-name">
+                        {{ boutique_settings.nom }}
+                    </h1>
+
+                    {% include "orders/_receipt_shop.html" %}<p class="receipt-brand-subtitle">
+                        {% trans "Votre reçu officiel de commande" %}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="receipt-identity">
+
+                <span class="receipt-label">
+                    <i class="bi bi-patch-check-fill"></i>
+                    {% trans "Reçu officiel" %}
+                </span>
+
+                <h2 class="receipt-number">
+                    {{ numero_recu }}
+                </h2>
+
+                <div class="receipt-order-number">
+                    {% trans "Commande #" %}{{ commande.id }}
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Statut -->
+
+        <section class="receipt-status">
+
+            <div class="receipt-status-icon">
+                <i class="bi bi-check-lg"></i>
+            </div>
+
+            <div>
+                <strong>
+                    {% trans "Commande confirmée" %}
+                </strong>
+
+                <span>
+                    {% trans "Ce reçu atteste de la validation de cette commande." %}
+                </span>
+            </div>
+
+        </section>
+
+
+        <!-- Informations -->
+
+        <section class="receipt-info-grid">
+
+            <!-- Client -->
+
+            <div class="receipt-info-box">
+
+                <div class="receipt-info-title">
+                    <i class="bi bi-person me-1"></i>
+                    {% trans "Client" %}
+                </div>
+
+                <p class="receipt-info-main">
+                    {{ client_name }}
+                </p>
+
+                <p class="receipt-info-secondary">
+                    {{ commande.utilisateur.email }}
+                </p>
+
+            </div>
+
+
+            <!-- Commande -->
+
+            <div class="receipt-info-box">
+
+                <div class="receipt-info-title">
+                    <i class="bi bi-bag me-1"></i>
+                    {% trans "Commande" %}
+                </div>
+
+                <p class="receipt-info-main">
+                    #{{ commande.id }}
+                </p>
+
+                <p class="receipt-info-secondary">
+                    {{ commande.date_creation|date:"d/m/Y à H:i" }}
+                </p>
+
+            </div>
+
+
+            <!-- Paiement -->
+
+            <div class="receipt-info-box">
+
+                <div class="receipt-info-title">
+                    <i class="bi bi-credit-card me-1"></i>
+                    {% trans "Paiement" %}
+                </div>
+
+                {% if paiement %}
+
+                    <p class="receipt-info-main">
+                        {{ paiement.get_methode_display }}
+                    </p>
+
+                    <p class="receipt-info-secondary">
+                        {% if paiement.provider %}{% trans "Provider :" %} {{ paiement.provider }}<br>{% endif %}
+                        {% trans "Référence :" %}
+                        {{ paiement.provider_reference|default:paiement.reference|default:"Non renseignée" }}
+                    </p>
+
+                {% else %}
+
+                    <p class="receipt-info-main">
+                        {% trans "Non renseigné" %}
+                    </p>
+
+                    <p class="receipt-info-secondary">
+                        {% trans "Aucun paiement associé." %}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Livraison -->
+
+            <div class="receipt-info-box">
+
+                <div class="receipt-info-title">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {% trans "Livraison" %}
+                </div>
+
+                <p class="receipt-info-main">
+                    {{ commande.ville_livraison|default:"Adresse client" }}{% if commande.rue_porte %}<br>{{ commande.rue_porte }}{% endif %}{% if commande.livraison %}<br>{{ commande.livraison.reference }}{% endif %}
+                </p>
+
+                <p class="receipt-info-secondary">
+                    {{ commande.adresse_livraison|default:"Adresse non renseignée" }}
+
+                    {% if commande.code_postal_livraison %}
+                        <br>
+                        {% trans "Repère :" %}
+                        {{ commande.code_postal_livraison }}
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Produits -->
+
+        <section class="receipt-items">
+
+            <h3 class="receipt-section-title">
+                {% trans "Articles de la commande" %}
+            </h3>
+
+
+            <div class="receipt-table-wrapper">
+
+                <table class="receipt-table">
+
+                    <thead>
+                        <tr>
+                            <th>{% trans "Produit" %}</th>
+                            <th>{% trans "Prix unitaire" %}</th>
+                            <th class="receipt-text-center">
+                                {% trans "Qté" %}
+                            </th>
+                            <th class="receipt-text-right">
+                                {% trans "Total" %}
+                            </th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in items %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="receipt-product">
+
+                                        <div class="receipt-product-image">
+
+                                            {% if item.produit.image %}
+
+                                                <img
+                                                    src="{{ item.produit.image.url }}"
+                                                    alt="{{ item.produit.nom }}"
+                                                >
+
+                                            {% else %}
+
+                                                <div class="receipt-product-image-empty">
+                                                    <i class="bi bi-image"></i>
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="receipt-product-name">
+                                                {{ item.produit.nom }}
+                                            </div>
+
+                                            {% if item.produit.categorie %}
+
+                                                <div class="receipt-product-category">
+                                                    {{ item.produit.categorie.nom }}
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    {{ item.prix|floatformat:"-2" }}
+                                    {{ boutique_settings.devise }}
+                                </td>
+
+
+                                <td class="receipt-text-center">
+                                    {{ item.quantite }}
+                                </td>
+
+
+                                <td class="receipt-text-right">
+                                    <strong>
+                                        {{ item.sous_total|floatformat:"-2" }}
+                                        {{ boutique_settings.devise }}
+                                    </strong>
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+                                <td colspan="4">
+                                    {% trans "Aucun article enregistré." %}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Totaux -->
+
+        <section class="receipt-summary-wrap">
+
+            <div class="receipt-summary">
+
+                <div class="receipt-summary-row">
+
+                    <span>
+                        {% trans "Sous-total" %}
+                    </span>
+
+                    <strong>
+                        {{ sous_total|floatformat:"-2" }}
+                        {{ boutique_settings.devise }}
+                    </strong>
+
+                </div>
+
+
+                <div class="receipt-summary-row">
+
+                    <span>
+                        {% trans "Livraison" %}
+                    </span>
+
+                    <strong>
+                        {% if frais_livraison %}
+                            {{ frais_livraison|floatformat:"-2" }} {{ boutique_settings.devise }}
+                        {% else %}
+                            {% trans "Gratuite" %}
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+
+                <div class="receipt-summary-row receipt-summary-total">
+
+                    <span>
+                        {% trans "Total" %}
+                    </span>
+
+                    <strong>
+                        {{ total|floatformat:"-2" }}
+                        {{ boutique_settings.devise }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Validation -->
+
+        <section class="receipt-validation">
+
+            <div class="receipt-validation-person">
+
+                <div class="receipt-validation-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+                <div>
+
+                    <div class="receipt-validation-title">
+                        {% trans "VALIDATION VENDEUR" %}
+                    </div>
+
+                    <div class="receipt-validation-name">
+
+                        {% if vendeur_name %}
+                            {{ vendeur_name }}
+                        {% else %}
+                            {% trans "Équipe" %} {{ boutique_settings.nom }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="receipt-validation-date">
+
+                {% if commande.date_confirmation %}
+
+                    {% trans "Confirmée le" %}<br>
+
+                    <strong>
+                        {{ commande.date_confirmation|date:"d/m/Y à H:i" }}
+                    </strong>
+
+                {% else %}
+
+                    {% trans "Commande" %}
+                    {{ commande.get_statut_display|lower }}
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- Footer -->
+
+        <footer class="receipt-footer">
+
+            <div class="receipt-footer-icon">
+                <i class="bi bi-heart"></i>
+            </div>
+
+            <strong>
+                {% if boutique_settings.afficher_message_recu %}{{ boutique_settings.message_recu }}{% endif %}
+            </strong>
+
+            <p>
+                {% trans "Conservez ce reçu comme justificatif de votre commande." %}
+            </p>
+
+        </footer>
+
+    </article>
+
+</main>
+
+{% endblock %}

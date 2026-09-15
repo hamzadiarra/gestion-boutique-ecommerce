@@ -1,108 +1,1168 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load i18n %}
 
-{% block title %}Ajouter un Produit — Espace Vendeur{% endblock %}
+{% block title %}{% trans "Nouveau produit — Espace vendeur" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4 fade-in" style="max-width:760px;">
 
-    <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-sm btn-outline-secondary mb-3">
-        <i class="bi bi-arrow-left me-1"></i> Retour à la liste
-    </a>
+<style>
+.seller-category-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
 
-    <div class="card shadow border-0">
-        <div class="card-header bg-success bg-opacity-10 py-3">
-            <h4 class="fw-bold mb-0 text-success"><i class="bi bi-plus-circle me-2"></i>Nouveau Produit</h4>
-            <p class="text-muted small mb-0 mt-1">Remplissez le formulaire pour ajouter un nouveau produit à la boutique.</p>
-        </div>
-        <div class="card-body p-4">
+.seller-category-label-row label {
+    margin: 0;
+}
 
-            <form method="POST" action="{% url 'vendeur_ajouter_produit' %}" enctype="multipart/form-data">
-                {% csrf_token %}
+.seller-category-create-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 
-                <div class="row g-3">
-                    <!-- Nom -->
-                    <div class="col-12">
-                        <label for="nom" class="form-label fw-semibold">Nom du produit <span class="text-danger">*</span></label>
-                        <input type="text" name="nom" id="nom" class="form-control" placeholder="Ex: Téléphone Samsung Galaxy A54" required>
-                    </div>
+    padding: 7px 11px;
 
-                    <!-- Description -->
-                    <div class="col-12">
-                        <label for="description" class="form-label fw-semibold">Description</label>
-                        <textarea name="description" id="description" class="form-control" rows="3" placeholder="Description du produit..."></textarea>
-                    </div>
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--color-primary) 30%,
+            var(--color-border)
+        );
 
-                    <!-- Catégorie + Marque -->
-                    <div class="col-md-6">
-                        <label for="categorie" class="form-label fw-semibold">Catégorie <span class="text-danger">*</span></label>
-                        <select name="categorie" id="categorie" class="form-select" required>
-                            <option value="">-- Choisir une catégorie --</option>
-                            {% for cat in categories %}
-                            <option value="{{ cat.id }}">{{ cat.nom }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="marque" class="form-label fw-semibold">Marque</label>
-                        <input type="text" name="marque" id="marque" class="form-control" placeholder="Ex: Samsung, Apple...">
-                    </div>
+    border-radius: 9px;
 
-                    <!-- Prix + Prix promo -->
-                    <div class="col-md-6">
-                        <label for="prix" class="form-label fw-semibold">Prix (FCFA) <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <input type="number" name="prix" id="prix" class="form-control" step="0.01" min="0" placeholder="0.00" required>
-                            <span class="input-group-text">FCFA</span>
+    background:
+        color-mix(
+            in srgb,
+            var(--color-primary) 6%,
+            var(--color-surface)
+        );
+
+    color: var(--color-primary);
+
+    font-size: .78rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+}
+
+.seller-category-create-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--color-primary);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--color-primary) 11%,
+            var(--color-surface)
+        );
+}
+
+/* =========================================================
+   MODAL CATÉGORIE
+========================================================= */
+
+.seller-category-modal {
+    overflow: hidden;
+
+    border: 1px solid var(--color-border);
+    border-radius: 22px;
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    box-shadow:
+        0 28px 80px
+        rgba(15, 23, 42, .18);
+}
+
+.seller-category-modal-header {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 25px 25px 20px;
+
+    border-bottom:
+        1px solid var(--color-border);
+}
+
+.seller-category-modal-icon {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    color: var(--color-primary);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--color-primary) 10%,
+            var(--color-surface)
+        );
+
+    font-size: 1.15rem;
+}
+
+.seller-category-modal-title {
+    flex: 1;
+}
+
+.seller-category-modal-title > span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--color-primary);
+
+    font-size: .72rem;
+    font-weight: 800;
+
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.seller-category-modal-title h2 {
+    margin: 0;
+
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.seller-category-modal-title p {
+    margin: 5px 0 0;
+
+    color: var(--color-muted);
+
+    font-size: .84rem;
+}
+
+.seller-category-modal-close {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+    color: var(--color-muted);
+
+    cursor: pointer;
+
+    transition: .18s ease;
+}
+
+.seller-category-modal-close:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.seller-category-modal-body {
+    padding: 25px;
+}
+
+.seller-category-modal-field label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: .87rem;
+    font-weight: 700;
+}
+
+.seller-category-modal-input {
+    position: relative;
+}
+
+.seller-category-modal-input > i {
+    position: absolute;
+
+    top: 50%;
+    left: 15px;
+
+    transform: translateY(-50%);
+
+    color: var(--color-muted);
+
+    pointer-events: none;
+}
+
+.seller-category-modal-input input {
+    width: 100%;
+    min-height: 50px;
+
+    padding:
+        11px
+        14px
+        11px
+        43px;
+
+    border:
+        1px solid
+        var(--color-border);
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+.seller-category-modal-input input:focus {
+    border-color: var(--color-primary);
+
+    box-shadow:
+        0 0 0 3px
+        color-mix(
+            in srgb,
+            var(--color-primary) 13%,
+            transparent
+        );
+}
+
+.seller-category-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    padding: 0 25px 25px;
+}
+
+@media (max-width: 576px) {
+    .seller-category-label-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .seller-category-create-btn {
+        width: 100%;
+    }
+
+    .seller-category-modal-header,
+    .seller-category-modal-body {
+        padding-left: 19px;
+        padding-right: 19px;
+    }
+
+    .seller-category-modal-footer {
+        padding-left: 19px;
+        padding-right: 19px;
+
+        flex-direction: column-reverse;
+    }
+
+    .seller-category-modal-footer button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+
+<main class="seller-editor-page fade-in">
+
+    <div class="seller-editor-shell">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <header class="seller-editor-header">
+
+            <a
+                href="{% url 'vendeur_liste_produits' %}"
+                class="seller-editor-back"
+            >
+                <i class="bi bi-arrow-left"></i>
+                {% trans "Retour aux produits" %}
+            </a>
+
+            <span class="seller-editor-kicker">
+                {% trans "Catalogue vendeur" %}
+            </span>
+
+            <h1>
+                {% trans "Nouveau produit" %}
+            </h1>
+
+            <p>
+                {% trans "Créez une fiche claire et attractive pour présenter votre produit dans la boutique." %}
+            </p>
+
+        </header>
+
+
+        {% if form_errors %}
+
+            <div class="seller-form-alert">
+
+                <i class="bi bi-exclamation-circle"></i>
+
+                <span>
+                    {% trans "Vérifiez les champs signalés avant de continuer." %}
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FORMULAIRE
+        ====================================================== -->
+
+        <form
+            method="POST"
+            action="{% url 'vendeur_ajouter_produit' %}"
+            enctype="multipart/form-data"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+            <div class="seller-editor-grid">
+
+                <!-- =================================================
+                     COLONNE PRINCIPALE
+                ================================================== -->
+
+                <div class="seller-editor-main">
+
+                    <!-- =============================================
+                         INFORMATIONS GÉNÉRALES
+                    ============================================== -->
+
+                    <section class="seller-editor-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Informations générales" %}
+                                </h2>
+
+                                <p>
+                                    {% trans "Les informations essentielles de votre fiche produit." %}
+                                </p>
+                            </div>
+
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="prix_promotion" class="form-label fw-semibold">Prix Promo (FCFA)</label>
-                        <div class="input-group">
-                            <input type="number" name="prix_promotion" id="prix_promotion" class="form-control" step="0.01" min="0" placeholder="Laisser vide si aucune promo">
-                            <span class="input-group-text">FCFA</span>
-                        </div>
-                    </div>
 
-                    <!-- Stock -->
-                    <div class="col-md-6">
-                        <label for="stock" class="form-label fw-semibold">Stock initial <span class="text-danger">*</span></label>
-                        <input type="number" name="stock" id="stock" class="form-control" min="0" value="0" required>
-                    </div>
+
+                        <!-- Nom -->
+
+                        <div class="seller-field seller-field-wide">
+
+                            <label for="nom">
+                                {% trans "Nom du produit" %}
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nom"
+                                id="nom"
+                                class="seller-editor-input{% if form_errors.nom %} is-invalid{% endif %}"
+                                value="{{ form_data.nom|default:'' }}"
+                                placeholder="{% trans "Ex. Sac à dos urbain en cuir" %}"
+                                required
+                            >
+
+                            {% if form_errors.nom %}
+
+                                <div class="seller-field-error">
+
+                                    <i class="bi bi-exclamation-circle"></i>
+
+                                    {{ form_errors.nom }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="seller-field seller-field-wide">
+                            <label for="nom_en">{% trans "English name" %}</label>
+                            <input type="text" name="nom_en" id="nom_en" class="seller-editor-input" value="{{ form_data.nom_en|default:'' }}" placeholder="{% trans "Optional English name" %}">
+                        </div>
+
+                        <!-- Description -->
+
+                        <div class="seller-field seller-field-wide">
+
+                            <label for="description">
+                                {% trans "Description" %}
+                            </label>
+
+                            <textarea
+                                name="description"
+                                id="description"
+                                class="seller-editor-input seller-editor-textarea"
+                                rows="5"
+                                placeholder="{% trans "Décrivez les caractéristiques et les points forts du produit..." %}"
+                            >{{ form_data.description|default:'' }}</textarea>
+
+                            <span class="seller-editor-help">
+                                {% trans "Une description précise aide vos clients à faire leur choix." %}
+                            </span>
+
+                        </div>
+
+
+                        <div class="seller-field seller-field-wide">
+                            <label for="description_en">{% trans "English description" %}</label>
+                            <textarea name="description_en" id="description_en" class="seller-editor-input seller-editor-textarea" rows="4" placeholder="{% trans "Optional English description" %}">{{ form_data.description_en|default:'' }}</textarea>
+                        </div>
+
+                        <!-- Catégorie + Marque -->
+
+                        <div class="seller-editor-fields-2">
+
+                            <!-- CATÉGORIE -->
+
+                            <div class="seller-field">
+
+                                <div class="seller-category-label-row">
+
+                                    <label for="categorie">
+                                        {% trans "Catégorie" %}
+                                        <span class="required-mark">*</span>
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        class="seller-category-create-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#categorieModal"
+                                    >
+                                        <i class="bi bi-plus-circle"></i>
+                                        {% trans "Nouvelle" %}
+                                    </button>
+
+                                </div>
+
+
+                                <select
+                                    name="categorie"
+                                    id="categorie"
+                                    class="seller-editor-input{% if form_errors.categorie %} is-invalid{% endif %}"
+                                    required
+                                >
+
+                                    <option value="">
+                                        {% trans "Choisir une catégorie" %}
+                                    </option>
+
+
+                                    {% for cat in categories %}
+
+                                        <option
+                                            value="{{ cat.id }}"
+                                            {% if cat.id|stringformat:"s" == form_categorie|stringformat:"s" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            {{ cat.nom }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+
+                                {% if form_errors.categorie %}
+
+                                    <div class="seller-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        {{ form_errors.categorie }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <span class="seller-editor-help">
+                                    {% trans "Choisissez une catégorie existante ou créez-en une nouvelle." %}
+                                </span>
+
+                            </div>
+
+
+                            <!-- MARQUE -->
+
+                            <div class="seller-field">
+
+                                <label for="marque">
+                                    {% trans "Marque" %}
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="marque"
+                                    id="marque"
+                                    class="seller-editor-input"
+                                    value="{{ form_data.marque|default:'' }}"
+                                    placeholder="{% trans "Ex. Atelier Nova" %}"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =============================================
+                         TARIFICATION
+                    ============================================== -->
+
+                    <section class="seller-editor-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-tag"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Tarification" %}
+                                </h2>
+
+                                <p>
+                                    {% trans "Définissez un prix lisible et compétitif." %}
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="seller-editor-fields-2">
+
+                            <!-- Prix normal -->
+
+                            <div class="seller-field">
+
+                                <label for="prix">
+                                    {% trans "Prix normal" %}
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                <div class="seller-input-group">
+
+                                    <input
+                                        type="number"
+                                        name="prix"
+                                        id="prix"
+                                        class="seller-editor-input{% if form_errors.prix %} is-invalid{% endif %}"
+                                        value="{{ form_data.prix|default:'' }}"
+                                        min="0.01"
+                                        step="0.01"
+                                        placeholder="0"
+                                        required
+                                    >
+
+                                    <span>
+                                        {% trans "FCFA" %}
+                                    </span>
+
+                                </div>
+
+
+                                {% if form_errors.prix %}
+
+                                    <div class="seller-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        {{ form_errors.prix }}
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Prix promotionnel -->
+
+                            <div class="seller-field">
+
+                                <label for="prix_promotion">
+                                    {% trans "Prix promotionnel" %}
+                                </label>
+
+                                <div class="seller-input-group">
+
+                                    <input
+                                        type="number"
+                                        name="prix_promotion"
+                                        id="prix_promotion"
+                                        class="seller-editor-input{% if form_errors.prix_promotion %} is-invalid{% endif %}"
+                                        value="{{ form_data.prix_promotion|default:'' }}"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="{% trans "Optionnel" %}"
+                                    >
+
+                                    <span>
+                                        {% trans "FCFA" %}
+                                    </span>
+
+                                </div>
+
+
+                                {% if form_errors.prix_promotion %}
+
+                                    <div class="seller-field-error">
+
+                                        <i class="bi bi-exclamation-circle"></i>
+
+                                        {{ form_errors.prix_promotion }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <span class="seller-editor-help">
+                                    {% trans "Laissez vide si aucune promotion n'est active." %}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =============================================
+                         INVENTAIRE
+                    ============================================== -->
+
+                    <section class="seller-editor-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Inventaire" %}
+                                </h2>
+
+                                <p>
+                                    {% trans "Suivez la quantité actuellement disponible." %}
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="seller-field seller-stock-field">
+
+                            <label for="stock">
+                                {% trans "Quantité en stock" %}
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                name="stock"
+                                id="stock"
+                                class="seller-editor-input{% if form_errors.stock %} is-invalid{% endif %}"
+                                value="{{ form_data.stock|default:'0' }}"
+                                min="0"
+                                step="1"
+                                required
+                            >
+
+
+                            {% if form_errors.stock %}
+
+                                <div class="seller-field-error">
+
+                                    <i class="bi bi-exclamation-circle"></i>
+
+                                    {{ form_errors.stock }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <span class="seller-editor-help">
+                                {% trans "Quantité actuellement disponible à la vente." %}
+                            </span>
+
+                            <span
+                                class="seller-stock-status"
+                                data-stock-status
+                            ></span>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- =================================================
+                     COLONNE LATÉRALE
+                ================================================== -->
+
+                <aside class="seller-editor-side">
 
                     <!-- Image -->
-                    <div class="col-md-6">
-                        <label for="image" class="form-label fw-semibold">Image du produit</label>
-                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
-                    </div>
 
-                    <!-- Options -->
-                    <div class="col-12">
-                        <div class="d-flex gap-4">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="actif" id="actif" checked>
-                                <label class="form-check-label fw-semibold" for="actif">Produit actif</label>
+                    <section class="seller-editor-card seller-image-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-image"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Image du produit" %}
+                                </h2>
+
+                                <p>
+                                    {% trans "Une image nette renforce la confiance." %}
+                                </p>
                             </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="vedette" id="vedette">
-                                <label class="form-check-label fw-semibold" for="vedette">⭐ Produit vedette</label>
-                            </div>
+
                         </div>
+
+
+                        <div
+                            class="seller-image-dropzone"
+                            data-image-zone
+                        >
+
+                            <div
+                                class="seller-image-placeholder"
+                                data-image-placeholder
+                            >
+
+                                <i class="bi bi-cloud-arrow-up"></i>
+
+                                <strong>
+                                    {% trans "Ajouter une photo" %}
+                                </strong>
+
+                                <span>
+                                    {% trans "JPG, PNG ou WebP" %}
+                                </span>
+
+                                <small>
+                                    {% trans "Maximum 5 Mo" %}
+                                </small>
+
+                            </div>
+
+
+                            <img
+                                class="seller-image-preview"
+                                data-image-preview
+                                alt="{% trans "Aperçu du produit" %}"
+                                hidden
+                            >
+
+
+                            <input
+                                class="seller-file-input"
+                                type="file"
+                                name="image"
+                                id="image"
+                                accept="image/jpeg,image/png,image/webp"
+                            >
+
+                        </div>
+
+
+                        <div class="seller-image-actions">
+
+                            <label
+                                for="image"
+                                class="seller-editor-button"
+                            >
+                                <i class="bi bi-folder2-open"></i>
+                                {% trans "Choisir un fichier" %}
+                            </label>
+
+
+                            <button
+                                type="button"
+                                class="seller-editor-button seller-editor-button-muted"
+                                data-image-clear
+                                hidden
+                            >
+                                {% trans "Retirer" %}
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="seller-image-file"
+                            data-image-name
+                        >
+                            {% trans "Aucun fichier sélectionné" %}
+                        </div>
+
+
+                        {% if form_errors.image %}
+
+                            <div class="seller-field-error">
+
+                                <i class="bi bi-exclamation-circle"></i>
+
+                                {{ form_errors.image }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </section>
+
+
+                    <!-- Visibilité -->
+
+                    <section class="seller-editor-card seller-visibility-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-eye"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Visibilité" %}
+                                </h2>
+
+                                <p>
+                                    {% trans "Contrôlez la présence du produit en boutique." %}
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <label
+                            class="seller-switch-row"
+                            for="actif"
+                        >
+
+                            <span class="seller-switch-copy">
+
+                                <strong>
+                                    {% trans "Disponible dans la boutique" %}
+                                </strong>
+
+                                <small>
+                                    {% trans "Le produit peut être consulté et acheté." %}
+                                </small>
+
+                            </span>
+
+
+                            <input
+                                class="seller-switch"
+                                type="checkbox"
+                                name="actif"
+                                id="actif"
+                                {% if form_actif %}checked{% endif %}
+                            >
+
+                        </label>
+
+
+                        <label
+                            class="seller-switch-row"
+                            for="vedette"
+                        >
+
+                            <span class="seller-switch-copy">
+
+                                <strong>
+                                    {% trans "Mettre en avant" %}
+                                </strong>
+
+                                <small>
+                                    {% trans "Affiche le produit parmi les sélections de la boutique." %}
+                                </small>
+
+                            </span>
+
+
+                            <input
+                                class="seller-switch"
+                                type="checkbox"
+                                name="vedette"
+                                id="vedette"
+                                {% if form_vedette %}checked{% endif %}
+                            >
+
+                        </label>
+
+                    </section>
+
+
+                    <!-- Conseils -->
+
+                    <section class="seller-editor-card seller-tips-card">
+
+                        <div class="seller-section-heading">
+
+                            <span class="seller-section-icon">
+                                <i class="bi bi-lightbulb"></i>
+                            </span>
+
+                            <div>
+                                <h2>
+                                    {% trans "Conseils utiles" %}
+                                </h2>
+                            </div>
+
+                        </div>
+
+
+                        <ul>
+
+                            <li>
+                                <i class="bi bi-check2"></i>
+                                {% trans "Utilisez une photo lumineuse et nette." %}
+                            </li>
+
+                            <li>
+                                <i class="bi bi-check2"></i>
+                                {% trans "Vérifiez le stock avant de publier." %}
+                            </li>
+
+                            <li>
+                                <i class="bi bi-check2"></i>
+                                {% trans "Un nom précis facilite la recherche." %}
+                            </li>
+
+                        </ul>
+
+                    </section>
+
+                </aside>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="seller-editor-actions">
+
+                <a
+                    href="{% url 'vendeur_liste_produits' %}"
+                    class="seller-editor-button seller-editor-button-secondary"
+                >
+                    {% trans "Annuler" %}
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="seller-editor-button seller-editor-button-primary"
+                >
+                    <i class="bi bi-check2-circle"></i>
+                    {% trans "Enregistrer le produit" %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================================
+     MODAL — NOUVELLE CATÉGORIE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="categorieModal"
+    tabindex="-1"
+    aria-labelledby="categorieModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content seller-category-modal">
+
+            <form
+                method="POST"
+                action="{% url 'vendeur_ajouter_categorie' %}"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Header -->
+
+                <div class="seller-category-modal-header">
+
+                    <div class="seller-category-modal-icon">
+                        <i class="bi bi-tags"></i>
                     </div>
 
-                    <!-- Bouton -->
-                    <div class="col-12 mt-2">
-                        <button type="submit" class="btn btn-success px-5 py-2 fw-semibold shadow-sm">
-                            <i class="bi bi-check-circle me-2"></i> Ajouter le Produit
-                        </button>
-                        <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-outline-secondary ms-2 px-4 py-2">
-                            Annuler
-                        </a>
+
+                    <div class="seller-category-modal-title">
+
+                        <span>
+                            {% trans "Catalogue vendeur" %}
+                        </span>
+
+                        <h2 id="categorieModalLabel">
+                            {% trans "Nouvelle catégorie" %}
+                        </h2>
+
+                        <p>
+                            {% trans "Créez une catégorie sans quitter votre produit." %}
+                        </p>
+
                     </div>
+
+
+                    <button
+                        type="button"
+                        class="seller-category-modal-close"
+                        data-bs-dismiss="modal"
+                        aria-label="{% trans "Fermer" %}"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                </div>
+
+
+                <!-- Body -->
+
+                <div class="seller-category-modal-body">
+
+                    <div class="seller-category-modal-field">
+
+                        <label for="nom_categorie">
+
+                            {% trans "Nom de la catégorie" %}
+
+                            <span class="required-mark">
+                                *
+                            </span>
+
+                        </label>
+
+
+                        <div class="seller-category-modal-input">
+
+                            <i class="bi bi-tag"></i>
+
+                            <input
+                                type="text"
+                                name="nom_categorie"
+                                id="nom_categorie"
+                                placeholder="{% trans "Ex. Informatique" %}"
+                                maxlength="120"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <label class="visually-hidden" for="nom_categorie_en">{% trans "English category name" %}</label>
+                            <input type="text" name="nom_categorie_en" id="nom_categorie_en" class="seller-editor-input mt-2" placeholder="{% trans "Optional English category name" %}" maxlength="120">
+
+                        </div>
+
+
+                        <span class="seller-editor-help">
+                            {% trans "Exemples : Informatique, Téléphones,\n                            Maison, Mode, Beauté, Accessoires..." %}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="seller-category-modal-footer">
+
+                    <button
+                        type="button"
+                        class="seller-editor-button seller-editor-button-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        {% trans "Annuler" %}
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="seller-editor-button seller-editor-button-primary"
+                    >
+                        <i class="bi bi-plus-circle"></i>
+                        {% trans "Créer la catégorie" %}
+                    </button>
+
                 </div>
 
             </form>
+
         </div>
+
     </div>
 
 </div>
+
+
+{% include "dashboard/partials/_vendeur_image_script.html" %}
+
 {% endblock %}

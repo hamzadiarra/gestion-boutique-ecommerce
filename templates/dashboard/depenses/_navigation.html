@@ -1,0 +1,14 @@
+{% load i18n %}<nav class="d-flex flex-wrap gap-2 mb-4" aria-label="{% trans "Navigation comptable" %}">
+    <a href="{% url 'comptable_dashboard' %}" class="btn btn-outline-secondary">{% trans "Vue d'ensemble" %}</a>
+    <a href="{% url 'comptable_transactions' %}" class="btn btn-outline-secondary">{% trans "Encaissements" %}</a>
+    <a href="{% url 'comptable_depenses' %}" class="btn btn-outline-secondary">{% trans "Dépenses" %}</a>
+    <a href="{% url 'comptable_depense_categories' %}" class="btn btn-outline-secondary">{% trans "Catégories de dépenses" %}</a>
+</nav>
+<nav class="d-flex flex-wrap gap-2 mb-4" aria-label="{% trans "Trésorerie théorique" %}">
+    <a href="{% url 'comptable_clotures' %}" class="btn btn-outline-secondary">{% trans "Clôtures financières" %}</a>
+    <a href="{% url 'comptable_comptes' %}" class="btn btn-outline-secondary">{% trans "Comptes financiers" %}</a>
+    <a href="{% url 'comptable_mouvements' %}" class="btn btn-outline-secondary">{% trans "Journal financier" %}</a>
+    <a href="{% url 'comptable_regularisations' %}" class="btn btn-outline-secondary">{% trans "À régulariser" %}</a>
+    <a href="{% url 'comptable_transfert_nouveau' %}" class="btn btn-outline-secondary">{% trans "Transfert" %}</a>
+    <a href="{% url 'comptable_ajustement_nouveau' %}" class="btn btn-outline-secondary">{% trans "Ajustement" %}</a>
+</nav>

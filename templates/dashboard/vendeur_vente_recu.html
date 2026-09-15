@@ -1,0 +1,561 @@
+{% extends "base.html" %}{% load i18n %}
+
+{% block title %}{% trans "Reçu" %} {{ numero_recu }} {% trans "— Vente comptoir" %}{% endblock %}
+
+{% block content %}
+
+<style>
+.sale-receipt-page {
+    min-height: calc(100vh - 80px);
+    padding: 36px 16px 70px;
+}
+
+.sale-receipt-toolbar {
+    width: min(100%, 760px);
+    margin: 0 auto 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sale-receipt-card {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .12);
+}
+
+.sale-receipt-accent {
+    height: 6px;
+    background: linear-gradient(
+        90deg,
+        var(--color-primary),
+        #14b8a6
+    );
+}
+
+.sale-receipt-header {
+    padding: 30px 30px 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sale-receipt-brand {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+}
+
+.sale-receipt-brand-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.sale-receipt-brand h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.sale-receipt-brand p {
+    margin: 3px 0 0;
+    color: var(--color-muted);
+    font-size: .8rem;
+}
+
+.sale-receipt-meta {
+    text-align: right;
+}
+
+.sale-receipt-meta span {
+    display: block;
+    color: var(--color-muted);
+    font-size: .74rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: .05em;
+}
+
+.sale-receipt-meta strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 1.2rem;
+}
+
+.sale-receipt-status {
+    margin: 24px 30px 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: color-mix(in srgb, #16a34a 8%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, #16a34a 25%, var(--color-border));
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.sale-receipt-status i {
+    color: #16a34a;
+    font-size: 1.2rem;
+}
+
+.sale-receipt-status strong {
+    display: block;
+    color: #15803d;
+}
+
+.sale-receipt-status small {
+    color: var(--color-muted);
+}
+
+.sale-receipt-info {
+    padding: 28px 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.sale-receipt-info-box {
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+}
+
+.sale-receipt-info-box span {
+    display: block;
+    color: var(--color-muted);
+    font-size: .72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.sale-receipt-info-box strong {
+    display: block;
+}
+
+.sale-receipt-product {
+    margin: 0 30px 26px;
+    padding: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.sale-receipt-product-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+}
+
+.sale-receipt-product-name {
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.sale-receipt-product-detail {
+    color: var(--color-muted);
+    font-size: .82rem;
+}
+
+.sale-receipt-product-total {
+    text-align: right;
+    font-weight: 800;
+}
+
+.sale-receipt-summary {
+    margin: 0 30px 30px auto;
+    width: min(360px, calc(100% - 60px));
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+    border: 1px solid var(--color-border);
+}
+
+.sale-receipt-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 6px 0;
+    color: var(--color-muted);
+}
+
+.sale-receipt-summary-total {
+    margin-top: 10px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--color-border);
+    color: var(--color-text);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.sale-receipt-summary-total strong {
+    color: var(--color-primary);
+    font-size: 1.3rem;
+}
+
+.sale-receipt-footer {
+    padding: 24px 30px 30px;
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+}
+
+.sale-receipt-footer strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.sale-receipt-footer p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: .82rem;
+}
+
+@media (max-width: 620px) {
+    .sale-receipt-header {
+        flex-direction: column;
+    }
+
+    .sale-receipt-meta {
+        text-align: left;
+    }
+
+    .sale-receipt-info {
+        grid-template-columns: 1fr;
+    }
+
+    .sale-receipt-toolbar {
+        flex-direction: column;
+    }
+
+    .sale-receipt-toolbar .btn {
+        width: 100%;
+    }
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 12mm;
+    }
+
+    body > header,
+    body > nav,
+    body > footer,
+    .navbar,
+    .sale-receipt-toolbar {
+        display: none !important;
+    }
+
+    .sale-receipt-page {
+        padding: 0;
+    }
+
+    .sale-receipt-card {
+        width: 100%;
+        max-width: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+</style>
+
+
+<main class="sale-receipt-page">
+
+    <div class="sale-receipt-toolbar">
+
+        <a
+            href="{% url 'vendeur_dashboard' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            {% trans "Nouvelle vente" %}
+        </a>
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                onclick="copyReceipt()"
+            >
+                <i class="bi bi-copy"></i>
+                {% trans "Copier" %}
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-success"
+                onclick="shareWhatsApp()"
+            >
+                <i class="bi bi-whatsapp"></i>
+                {% trans "WhatsApp" %}
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="window.print()"
+            >
+                <i class="bi bi-printer"></i>
+                {% trans "Imprimer" %}
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <article class="sale-receipt-card" id="saleReceipt">
+
+        <div class="sale-receipt-accent"></div>
+
+        <header class="sale-receipt-header">
+
+            <div class="sale-receipt-brand">
+
+                <div class="sale-receipt-brand-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+
+                <div>
+                    <h1>{{ boutique_settings.nom }}</h1>{% include "orders/_receipt_shop.html" %}
+                    <p>{% trans "Reçu de vente comptoir" %}</p>
+                </div>
+
+            </div>
+
+            <div class="sale-receipt-meta">
+
+                <span>{% trans "Reçu" %}</span>
+
+                <strong>
+                    {{ numero_recu }}
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <section class="sale-receipt-status">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <div>
+                <strong>{% trans "Paiement encaissé" %}</strong>
+                <small>{% trans "Vente enregistrée avec succès." %}</small>
+            </div>
+
+        </section>
+
+
+        <section class="sale-receipt-info">
+
+            <div class="sale-receipt-info-box">
+
+                <span>{% trans "Date" %}</span>
+
+                <strong>
+                    {{ vente.date_vente|date:"d/m/Y à H:i" }}
+                </strong>
+
+            </div>
+
+            <div class="sale-receipt-info-box">
+
+                <span>{% trans "Vendeur" %}</span>
+
+                <strong>
+                    {{ vendeur_name }}
+                </strong>
+
+            </div>
+
+            <div class="sale-receipt-info-box">
+
+                <span>{% trans "Client" %}</span>
+
+                <strong>
+                    {{ vente.reference_client|default:"Client comptoir" }}
+                </strong>
+
+            </div>
+
+            <div class="sale-receipt-info-box">
+
+                <span>{% trans "Paiement" %}</span>
+
+                <strong>
+                    {{ vente.get_methode_paiement_display }}
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <section class="sale-receipt-product">
+
+            <div class="sale-receipt-product-row">
+
+                <div>
+
+                    <div class="sale-receipt-product-name">
+                        {{ vente.produit.nom }}
+                    </div>
+
+                    <div class="sale-receipt-product-detail">
+                        {% trans "Quantité :" %} {{ vente.quantite }}
+                        ·
+                        {{ vente.prix_unitaire|floatformat:"-2" }} {{ boutique_settings.devise }} {% trans "/ unité" %}
+
+                        {% if vente.produit.categorie %}
+                            · {{ vente.produit.categorie.nom }}
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="sale-receipt-product-total">
+                    {{ vente.montant_total|floatformat:"-2" }} {{ boutique_settings.devise }}
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="sale-receipt-summary">
+
+            <div class="sale-receipt-summary-row">
+
+                <span>{% trans "Sous-total" %}</span>
+
+                <strong>
+                    {{ vente.montant_total|floatformat:"-2" }} {{ boutique_settings.devise }}
+                </strong>
+
+            </div>
+
+            <div class="sale-receipt-summary-row sale-receipt-summary-total">
+
+                <span>{% trans "Total payé" %}</span>
+
+                <strong>
+                    {{ vente.montant_total|floatformat:"-2" }} {{ boutique_settings.devise }}
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        {% if vente.notes %}
+
+            <section
+                class="sale-receipt-product"
+                style="margin-top: 0;"
+            >
+
+                <div class="sale-receipt-product-name">
+                    {% trans "Note" %}
+                </div>
+
+                <div class="sale-receipt-product-detail">
+                    {{ vente.notes }}
+                </div>
+
+            </section>
+
+        {% endif %}
+
+
+        <footer class="sale-receipt-footer">
+
+            <strong>
+                {% if boutique_settings.afficher_message_recu %}{{ boutique_settings.message_recu }}{% endif %}
+            </strong>
+
+            <p>
+                {% trans "Conservez ce reçu comme justificatif de votre achat." %}
+            </p>
+
+        </footer>
+
+    </article>
+
+</main>
+
+
+<script>
+function buildReceiptText() {
+    return [
+        "{{ boutique_settings.nom|upper|escapejs }}",
+        "Reçu : {{ numero_recu|escapejs }}",
+        "Date : {{ vente.date_vente|date:'d/m/Y H:i'|escapejs }}",
+        "Client : {{ vente.reference_client|default:'Client comptoir'|escapejs }}",
+        "Vendeur : {{ vendeur_name|escapejs }}",
+        "",
+        "Produit : {{ vente.produit.nom|escapejs }}",
+        "Quantité : {{ vente.quantite }}",
+        "Prix unitaire : {{ vente.prix_unitaire|floatformat:"-2" }} {{ boutique_settings.devise|escapejs }}",
+        "Total : {{ vente.montant_total|floatformat:"-2" }} {{ boutique_settings.devise|escapejs }}",
+        "Paiement : {{ vente.get_methode_paiement_display|escapejs }}",
+        "",
+        "{{ boutique_settings.message_recu|escapejs }}"
+    ].join("\n");
+}
+
+
+async function copyReceipt() {
+
+    const texte = buildReceiptText();
+
+    try {
+
+        await navigator.clipboard.writeText(texte);
+
+        alert("Le reçu a été copié.");
+
+    } catch (error) {
+
+        window.prompt(
+            "Copiez le reçu :",
+            texte
+        );
+
+    }
+}
+
+
+function shareWhatsApp() {
+
+    const texte = buildReceiptText();
+
+    const url =
+        "https://wa.me/?text=" +
+        encodeURIComponent(texte);
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+</script>
+
+{% endblock %}

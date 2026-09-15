@@ -1,0 +1,13 @@
+fr,en,bm,domain,source_1,source_2,confidence,validated,notes
+Téléphone,Phone,Tɛlɛfɔni,Compte,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; aucune confirmation Anw Kalan accessible.
+Paiement,Payment,Wari sara,Paiement,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; contexte e-commerce à valider.
+Produit,Product,Fɛn,Catalogue,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; aucune source indépendante accessible.
+Produits,Products,Fɛnw,Catalogue,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; pluriel à valider.
+Fermer,Close,Datugu,Actions,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; contexte UI à valider.
+Retour,Back,Segin,Navigation,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; aucune confirmation Anw Kalan accessible.
+produit,product,Fɛn,Catalogue,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Variante minuscule préexistante; harmonisation à valider.
+Total,Total,Bɛɛ,Paiement,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; terme financier à valider.
+Prix,Price,Sɔngɔ,Paiement,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; terme commercial à valider.
+Rechercher,Search,Ɲini,Actions,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; aucune confirmation Anw Kalan accessible.
+Quantité,Quantity,Hakɛ,Catalogue,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; contexte commercial à valider.
+Envoyer,Send,Ci,Actions,Gestion Boutique:locale/bm/LC_MESSAGES/django.po,,,false,Traduction préexistante; contexte message/formulaire à valider.

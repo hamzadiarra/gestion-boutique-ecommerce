@@ -1,0 +1,6534 @@
+# Initial editable catalog. Update using GNU gettext / Django makemessages.
+msgid ""
+msgstr ""
+"Project-Id-Version: Gestion Boutique\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-12 19:43+0000\n"
+"PO-Revision-Date: 2026-09-12 00:00+0000\n"
+"Last-Translator: Project team\n"
+"Language-Team: en\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Cette adresse e-mail est déjà utilisée."
+msgstr "This email address is already in use."
+
+msgid "Votre photo de profil a été supprimée."
+msgstr "Your profile photo has been removed."
+
+msgid "Aucune photo de profil à supprimer."
+msgstr "There is no profile photo to remove."
+
+msgid "Supprimer votre photo de profil ?"
+msgstr "Delete your profile photo?"
+
+msgid "Cette action retirera votre photo actuelle."
+msgstr "Your current photo will be removed."
+
+msgid "Votre avatar par défaut sera affiché."
+msgstr "Your default avatar will be displayed."
+
+msgid "Supprimer la photo"
+msgstr "Delete photo"
+
+msgid "Nom utilisateur"
+msgstr "Username"
+
+#: .\accounts\decorators.py:27
+msgid "Veuillez vous connecter pour accéder à cette page."
+msgstr "Please sign in to access this page."
+
+#: .\accounts\decorators.py:33
+msgid "Profil introuvable. Veuillez contacter l'administrateur."
+msgstr "Profile not found. Please contact the administrator."
+
+#: .\accounts\decorators.py:43
+msgid ""
+"⛔ Accès refusé — Vous n'avez pas les permissions nécessaires pour accéder à "
+"cette page."
+msgstr ""
+
+#: .\accounts\decorators.py:57 .\accounts\decorators.py:78
+#: .\accounts\decorators.py:99 .\accounts\decorators.py:120
+msgid "Veuillez vous connecter."
+msgstr "Please sign in."
+
+#: .\accounts\decorators.py:68
+msgid "⛔ Accès refusé — Espace réservé aux administrateurs."
+msgstr "⛔ Access denied — Administrators only."
+
+#: .\accounts\decorators.py:89
+msgid "⛔ Accès refusé — Espace réservé aux vendeurs."
+msgstr "⛔ Access denied — Sellers only."
+
+#: .\accounts\decorators.py:110
+msgid "⛔ Accès refusé — Espace réservé aux clients."
+msgstr "⛔ Access denied — Customers only."
+
+#: .\accounts\decorators.py:133
+msgid "⛔ Accès refusé — Espace réservé aux comptables."
+msgstr "⛔ Access denied — Accountants only."
+
+#: .\accounts\forms.py:16
+msgid "La photo doit peser 5 Mo maximum."
+msgstr "The photo must not exceed 5 MB."
+
+#: .\accounts\forms.py:18
+msgid "Format non accepté. Utilisez une image JPG, JPEG, PNG ou WebP."
+msgstr "Unsupported format. Use a JPG, JPEG, PNG or WebP image."
+
+#: .\accounts\forms.py:24
+msgid "Le fichier envoyé n'est pas une image valide."
+msgstr "The uploaded file is not a valid image."
+
+#: .\accounts\forms.py:29 .\templates\accounts\profile_edit.html:4
+#: .\templates\accounts\register.html:570
+msgid "Prénom"
+msgstr "First name"
+
+#: .\accounts\forms.py:30 .\templates\accounts\profile_edit.html:4
+#: .\templates\accounts\register.html:598
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Nom"
+msgstr "Name"
+
+#: .\accounts\forms.py:31 .\templates\accounts\profile_edit.html:4
+#: .\templates\accounts\register.html:920
+#: .\templates\registration\password_reset_form.html:24
+msgid "Adresse e-mail"
+msgstr "Email address"
+
+#: .\accounts\forms.py:57 .\accounts\forms.py:101
+#: .\templates\accounts\profile.html:6 .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\admin_parametres.html:1
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Téléphone"
+msgstr "Phone"
+
+#: .\accounts\forms.py:65 .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Adresse"
+msgstr "Address"
+
+#: .\accounts\forms.py:74 .\accounts\forms.py:103
+#: .\templates\accounts\profile.html:6 .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\orders\checkout.html:5
+msgid "Ville"
+msgstr "City"
+
+#: .\accounts\forms.py:82
+msgid "Ex. Porte 12 ou repère visible"
+msgstr "E.g. Door 12 or visible landmark"
+
+#: .\accounts\forms.py:90
+msgid "Ville ou localité"
+msgstr "City or locality"
+
+#: .\accounts\forms.py:102 .\templates\accounts\profile.html:6
+#: .\templates\accounts\profile_edit.html:4 .\templates\orders\checkout.html:5
+msgid "Quartier / Rue / Avenue"
+msgstr "District / Street / Avenue"
+
+#: .\accounts\forms.py:104 .\templates\accounts\profile.html:6
+#: .\templates\accounts\profile_edit.html:4
+msgid "N° de porte / Repère"
+msgstr "Door number / Landmark"
+
+#: .\accounts\forms.py:105
+msgid "Photo de profil"
+msgstr "Profile photo"
+
+#: .\accounts\models.py:9 .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Administrateur"
+msgstr "Administrator"
+
+#: .\accounts\models.py:10 .\templates\accounts\login.html:162
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+#: .\templates\dashboard\comptable_dashboard.html:27
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\dashboard\vendeur_vente_recu.html:390
+#: .\templates\orders\receipt.html:698
+msgid "Client"
+msgstr "Customer"
+
+#: .\accounts\models.py:11 .\dashboard\models.py:124
+#: .\templates\accounts\login.html:166 .\templates\base.html:55
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\vendeur_vente_recu.html:380
+msgid "Vendeur"
+msgstr "Sales assistant"
+
+#: .\accounts\models.py:12 .\templates\accounts\login.html:170
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Comptable"
+msgstr "Accountant"
+
+#: .\accounts\models.py:13 .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Livreur"
+msgstr "Delivery driver"
+
+#: .\accounts\models.py:26 .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Rôle"
+msgstr "Role"
+
+#: .\accounts\models.py:55 .\templates\accounts\profile_edit.html:4
+#: .\templates\accounts\register.html:663
+msgid "Date de naissance"
+msgstr "Date of birth"
+
+#: .\accounts\models.py:62 .\templates\accounts\profile_edit.html:4
+msgid "Lieu de naissance"
+msgstr "Place of birth"
+
+#: .\accounts\models.py:66 .\templates\accounts\register.html:816
+msgid "Homme"
+msgstr "Man"
+
+#: .\accounts\models.py:67 .\templates\accounts\register.html:836
+msgid "Femme"
+msgstr "Woman"
+
+#: .\accounts\models.py:68
+msgid "Préfère ne pas préciser"
+msgstr "Prefer not to say"
+
+#: .\accounts\models.py:76 .\templates\accounts\profile_edit.html:4
+#: .\templates\accounts\register.html:795
+msgid "Genre"
+msgstr "Gender"
+
+#: .\accounts\models.py:96
+msgid "Profil utilisateur"
+msgstr "User profile"
+
+#: .\accounts\models.py:97
+msgid "Profils utilisateurs"
+msgstr "User profiles"
+
+#: .\accounts\views.py:443
+msgid "Vous avez été déconnecté."
+msgstr "You have been logged out."
+
+#: .\accounts\views.py:503
+msgid "Vos informations personnelles ont été mises à jour."
+msgstr "Your personal information has been updated."
+
+#: .\accounts\views.py:545
+msgid "L'ancien mot de passe est incorrect."
+msgstr "The current password is incorrect."
+
+#: .\accounts\views.py:557
+msgid "Les nouveaux mots de passe ne correspondent pas."
+msgstr "The new passwords do not match."
+
+#: .\accounts\views.py:594
+msgid "Votre mot de passe a été modifié avec succès."
+msgstr "Your password has been changed successfully."
+
+#: .\cart\models.py:21 .\templates\base.html:47 .\templates\base.html:106
+msgid "Panier"
+msgstr "Cart"
+
+#: .\cart\models.py:22
+msgid "Paniers"
+msgstr "Carts"
+
+#: .\cart\models.py:61
+msgid "Article du panier"
+msgstr "Cart item"
+
+#: .\cart\models.py:62
+msgid "Articles du panier"
+msgstr "Cart items"
+
+#: .\cart\views.py:22
+#, python-brace-format
+msgid "« {name} » est en rupture de stock."
+msgstr "« {name} » is out of stock."
+
+#: .\cart\views.py:50
+#, python-brace-format
+msgid "Stock maximum atteint pour « {name} » ({stock} disponibles)."
+msgstr "Maximum stock reached for « {name} » ({stock} available)."
+
+#: .\cart\views.py:57
+#, python-brace-format
+msgid "« {name} » a été ajouté au panier."
+msgstr "« {name} » was added to your cart."
+
+#: .\cart\views.py:103
+#, python-brace-format
+msgid "Stock maximum atteint pour « {name} »."
+msgstr "Maximum stock reached for « {name} »."
+
+#: .\cart\views.py:131 .\cart\views.py:151
+msgid "Article retiré du panier."
+msgstr "Item removed from cart."
+
+#: .\categories\models.py:16 .\dashboard\depense_forms.py:43
+#: .\templates\dashboard\admin_liste.html:11
+#: .\templates\dashboard\admin_liste.html:12
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\depenses\_dashboard.html:13
+#: .\templates\dashboard\depenses\detail.html:11
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\vendeur_ajouter_produit.html:450
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Catégorie"
+msgstr "Category"
+
+#: .\categories\models.py:17 .\templates\base.html:46 .\templates\base.html:105
+msgid "Catégories"
+msgstr "Categories"
+
+#: .\core\test_i18n.py:149
+#, fuzzy
+#| msgid "Actions opérationnelles"
+msgid "Résultat opérationnel"
+msgstr "Operational actions"
+
+#: .\dashboard\cloture_forms.py:35
+msgid "PDF ou image vérifiée, 5 Mo maximum, stockage privé."
+msgstr "Verified PDF or image, 5 MB maximum, private storage."
+
+#: .\dashboard\cloture_forms.py:40
+msgid "La date de clôture ne peut pas être dans le futur."
+msgstr "The closing date cannot be in the future."
+
+#: .\dashboard\cloture_forms.py:46 .\templates\dashboard\admin_alertes.html:3
+msgid "Tous les types"
+msgstr "All types"
+
+#: .\dashboard\cloture_forms.py:49 .\dashboard\depense_forms.py:45
+#: .\orders\delivery_forms.py:30 .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\admin_liste.html:8
+#: .\templates\dashboard\admin_liste.html:9
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\orders\my_orders.html:3
+msgid "Tous les statuts"
+msgstr "All statuses"
+
+#: .\dashboard\cloture_forms.py:50
+msgid "Tous les écarts"
+msgstr "All variances"
+
+#: .\dashboard\cloture_forms.py:50
+msgid "Conforme"
+msgstr "Balanced"
+
+#: .\dashboard\cloture_forms.py:50
+msgid "Excédent constaté"
+msgstr "Observed surplus"
+
+#: .\dashboard\cloture_forms.py:50
+msgid "Manquant constaté"
+msgstr "Observed shortfall"
+
+#: .\dashboard\cloture_forms.py:55
+msgid "Période invalide."
+msgstr "Invalid date range."
+
+#: .\dashboard\cloture_models.py:23 .\dashboard\models.py:40
+#: .\templates\dashboard\depenses\formulaire.html:4
+msgid "Brouillon"
+msgstr "Draft"
+
+#: .\dashboard\cloture_models.py:23 .\dashboard\models.py:40
+msgid "Validée"
+msgstr "Validated"
+
+#: .\dashboard\cloture_models.py:23 .\dashboard\models.py:40
+#: .\orders\delivery_models.py:10 .\orders\models.py:15
+#: .\templates\orders\my_orders.html:3
+msgid "Annulée"
+msgstr "Cancelled"
+
+#: .\dashboard\cloture_models.py:60
+msgid "Une clôture ne peut pas être datée dans le futur."
+msgstr "A closing cannot be dated in the future."
+
+#: .\dashboard\cloture_models.py:74
+msgid "Seul un brouillon est modifiable."
+msgstr "Only a draft can be edited."
+
+#: .\dashboard\cloture_models.py:76
+msgid "Référence et créateur non modifiables."
+msgstr "Reference and creator cannot be changed."
+
+#: .\dashboard\cloture_models.py:92
+msgid "Une clôture reste dans l'historique ; aucune suppression."
+msgstr "A closing remains in the history; nothing is deleted."
+
+#: .\dashboard\cloture_services.py:55
+msgid "Transition inconnue."
+msgstr "Unknown transition."
+
+#: .\dashboard\cloture_services.py:64
+msgid "Cette transition n'est pas autorisée."
+msgstr "This transition is not allowed."
+
+#: .\dashboard\cloture_services.py:70
+msgid "Une clôture validée existe déjà pour ce compte et cette date."
+msgstr "A validated closing already exists for this account and date."
+
+#: .\dashboard\cloture_services.py:74
+msgid "Justifiez l'écart dans le commentaire avant de valider."
+msgstr "Explain the variance in the comment before validating."
+
+#: .\dashboard\cloture_views.py:59
+msgid "Une clôture validée ou annulée est figée."
+msgstr "A validated or cancelled closing is locked."
+
+#: .\dashboard\cloture_views.py:93
+msgid "Clôture mise à jour. Aucun mouvement financier créé."
+msgstr "Closing updated. No financial movement was created."
+
+#: .\dashboard\cloture_views.py:102
+#: .\templates\dashboard\clotures\detail.html:10
+msgid "Aucun justificatif."
+msgstr "No supporting document."
+
+#: .\dashboard\cloture_views.py:106 .\dashboard\depense_views.py:154
+msgid "Justificatif introuvable."
+msgstr "Supporting document not found."
+
+#: .\dashboard\comptable_views.py:325
+msgid "Transaction introuvable"
+msgstr "Transaction not found"
+
+#: .\dashboard\comptable_views.py:406
+msgid "Montant HT"
+msgstr "Amount before tax"
+
+#: .\dashboard\comptable_views.py:408
+msgid "Montant TTC"
+msgstr "Amount including tax"
+
+#: .\dashboard\comptable_views.py:422
+msgid "Prix d'achat"
+msgstr "Purchase price"
+
+#: .\dashboard\comptable_views.py:423
+msgid "Prix de vente"
+msgstr "Selling price"
+
+#: .\dashboard\comptable_views.py:424 .\dashboard\comptable_views.py:449
+msgid "Bénéfice brut"
+msgstr "Gross profit"
+
+#: .\dashboard\comptable_views.py:425 .\dashboard\comptable_views.py:466
+msgid "Taux de marge"
+msgstr "Margin rate"
+
+#: .\dashboard\comptable_views.py:426
+msgid "Taux de markup"
+msgstr "Markup rate"
+
+#: .\dashboard\comptable_views.py:445
+msgid "Chiffre d'affaires"
+msgstr "Revenue"
+
+#: .\dashboard\comptable_views.py:446 .\dashboard\comptable_views.py:465
+msgid "Charges fixes"
+msgstr "Fixed costs"
+
+#: .\dashboard\comptable_views.py:447
+msgid "Charges variables"
+msgstr "Variable costs"
+
+#: .\dashboard\comptable_views.py:448
+msgid "TVA collectée"
+msgstr "Collected VAT"
+
+#: .\dashboard\comptable_views.py:450
+msgid "Impôt estimé (25%)"
+msgstr "Estimated tax (25%)"
+
+#: .\dashboard\comptable_views.py:451
+#: .\templates\dashboard\comptable_calculs.html:155
+msgid "Bénéfice Net"
+msgstr "Net profit"
+
+#: .\dashboard\comptable_views.py:452
+msgid "Taux de rentabilité"
+msgstr "Profitability rate"
+
+#: .\dashboard\comptable_views.py:467
+msgid "Seuil de rentabilité"
+msgstr "Break-even point"
+
+#: .\dashboard\comptable_views.py:468
+#: .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+msgid "CA du mois"
+msgstr "Monthly revenue"
+
+#: .\dashboard\comptable_views.py:469
+msgid "Marge de sécurité"
+msgstr "Safety margin"
+
+#: .\dashboard\comptable_views.py:491
+msgid "CA de départ"
+msgstr "Starting revenue"
+
+#: .\dashboard\comptable_views.py:492
+msgid "Taux de croissance"
+msgstr "Growth rate"
+
+#: .\dashboard\depense_files.py:49
+msgid "Formats acceptés : PDF, JPG/JPEG, PNG et WebP."
+msgstr "Accepted formats: PDF, JPG/JPEG, PNG and WebP."
+
+#: .\dashboard\depense_files.py:51
+msgid "Le justificatif doit peser entre 1 octet et 5 Mo."
+msgstr "The supporting document must be between 1 byte and 5 MB."
+
+#: .\dashboard\depense_files.py:57
+msgid "Le type du fichier ne correspond pas à son extension."
+msgstr "The file type does not match its extension."
+
+#: .\dashboard\depense_files.py:62
+msgid "Le fichier envoyé n'est pas un PDF."
+msgstr "The uploaded file is not a PDF."
+
+#: .\dashboard\depense_files.py:65
+msgid "Le fichier PDF est incomplet."
+msgstr "The PDF file is incomplete."
+
+#: .\dashboard\depense_files.py:69
+msgid "L'image ne correspond pas à son extension."
+msgstr "The image does not match its extension."
+
+#: .\dashboard\depense_files.py:72
+msgid "Le justificatif est illisible ou invalide."
+msgstr "The supporting document is unreadable or invalid."
+
+#: .\dashboard\depense_forms.py:26
+msgid ""
+"PDF, JPG/JPEG, PNG ou WebP, 5 Mo maximum. Téléchargement réservé au "
+"comptable et à l'administrateur."
+msgstr ""
+
+#: .\dashboard\depense_forms.py:40 .\dashboard\finance_forms.py:47
+msgid "Recherche"
+msgstr "Search"
+
+#: .\dashboard\depense_forms.py:40
+msgid "Référence, libellé, bénéficiaire..."
+msgstr "Reference, label, beneficiary..."
+
+#: .\dashboard\depense_forms.py:41
+#: .\templates\dashboard\vendeur_historique.html:5
+msgid "Du"
+msgstr "From"
+
+#: .\dashboard\depense_forms.py:42
+#: .\templates\dashboard\vendeur_historique.html:5
+msgid "Au"
+msgstr "To"
+
+#: .\dashboard\depense_forms.py:44
+msgid "Tous les moyens"
+msgstr "All methods"
+
+#: .\dashboard\depense_forms.py:44
+#: .\templates\dashboard\depenses\detail.html:13
+#: .\templates\payments\payment_form.html:3
+msgid "Moyen de paiement"
+msgstr "Payment method"
+
+#: .\dashboard\depense_forms.py:45 .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\admin_liste.html:12
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+#: .\templates\dashboard\clotures\liste.html:6
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Statut"
+msgstr "Status"
+
+#: .\dashboard\depense_forms.py:46 .\templates\dashboard\clotures\liste.html:6
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Créateur"
+msgstr "Created by"
+
+#: .\dashboard\depense_forms.py:58
+msgid "La date de début doit précéder la date de fin."
+msgstr "The start date must precede the end date."
+
+#: .\dashboard\depense_views.py:69
+msgid "Brouillon enregistré. Validez-le pour l'inclure dans les charges."
+msgstr "Draft saved. Validate it to include it in expenses."
+
+#: .\dashboard\depense_views.py:81
+msgid "Seule une dépense brouillon est modifiable."
+msgstr "Only a draft expense can be edited."
+
+#: .\dashboard\depense_views.py:86
+msgid "Brouillon mis à jour."
+msgstr "Draft updated."
+
+#: .\dashboard\depense_views.py:120
+msgid "Dépense mise à jour."
+msgstr "Expense updated."
+
+#: .\dashboard\depense_views.py:120
+msgid "Cette action a déjà été effectuée."
+msgstr "This action has already been completed."
+
+#: .\dashboard\depense_views.py:150
+msgid "Aucun justificatif pour cette dépense."
+msgstr "No receipt for this expense."
+
+#: .\dashboard\depense_views.py:174
+msgid "Catégorie créée."
+msgstr "Category created."
+
+#: .\dashboard\depense_views.py:191
+msgid "Catégorie mise à jour. L'historique est conservé."
+msgstr "Category updated. History is preserved."
+
+#: .\dashboard\finance_forms.py:37
+msgid "Choisissez deux comptes distincts de même devise."
+msgstr "Choose two different accounts in the same currency."
+
+#: .\dashboard\finance_forms.py:49
+msgid "Tous les types de compte"
+msgstr "All account types"
+
+#: .\dashboard\finance_forms.py:50
+msgid "Tous les mouvements"
+msgstr "All movements"
+
+#: .\dashboard\finance_forms.py:51
+msgid "Entrées et sorties"
+msgstr "Inflows and outflows"
+
+#: .\dashboard\finance_forms.py:58
+msgid "La date de fin doit suivre la date de début."
+msgstr "The end date must not precede the start date."
+
+#: .\dashboard\finance_models.py:13 .\dashboard\models.py:37
+#: .\dashboard\models.py:154 .\payments\models.py:11
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\orders\checkout.html:8 .\templates\payments\payment_form.html:3
+msgid "Espèces"
+msgstr "Cash"
+
+#: .\dashboard\finance_models.py:13 .\dashboard\models.py:37
+#: .\dashboard\models.py:155 .\payments\models.py:12
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\orders\checkout.html:8 .\templates\payments\payment_form.html:3
+msgid "Orange Money"
+msgstr "Orange Money"
+
+#: .\dashboard\finance_models.py:14 .\dashboard\models.py:38
+#: .\dashboard\models.py:156 .\payments\models.py:13
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\orders\checkout.html:8 .\templates\payments\payment_form.html:3
+msgid "Wave"
+msgstr "Wave"
+
+#: .\dashboard\finance_models.py:14 .\dashboard\models.py:38
+#: .\payments\models.py:15 .\templates\orders\checkout.html:8
+#: .\templates\payments\payment_form.html:3
+msgid "Moov Money"
+msgstr "Moov Money"
+
+#: .\dashboard\finance_models.py:14
+msgid "Banque"
+msgstr "Bank"
+
+#: .\dashboard\finance_models.py:15
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Entrée"
+msgstr "Inflow"
+
+#: .\dashboard\finance_models.py:15
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Sortie"
+msgstr "Outflow"
+
+#: .\dashboard\finance_models.py:16 .\dashboard\models.py:183
+msgid "Vente"
+msgstr "Sale"
+
+#: .\dashboard\finance_models.py:16 .\notifications\models.py:9
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\dashboard\vendeur_vente_recu.html:400
+#: .\templates\orders\checkout.html:4 .\templates\orders\receipt.html:738
+msgid "Paiement"
+msgstr "Payment"
+
+#: .\dashboard\finance_models.py:17 .\dashboard\models.py:63
+msgid "Dépense"
+msgstr "Expense"
+
+#: .\dashboard\finance_models.py:17
+#: .\templates\dashboard\depenses\_navigation.html:12
+msgid "Transfert"
+msgstr "Transfer"
+
+#: .\dashboard\finance_models.py:17
+#: .\templates\dashboard\depenses\_navigation.html:13
+msgid "Ajustement"
+msgstr "Adjustment"
+
+#: .\dashboard\finance_models.py:17
+msgid "Annulation"
+msgstr "Cancellation"
+
+#: .\dashboard\finance_models.py:48
+msgid ""
+"Compte utilisé : utilisez un ajustement, pas une modification du solde "
+"initial."
+msgstr ""
+
+#: .\dashboard\finance_models.py:58
+msgid "Désactivez le compte ; aucune suppression financière."
+msgstr "Deactivate the account; financial records cannot be deleted."
+
+#: .\dashboard\finance_models.py:83
+msgid "Journal immuable : utilisez un workflow financier explicite."
+msgstr "Immutable journal: use an explicit financial workflow."
+
+#: .\dashboard\finance_models.py:86
+msgid "Aucune suppression du journal financier."
+msgstr "Financial journal entries cannot be deleted."
+
+#: .\dashboard\finance_models.py:89
+msgid "Utilisez le service financier pour conserver références et contraintes."
+msgstr "Use the financial service to preserve references and constraints."
+
+#: .\dashboard\finance_models.py:105
+msgid "Enregistrement financier immuable."
+msgstr "Financial record is immutable."
+
+#: .\dashboard\finance_models.py:114
+msgid "Aucune suppression financière."
+msgstr "Financial records cannot be deleted."
+
+#: .\dashboard\finance_models.py:137
+msgid "Transfert entre devises interdit : aucune conversion implicite."
+msgstr "Transfers between currencies are not allowed: no implicit conversion."
+
+#: .\dashboard\finance_models.py:139
+msgid "Les deux comptes doivent être actifs."
+msgstr "Both accounts must be active."
+
+#: .\dashboard\finance_models.py:182
+msgid "Compte incompatible avec le type ou la devise du mouvement."
+msgstr "Account is incompatible with the movement type or currency."
+
+#: .\dashboard\finance_services.py:42
+msgid "Montant financier invalide."
+msgstr "Invalid financial amount."
+
+#: .\dashboard\finance_services.py:99
+msgid "Compte introuvable."
+msgstr "Account not found."
+
+#: .\dashboard\finance_services.py:119
+msgid "Compte actif et motif obligatoires."
+msgstr "An active account and a reason are required."
+
+#: .\dashboard\finance_services.py:135
+msgid "Ce mouvement est déjà affecté à un autre compte."
+msgstr "This movement is already assigned to another account."
+
+#: .\dashboard\finance_services.py:139
+msgid "Sélectionnez un compte actif de même type et devise."
+msgstr "Select an active account with the same type and currency."
+
+#: .\dashboard\finance_services.py:141
+msgid "Date de paiement absente : correction métier préalable nécessaire."
+msgstr "Payment date is missing: a prior business correction is required."
+
+#: .\dashboard\finance_services.py:146
+msgid ""
+"Sortie historique absente : utilisez la future reprise historique, pas une "
+"entrée isolée."
+msgstr ""
+
+#: .\dashboard\finance_services.py:148
+msgid "La contrepassation doit rester sur le compte de la sortie initiale."
+msgstr "The reversal must remain on the account of the original outgoing movement."
+
+#: .\dashboard\finance_views.py:155
+#, python-brace-format
+msgid "Opération {reference} enregistrée."
+msgstr "Operation {reference} saved."
+
+#: .\dashboard\finance_views.py:157
+msgid "Attention : le solde théorique du compte est négatif."
+msgstr "Warning: the account's theoretical balance is negative."
+
+#: .\dashboard\models.py:23
+msgid "Catégorie de dépense"
+msgstr "Expense category"
+
+#: .\dashboard\models.py:24 .\templates\dashboard\depenses\_navigation.html:5
+#: .\templates\dashboard\depenses\categories.html:2
+#: .\templates\dashboard\depenses\categories.html:4
+msgid "Catégories de dépenses"
+msgstr "Expense categories"
+
+#: .\dashboard\models.py:38
+msgid "Carte / Banque"
+msgstr "Card / Bank"
+
+#: .\dashboard\models.py:64 .\templates\base.html:67
+#: .\templates\dashboard\depenses\_navigation.html:4
+msgid "Dépenses"
+msgstr "Expenses"
+
+#: .\dashboard\models.py:89
+msgid ""
+"Seul un brouillon est modifiable ; utilisez les actions de validation et "
+"d'annulation."
+msgstr ""
+
+#: .\dashboard\models.py:91
+msgid "La référence et le créateur ne sont pas modifiables."
+msgstr "The reference and creator cannot be changed."
+
+#: .\dashboard\models.py:131 .\products\models.py:54
+#: .\templates\dashboard\admin_liste.html:11
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\vendeur_dashboard.html:31
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\dashboard\vendeur_stock.html:6
+#: .\templates\orders\receipt.html:810
+msgid "Produit"
+msgstr "Product"
+
+#: .\dashboard\models.py:136
+msgid "Quantité vendue"
+msgstr "Quantity sold"
+
+#: .\dashboard\models.py:142
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\orders\receipt.html:811
+msgid "Prix unitaire"
+msgstr "Unit price"
+
+#: .\dashboard\models.py:148
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+msgid "Montant total"
+msgstr "Total amount"
+
+#: .\dashboard\models.py:157 .\payments\models.py:14
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\orders\checkout.html:8 .\templates\payments\payment_form.html:3
+msgid "Carte bancaire"
+msgstr "Bank card"
+
+#: .\dashboard\models.py:160
+msgid "Méthode de paiement"
+msgstr "Payment method"
+
+#: .\dashboard\models.py:167
+msgid "Nom du client"
+msgstr "Customer name"
+
+#: .\dashboard\models.py:173
+msgid "Notes"
+msgstr "Notes"
+
+#: .\dashboard\models.py:178
+msgid "Date de vente"
+msgstr "Sale date"
+
+#: .\dashboard\models.py:184
+msgid "Ventes"
+msgstr "Sales"
+
+#: .\dashboard\models.py:221
+msgid "🛒 Vente enregistrée"
+msgstr "🛒 Sale recorded"
+
+#: .\dashboard\models.py:222
+msgid "✏️ Vente modifiée"
+msgstr "✏️ Sale updated"
+
+#: .\dashboard\models.py:223
+msgid "🗑️ Vente supprimée"
+msgstr "🗑️ Sale deleted"
+
+#: .\dashboard\models.py:224
+msgid "🔑 Connexion"
+msgstr "🔑 Sign in"
+
+#: .\dashboard\models.py:225
+msgid "🚪 Déconnexion"
+msgstr "🚪 Sign out"
+
+#: .\dashboard\models.py:226
+msgid "📦 Stock modifié"
+msgstr "📦 Stock updated"
+
+#: .\dashboard\models.py:227
+msgid "💰 Prix modifié"
+msgstr "💰 Price updated"
+
+#: .\dashboard\models.py:228
+msgid "⛔ Accès refusé"
+msgstr "⛔ Access denied"
+
+#: .\dashboard\models.py:229
+msgid "📝 Autre action"
+msgstr "📝 Other action"
+
+#: .\dashboard\models.py:233 .\notifications\models.py:13
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Information"
+msgstr "Information"
+
+#: .\dashboard\models.py:234
+msgid "Avertissement"
+msgstr "Warning"
+
+#: .\dashboard\models.py:235
+msgid "Alerte critique"
+msgstr "Critical alert"
+
+#: .\dashboard\models.py:242 .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+#: .\templates\dashboard\depenses\detail.html:22
+msgid "Utilisateur"
+msgstr "User"
+
+#: .\dashboard\models.py:248 .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\depenses\detail.html:22
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Action"
+msgstr "Action"
+
+#: .\dashboard\models.py:255
+msgid "Niveau d'alerte"
+msgstr "Alert level"
+
+#: .\dashboard\models.py:259
+msgid "Détails de l'action"
+msgstr "Action details"
+
+#: .\dashboard\models.py:265
+msgid "Adresse IP"
+msgstr "IP address"
+
+#: .\dashboard\models.py:270 .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+#: .\templates\dashboard\clotures\liste.html:6
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\depenses\detail.html:22
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\finance\journal.html:7
+#: .\templates\dashboard\finance\regularisations.html:4
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\dashboard\vendeur_vente_recu.html:370
+msgid "Date"
+msgstr "Date"
+
+#: .\dashboard\models.py:275 .\templates\dashboard\admin_activites.html:3
+msgid "Journal d'activité"
+msgstr "Activity log"
+
+#: .\dashboard\models.py:276
+msgid "Journal des activités"
+msgstr "Activity log"
+
+#: .\dashboard\vendeur_views.py:148
+msgid "Choisissez un produit valide."
+msgstr "Choose a valid product."
+
+#: .\dashboard\vendeur_views.py:151
+msgid "Choisissez un moyen de paiement valide."
+msgstr "Choose a valid payment method."
+
+#: .\dashboard\vendeur_views.py:159
+msgid "La quantité doit être un nombre positif."
+msgstr "Quantity must be a positive number."
+
+#: .\dashboard\vendeur_views.py:202
+#, python-brace-format
+msgid "Vente #{sale_id} enregistrée — {name} x{quantity} = {amount} FCFA"
+msgstr "Sale #{sale_id} recorded — {name} x{quantity} = {amount} XOF"
+
+#: .\dashboard\vendeur_views.py:398
+msgid "Cette commande n'est plus en attente de confirmation."
+msgstr "This order is no longer awaiting confirmation."
+
+#: .\dashboard\vendeur_views.py:412 .\dashboard\vendeur_views.py:507
+msgid "Aucun paiement n'est associé à cette commande."
+msgstr "No payment is associated with this order."
+
+#: .\dashboard\vendeur_views.py:422 .\templates\payments\payment_success.html:3
+msgid "Ce paiement est déjà confirmé."
+msgstr "This payment is already confirmed."
+
+#: .\dashboard\vendeur_views.py:432
+msgid "Ce paiement ne peut pas être confirmé dans son état actuel."
+msgstr "This payment cannot be confirmed in its current state."
+
+#: .\dashboard\vendeur_views.py:440
+msgid "Le montant du paiement ne correspond pas au total de la commande."
+msgstr "The payment amount does not match the order total."
+
+#: .\dashboard\vendeur_views.py:517
+msgid "Seul un paiement en attente peut être rejeté."
+msgstr "Only a pending payment can be rejected."
+
+#: .\dashboard\vendeur_views.py:566 .\dashboard\vendeur_views.py:620
+msgid "Utilisez les actions du suivi de livraison."
+msgstr "Use the delivery tracking actions."
+
+#: .\dashboard\vendeur_views.py:577
+msgid "Seule une commande confirmée peut être expédiée."
+msgstr "Only a confirmed order can be shipped."
+
+#: .\dashboard\vendeur_views.py:631
+msgid "Seule une commande expédiée peut être marquée comme livrée."
+msgstr "Only a shipped order can be marked as delivered."
+
+#: .\dashboard\vendeur_views.py:686
+msgid "Cette commande ne peut plus être annulée."
+msgstr "This order can no longer be cancelled."
+
+#: .\dashboard\vendeur_views.py:754
+msgid "Action non reconnue."
+msgstr "Unknown action."
+
+#: .\dashboard\vendeur_views.py:864
+msgid "Le nom de la catégorie est obligatoire."
+msgstr "Category name is required."
+
+#: .\dashboard\vendeur_views.py:1029
+#, python-brace-format
+msgid "Produit « {name} » ajouté avec succès."
+msgstr "Product « {name} » added successfully."
+
+#: .\dashboard\vendeur_views.py:1151
+#, python-brace-format
+msgid "Produit « {name} » modifié avec succès."
+msgstr "Product « {name} » updated successfully."
+
+#: .\dashboard\vendeur_views.py:1169
+#, python-brace-format
+msgid "Produit « {name} » {state}."
+msgstr "Product « {name} » {state}."
+
+#: .\dashboard\views.py:350
+msgid "Cette transition de commande n'est pas autorisée."
+msgstr "This order transition is not allowed."
+
+#: .\dashboard\views.py:368
+msgid "Ce paiement ne peut plus changer de statut."
+msgstr "This payment status can no longer be changed."
+
+#: .\dashboard\views.py:378
+msgid "Statut du paiement mis à jour."
+msgstr "Payment status updated."
+
+#: .\dashboard\views.py:641
+msgid "Le seuil de stock doit être un nombre entier."
+msgstr "The stock threshold must be a whole number."
+
+#: .\dashboard\views.py:646
+msgid "Le logo doit être une image JPG, PNG ou WebP de 5 Mo maximum."
+msgstr "The logo must be a JPG, PNG, or WebP image of 5 MB maximum."
+
+#: .\dashboard\views.py:653
+msgid "Le fichier du logo n'est pas une image valide."
+msgstr "The logo file is not a valid image."
+
+#: .\dashboard\views.py:658
+msgid "Paramètres enregistrés."
+msgstr "Settings saved."
+
+#: .\notifications\models.py:8 .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+#: .\templates\dashboard\comptable_dashboard.html:27
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\orders\receipt.html:718 .\templates\orders\receipt.html:1010
+msgid "Commande"
+msgstr "Order"
+
+#: .\notifications\models.py:10 .\templates\cart\cart_detail.html:5
+#: .\templates\orders\checkout.html:4 .\templates\orders\checkout.html:9
+#: .\templates\orders\order_detail.html:4 .\templates\orders\receipt.html:773
+#: .\templates\orders\receipt.html:935
+msgid "Livraison"
+msgstr "Delivery"
+
+#: .\notifications\models.py:11 .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\admin_liste.html:11
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\dashboard\vendeur_stock.html:3
+msgid "Stock"
+msgstr "Stock"
+
+#: .\notifications\models.py:12 .\templates\base.html:106
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Compte"
+msgstr "Account"
+
+#: .\notifications\models.py:42
+msgid "Notification"
+msgstr "Notification"
+
+#: .\notifications\models.py:43 .\templates\accounts\profile.html:5
+#: .\templates\base.html:60
+msgid "Notifications"
+msgstr "Notifications"
+
+#: .\notifications\views.py:25 .\notifications\views.py:44
+msgid "Cette action doit être confirmée depuis le centre de notifications."
+msgstr "This action must be confirmed from the notification center."
+
+#: .\notifications\views.py:47
+msgid "Toutes les notifications ont été marquées comme lues."
+msgstr "All notifications have been marked as read."
+
+#: .\orders\delivery_forms.py:25
+msgid "Choisir un motif"
+msgstr "Choose a reason"
+
+#: .\orders\delivery_forms.py:34 .\templates\dashboard\vendeur_commandes.html:4
+msgid "Toutes"
+msgstr "All"
+
+#: .\orders\delivery_forms.py:34 .\templates\orders\delivery\liste.html:5
+msgid "À accepter"
+msgstr "Awaiting acceptance"
+
+#: .\orders\delivery_forms.py:34 .\orders\delivery_models.py:8
+#: .\templates\orders\delivery\liste.html:5
+msgid "À affecter"
+msgstr "Unassigned"
+
+#: .\orders\delivery_forms.py:34 .\templates\orders\delivery\liste.html:5
+msgid "En cours"
+msgstr "In progress"
+
+#: .\orders\delivery_forms.py:34 .\templates\dashboard\vendeur_commandes.html:4
+#: .\templates\orders\delivery\liste.html:5
+msgid "Terminées"
+msgstr "Completed"
+
+#: .\orders\delivery_forms.py:34 .\templates\orders\delivery\liste.html:5
+msgid "Échecs"
+msgstr "Failures"
+
+#: .\orders\delivery_forms.py:34 .\templates\orders\delivery\liste.html:5
+msgid "Livrées aujourd'hui"
+msgstr "Delivered today"
+
+#: .\orders\delivery_models.py:8
+msgid "Affectée"
+msgstr "Assigned"
+
+#: .\orders\delivery_models.py:8
+msgid "Acceptée"
+msgstr "Accepted"
+
+#: .\orders\delivery_models.py:9 .\templates\dashboard\vendeur_commandes.html:4
+msgid "En préparation"
+msgstr "Being prepared"
+
+#: .\orders\delivery_models.py:9
+msgid "Prête"
+msgstr "Ready"
+
+#: .\orders\delivery_models.py:9
+msgid "En route"
+msgstr "On the way"
+
+#: .\orders\delivery_models.py:10
+msgid "Arrivé"
+msgstr "Arrived"
+
+#: .\orders\delivery_models.py:10 .\orders\models.py:14
+#: .\templates\orders\my_orders.html:3
+msgid "Livrée"
+msgstr "Delivered"
+
+#: .\orders\delivery_models.py:10
+msgid "Échec de livraison"
+msgstr "Delivery failed"
+
+#: .\orders\delivery_models.py:11
+msgid "Client absent"
+msgstr "Customer absent"
+
+#: .\orders\delivery_models.py:11
+msgid "Adresse introuvable"
+msgstr "Address not found"
+
+#: .\orders\delivery_models.py:12
+msgid "Client injoignable"
+msgstr "Customer unreachable"
+
+#: .\orders\delivery_models.py:12
+msgid "Refus client"
+msgstr "Customer refused delivery"
+
+#: .\orders\delivery_models.py:12
+msgid "Autre"
+msgstr "Other"
+
+#: .\orders\delivery_models.py:18
+msgid "Utilisez les services de livraison."
+msgstr "Use the delivery services."
+
+#: .\orders\delivery_models.py:21
+msgid "L'historique de livraison est conservé."
+msgstr "Delivery history is preserved."
+
+#: .\orders\delivery_models.py:33
+msgid "Trace immuable : utilisez une action métier."
+msgstr "Immutable record: use a business action."
+
+#: .\orders\delivery_models.py:38
+msgid "Aucune suppression de livraison ou de discussion."
+msgstr "Deliveries and discussions cannot be deleted."
+
+#: .\orders\delivery_models.py:105
+msgid "Écrivez un message non vide."
+msgstr "Please enter a message."
+
+#: .\orders\delivery_permissions.py:28
+msgid "Cette livraison ne vous est pas accessible."
+msgstr "You do not have access to this delivery."
+
+#: .\orders\delivery_services.py:94
+msgid "Cette commande n'est pas éligible à une livraison."
+msgstr "This order is not eligible for delivery."
+
+#: .\orders\delivery_services.py:106
+msgid ""
+"Affectation réservée aux commandes confirmées et livraisons non terminées."
+msgstr ""
+
+#: .\orders\delivery_services.py:109
+msgid "Choisissez un utilisateur actif ayant le rôle livreur."
+msgstr "Choose an active user with the driver role."
+
+#: .\orders\delivery_services.py:150
+msgid "Transition non autorisée dans cet état."
+msgstr "This transition is not allowed in the current state."
+
+#: .\orders\delivery_services.py:154
+msgid "Précisez le motif de l'échec (et un commentaire pour Autre)."
+msgstr "Specify the failure reason (and a comment for Other)."
+
+#: .\orders\delivery_services.py:205
+msgid "La discussion est en lecture seule après un statut terminal."
+msgstr "The discussion is read-only after a terminal status."
+
+#: .\orders\models.py:11 .\payments\models.py:20
+#: .\templates\dashboard\admin_liste.html:8 .\templates\orders\my_orders.html:3
+msgid "En attente"
+msgstr "Pending"
+
+#: .\orders\models.py:12 .\templates\orders\my_orders.html:3
+msgid "Confirmée"
+msgstr "Confirmed"
+
+#: .\orders\models.py:13 .\templates\orders\my_orders.html:3
+msgid "Expédiée"
+msgstr "Shipped"
+
+#: .\orders\models.py:53 .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+msgid "Vendeur confirmateur"
+msgstr "Confirming seller"
+
+#: .\orders\models.py:59
+msgid "Date de confirmation"
+msgstr "Confirmation date"
+
+#: .\orders\views.py:22 .\templates\orders\checkout.html:6
+#: .\templates\orders\checkout.html:7 .\templates\orders\order_detail.html:4
+msgid "Livraison standard"
+msgstr "Standard delivery"
+
+#: .\orders\views.py:22 .\templates\orders\checkout.html:6
+msgid "Sous 2 à 4 jours ouvrés"
+msgstr "Within 2 to 4 business days"
+
+#: .\orders\views.py:23 .\templates\orders\checkout.html:6
+#: .\templates\orders\order_detail.html:4
+msgid "Livraison express"
+msgstr "Express delivery"
+
+#: .\orders\views.py:23 .\templates\orders\checkout.html:6
+msgid "Prioritaire sous 24 à 48 h"
+msgstr "Priority delivery within 24 to 48 hours"
+
+#: .\orders\views.py:60
+msgid "Votre panier est vide. Ajoutez un produit avant de poursuivre."
+msgstr "Your cart is empty. Add a product to continue."
+
+#: .\orders\views.py:98
+msgid "Votre panier est déjà vide."
+msgstr "Your cart is already empty."
+
+#: .\orders\views.py:145
+msgid "Un produit de votre panier n'est plus disponible."
+msgstr "A product in your cart is no longer available."
+
+#: .\orders\views.py:237
+msgid "Vous n'êtes pas autorisé à consulter ce reçu."
+msgstr "You are not authorized to view this receipt."
+
+#: .\orders\views.py:255
+msgid ""
+"Le reçu sera disponible après confirmation de la commande et du paiement."
+msgstr ""
+
+#: .\payments\models.py:21 .\templates\dashboard\admin_liste.html:8
+#: .\templates\orders\my_orders.html:3
+msgid "Payé"
+msgstr "Paid"
+
+#: .\payments\models.py:22 .\templates\dashboard\admin_liste.html:8
+msgid "Échoué"
+msgstr "Failed"
+
+#: .\payments\models.py:23
+msgid "Annulé"
+msgstr "Cancelled"
+
+#: .\payments\views.py:506
+msgid "Votre paiement Wave a été confirmé."
+msgstr "Your Wave payment has been confirmed."
+
+#: .\products\models.py:55 .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_liste.html:12
+#: .\templates\dashboard\vendeur_produits.html:4
+#: .\templates\dashboard\vendeur_produits.html:5
+msgid "Produits"
+msgstr "Products"
+
+#: .\products\models.py:85
+msgid "Liste de souhaits"
+msgstr "Wishlist"
+
+#: .\products\models.py:86
+msgid "Listes de souhaits"
+msgstr "Wishlists"
+
+#: .\products\views.py:126
+#, python-brace-format
+msgid "« {name} » a été retiré de votre liste de souhaits."
+msgstr "« {name} » was removed from your wishlist."
+
+#: .\products\views.py:129
+#, python-brace-format
+msgid "« {name} » a été ajouté à votre liste de souhaits."
+msgstr "« {name} » was added to your wishlist."
+
+#: .\reviews\forms.py:14
+msgid "Écrivez votre avis ici..."
+msgstr "Write your review here..."
+
+#: .\reviews\models.py:32 .\reviews\models.py:33
+msgid "Avis"
+msgstr "Reviews"
+
+#: .\reviews\views.py:25
+msgid "Votre avis a été enregistré avec succès ! ★"
+msgstr "Your review was saved successfully! ★"
+
+#: .\reviews\views.py:27
+msgid "Impossible d'enregistrer l'avis. Données invalides."
+msgstr "Unable to save the review. Invalid data."
+
+#: .\templates\403.html:2
+msgid "Accès refusé — Gestion Boutique"
+msgstr "Access denied — Shop Management"
+
+#: .\templates\403.html:4
+msgid "Cette page n'est pas accessible"
+msgstr "This page is not accessible"
+
+#: .\templates\403.html:4
+msgid ""
+"Votre compte ne dispose pas des autorisations nécessaires pour consulter "
+"cette page."
+msgstr ""
+
+#: .\templates\403.html:4 .\templates\500.html:3
+msgid "Retour à la boutique"
+msgstr "Back to shop"
+
+#: .\templates\404.html:2
+msgid "Page introuvable — Gestion Boutique"
+msgstr "Page not found — Shop Management"
+
+#: .\templates\404.html:4
+msgid "Cette page n'existe plus"
+msgstr "This page no longer exists"
+
+#: .\templates\404.html:4
+msgid ""
+"Le lien est peut-être incorrect ou le produit a été déplacé. Revenez à la "
+"boutique pour continuer votre visite."
+msgstr ""
+
+#: .\templates\404.html:4 .\templates\orders\my_orders.html:3
+msgid "Explorer la boutique"
+msgstr "Browse the shop"
+
+#: .\templates\500.html:2
+msgid "Un problème est survenu — Gestion Boutique"
+msgstr "Something went wrong — Shop Management"
+
+#: .\templates\500.html:3
+msgid "Un problème est survenu"
+msgstr "Something went wrong"
+
+#: .\templates\500.html:3
+msgid ""
+"La boutique rencontre momentanément une difficulté. Réessayez dans quelques "
+"instants."
+msgstr ""
+
+#: .\templates\_language_selector.html:4 .\templates\_language_selector.html:5
+msgid "Langue"
+msgstr "Language"
+
+#: .\templates\_language_selector.html:6
+msgid "FR"
+msgstr "FR"
+
+#: .\templates\_language_selector.html:7
+msgid "EN"
+msgstr "EN"
+
+#: .\templates\_language_selector.html:8
+msgid "BM"
+msgstr "BM"
+
+#: .\templates\_language_selector.html:9
+#: .\templates\dashboard\admin_performance.html:6
+msgid "Appliquer"
+msgstr "Apply"
+
+#: .\templates\_offline_i18n.html:3
+msgid "En ligne"
+msgstr "Online"
+
+#: .\templates\_offline_i18n.html:4
+#, fuzzy
+#| msgid "Connexion"
+msgid "Hors connexion"
+msgstr "Offline"
+
+#: .\templates\_offline_i18n.html:5
+#, fuzzy
+#| msgid "Dernière opération"
+msgid "Dernière synchronisation"
+msgstr "Last sync"
+
+#: .\templates\_offline_i18n.html:6
+msgid "Cette information n'est pas disponible hors connexion."
+msgstr "This information is not available offline."
+
+#: .\templates\_offline_i18n.html:7
+msgid "Cette action nécessite une connexion Internet."
+msgstr "This action requires an Internet connection."
+
+#: .\templates\_offline_i18n.html:8
+msgid "Synchronisation terminée."
+msgstr "Sync complete."
+
+#: .\templates\accounts\change_password.html:2
+msgid "Sécurité du compte — Gestion Boutique"
+msgstr "Account security — Shop Management"
+
+#: .\templates\accounts\change_password.html:4
+#: .\templates\accounts\profile.html:5
+msgid "Sécurité"
+msgstr "Security"
+
+#: .\templates\accounts\change_password.html:4
+msgid "Protéger votre compte"
+msgstr "Protect your account"
+
+#: .\templates\accounts\change_password.html:4
+msgid "Choisissez un mot de passe personnel d'au moins 6 caractères."
+msgstr "Choose a personal password of at least 6 characters."
+
+#: .\templates\accounts\change_password.html:4
+msgid "Mot de passe actuel"
+msgstr "Current password"
+
+#: .\templates\accounts\change_password.html:4
+#: .\templates\registration\password_reset_confirm.html:24
+msgid "Nouveau mot de passe"
+msgstr "New password"
+
+#: .\templates\accounts\change_password.html:4
+msgid "Confirmer le nouveau mot de passe"
+msgstr "Confirm new password"
+
+#: .\templates\accounts\change_password.html:4
+msgid "Retour au profil"
+msgstr "Back to profile"
+
+#: .\templates\accounts\change_password.html:4
+msgid "Mettre à jour le mot de passe"
+msgstr "Update password"
+
+#: .\templates\accounts\login.html:3
+msgid "Connexion — Gestion Boutique"
+msgstr "Sign in — Shop Management"
+
+#: .\templates\accounts\login.html:79 .\templates\base.html:106
+msgid "Connexion"
+msgstr "Sign in"
+
+#: .\templates\accounts\login.html:80
+msgid "Accédez à votre espace Gestion Boutique."
+msgstr "Access your Shop Management account."
+
+#: .\templates\accounts\login.html:89 .\templates\base.html:92
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1070
+msgid "Fermer"
+msgstr "Close"
+
+#: .\templates\accounts\login.html:102
+msgid "Nom d'utilisateur ou e-mail"
+msgstr "Username or email"
+
+#: .\templates\accounts\login.html:109
+#: .\templates\registration\password_reset_form.html:30
+msgid "nom@email.com"
+msgstr "name@email.com"
+
+#: .\templates\accounts\login.html:112
+msgid "Utilisez votre nom d'utilisateur ou l'e-mail associé au compte."
+msgstr "Use your username or the email associated with your account."
+
+#: .\templates\accounts\login.html:117 .\templates\accounts\register.html:950
+msgid "Mot de passe"
+msgstr "Password"
+
+#: .\templates\accounts\login.html:124
+msgid "Votre mot de passe"
+msgstr "Your password"
+
+#: .\templates\accounts\login.html:126
+msgid "Afficher ou masquer le mot de passe"
+msgstr "Show or hide password"
+
+#: .\templates\accounts\login.html:137
+msgid "Rester connecté"
+msgstr "Stay signed in"
+
+#: .\templates\accounts\login.html:144
+#: .\templates\registration\password_reset_form.html:14
+msgid "Mot de passe oublié ?"
+msgstr "Forgot your password?"
+
+#: .\templates\accounts\login.html:150
+msgid "Session sécurisée"
+msgstr "Secure session"
+
+#: .\templates\accounts\login.html:155 .\templates\accounts\register.html:1138
+#: .\templates\base.html:75 .\templates\products\product_detail.html:8
+#: .\templates\registration\password_reset_complete.html:20
+msgid "Se connecter"
+msgstr "Sign in"
+
+#: .\templates\accounts\login.html:159
+msgid "Espaces disponibles après connexion"
+msgstr "Available areas after sign-in"
+
+#: .\templates\accounts\login.html:174
+msgid "Admin"
+msgstr "Admin"
+
+#: .\templates\accounts\login.html:181
+msgid "Vous n'avez pas encore de compte ?"
+msgstr "Don't have an account yet?"
+
+#: .\templates\accounts\login.html:182 .\templates\base.html:76
+msgid "Créer un compte"
+msgstr "Create an account"
+
+#: .\templates\accounts\profile.html:2
+msgid "Mon compte — Gestion Boutique"
+msgstr "My account — Shop Management"
+
+#: .\templates\accounts\profile.html:4 .\templates\accounts\profile_edit.html:4
+msgid "Mon compte"
+msgstr "My account"
+
+#: .\templates\accounts\profile.html:4
+#: .\templates\dashboard\vendeur_dashboard.html:7
+msgid "Bonjour"
+msgstr "Hello"
+
+#: .\templates\accounts\profile.html:4
+msgid "Gérez vos informations, vos commandes et la sécurité de votre compte."
+msgstr "Manage your information, orders, and account security."
+
+#: .\templates\accounts\profile.html:4
+msgid "Modifier mes informations"
+msgstr "Edit my information"
+
+#: .\templates\accounts\profile.html:5
+msgid "Navigation du compte"
+msgstr "Account navigation"
+
+#: .\templates\accounts\profile.html:5 .\templates\base.html:66
+#: .\templates\base.html:106
+msgid "Mon profil"
+msgstr "My profile"
+
+#: .\templates\accounts\profile.html:5 .\templates\base.html:106
+#: .\templates\orders\my_orders.html:3 .\templates\orders\order_detail.html:4
+#: .\templates\payments\payment_success.html:3
+msgid "Mes commandes"
+msgstr "My orders"
+
+#: .\templates\accounts\profile.html:5
+msgid "Mes favoris"
+msgstr "My favourites"
+
+#: .\templates\accounts\profile.html:6 .\templates\base.html:51
+#: .\templates\base.html:68 .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_dashboard_v2.html:6
+#: .\templates\dashboard\vendeur_commandes.html:3
+msgid "Commandes"
+msgstr "Orders"
+
+#: .\templates\accounts\profile.html:6 .\templates\base.html:52
+#: .\templates\base.html:105
+msgid "Favoris"
+msgstr "Favourites"
+
+#: .\templates\accounts\profile.html:6
+msgid "Membre depuis"
+msgstr "Member since"
+
+#: .\templates\accounts\profile.html:6 .\templates\accounts\profile_edit.html:4
+msgid "Informations personnelles"
+msgstr "Personal information"
+
+#: .\templates\accounts\profile.html:6
+msgid "Vos coordonnées"
+msgstr "Your contact details"
+
+#: .\templates\accounts\profile.html:6
+#: .\templates\dashboard\clotures\detail.html:13
+#: .\templates\dashboard\clotures\formulaire.html:3
+#: .\templates\dashboard\depenses\detail.html:5
+#: .\templates\dashboard\depenses\formulaire.html:2
+#: .\templates\dashboard\depenses\formulaire.html:4
+#: .\templates\dashboard\vendeur_modifier_produit.html:2
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\orders\checkout.html:7 .\templates\orders\checkout.html:9
+msgid "Modifier"
+msgstr "Edit"
+
+#: .\templates\accounts\profile.html:6
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "E-mail"
+msgstr "Email"
+
+#: .\templates\accounts\profile.html:7
+#: .\templates\dashboard\admin_dashboard.html:9
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_dashboard.html:27
+msgid "Activité récente"
+msgstr "Recent activity"
+
+#: .\templates\accounts\profile.html:7
+msgid "Vos dernières commandes"
+msgstr "Your latest orders"
+
+#: .\templates\accounts\profile.html:7
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\vendeur_dashboard.html:38
+msgid "Tout voir"
+msgstr "View all"
+
+#: .\templates\accounts\profile.html:7
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\vendeur_commande_detail.html:2
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\orders\delivery\detail.html:4
+#: .\templates\orders\delivery\liste.html:7 .\templates\orders\my_orders.html:3
+#: .\templates\orders\order_detail.html:2
+#: .\templates\orders\order_detail.html:4 .\templates\orders\receipt.html:659
+#: .\templates\payments\payment_form.html:3
+#: .\templates\payments\payment_success.html:3
+msgid "Commande #"
+msgstr "Order #"
+
+#: .\templates\accounts\profile.html:7 .\templates\cart\cart_detail.html:5
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+#: .\templates\dashboard\admin_liste.html:15
+#: .\templates\dashboard\admin_liste.html:17
+#: .\templates\dashboard\admin_liste.html:18
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\comptable_calculs.html:99
+#: .\templates\dashboard\comptable_calculs.html:103
+#: .\templates\dashboard\comptable_calculs.html:389
+#: .\templates\dashboard\comptable_dashboard.html:14
+#: .\templates\dashboard\comptable_dashboard.html:25
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_dashboard.html:27
+#: .\templates\dashboard\comptable_transaction_detail.html:6
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:6
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\vendeur_ajouter_produit.html:590
+#: .\templates\dashboard\vendeur_ajouter_produit.html:633
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_dashboard.html:11
+#: .\templates\dashboard\vendeur_dashboard.html:14
+#: .\templates\dashboard\vendeur_dashboard.html:15
+#: .\templates\dashboard\vendeur_dashboard.html:38
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:4
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+#: .\templates\dashboard\vendeur_paniers.html:14
+#: .\templates\dashboard\vendeur_paniers.html:35
+#: .\templates\dashboard\vendeur_paniers.html:37
+#: .\templates\dashboard\vendeur_paniers.html:43
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\orders\checkout.html:9 .\templates\orders\my_orders.html:3
+#: .\templates\orders\order_detail.html:4
+#: .\templates\payments\payment_form.html:3
+#: .\templates\payments\payment_success.html:3
+#: .\templates\products\_product_card.html:15
+#: .\templates\products\product_detail.html:6
+msgid "FCFA"
+msgstr "FCFA"
+
+#: .\templates\accounts\profile.html:7
+msgid "Vous n'avez pas encore passé de commande."
+msgstr "You have not placed an order yet."
+
+#: .\templates\accounts\profile.html:7
+#: .\templates\notifications\notification_list.html:4
+#: .\templates\products\wishlist.html:3
+msgid "Découvrir la boutique"
+msgstr "Explore the shop"
+
+#: .\templates\accounts\profile.html:7
+msgid "Votre compte est protégé"
+msgstr "Your account is protected"
+
+#: .\templates\accounts\profile.html:7
+msgid "Vous pouvez modifier votre mot de passe à tout moment."
+msgstr "You can change your password at any time."
+
+#: .\templates\accounts\profile.html:7
+msgid "Gérer la sécurité"
+msgstr "Manage security"
+
+#: .\templates\accounts\profile_edit.html:2
+msgid "Modifier mon profil — Gestion Boutique"
+msgstr "Edit my profile — Shop Management"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Modifier mon profil"
+msgstr "Edit my profile"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Complétez vos informations quand vous le souhaitez."
+msgstr "Complete your information whenever you like."
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Photo"
+msgstr "Photo"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Modifier la photo de profil"
+msgstr "Change profile photo"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Photo actuelle"
+msgstr "Current photo"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "Cliquez sur l’avatar pour choisir une photo"
+msgstr "Click the avatar to choose a photo"
+
+#: .\templates\accounts\profile_edit.html:4
+msgid "JPG, JPEG, PNG ou WebP · 5 Mo maximum."
+msgstr "JPG, JPEG, PNG, or WebP · 5 MB maximum."
+
+#: .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Contact"
+msgstr "Contact"
+
+#: .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\vendeur_ajouter_produit.html:995
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1130
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Annuler"
+msgstr "Cancel"
+
+#: .\templates\accounts\profile_edit.html:4
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Enregistrer les modifications"
+msgstr "Save changes"
+
+#: .\templates\accounts\register.html:3
+msgid "Créer votre compte — Gestion Boutique"
+msgstr "Create your account — Shop Management"
+
+#: .\templates\accounts\register.html:474
+#: .\templates\dashboard\finance\comptes.html:3
+msgid "Nouveau compte"
+msgstr "New account"
+
+#: .\templates\accounts\register.html:478
+msgid "Créer votre compte"
+msgstr "Create your account"
+
+#: .\templates\accounts\register.html:482
+msgid "Trois étapes simples pour rejoindre Gestion Boutique."
+msgstr "Three simple steps to join Shop Management."
+
+#: .\templates\accounts\register.html:495
+msgid "Étape"
+msgstr "Step"
+
+#: .\templates\accounts\register.html:495
+msgid "sur 3"
+msgstr "of 3"
+
+#: .\templates\accounts\register.html:499
+msgid "Identité"
+msgstr "Identity"
+
+#: .\templates\accounts\register.html:557
+msgid "Faisons connaissance"
+msgstr "Let's get acquainted"
+
+#: .\templates\accounts\register.html:561
+msgid "Indiquez simplement votre prénom et votre nom."
+msgstr "Simply enter your first and last name."
+
+#: .\templates\accounts\register.html:580
+msgid "Votre prénom"
+msgstr "Your first name"
+
+#: .\templates\accounts\register.html:608
+msgid "Votre nom"
+msgstr "Your last name"
+
+#: .\templates\accounts\register.html:631
+#: .\templates\accounts\register.html:888
+#: .\templates\products\product_list.html:9
+msgid "Suivant"
+msgstr "Next"
+
+#: .\templates\accounts\register.html:650
+msgid "Quelques informations sur vous"
+msgstr "A few details about you"
+
+#: .\templates\accounts\register.html:654
+msgid "Renseignez votre date de naissance et votre genre."
+msgstr "Enter your date of birth and gender."
+
+#: .\templates\accounts\register.html:677
+msgid "Jour de naissance"
+msgstr "Day of birth"
+
+#: .\templates\accounts\register.html:681
+msgid "Jour"
+msgstr "Day"
+
+#: .\templates\accounts\register.html:707
+msgid "Mois de naissance"
+msgstr "Month of birth"
+
+#: .\templates\accounts\register.html:711
+msgid "Mois"
+msgstr "Month"
+
+#: .\templates\accounts\register.html:737
+msgid "Année de naissance"
+msgstr "Year of birth"
+
+#: .\templates\accounts\register.html:741
+msgid "Année"
+msgstr "Year"
+
+#: .\templates\accounts\register.html:856
+msgid "Ne pas préciser"
+msgstr "Prefer not to say"
+
+#: .\templates\accounts\register.html:881
+#: .\templates\accounts\register.html:1100
+#: .\templates\dashboard\clotures\formulaire.html:6
+#: .\templates\dashboard\depenses\formulaire.html:12
+#: .\templates\dashboard\finance\formulaire.html:9
+#: .\templates\dashboard\vendeur_paniers.html:11
+#: .\templates\orders\checkout.html:6 .\templates\orders\checkout.html:7
+#: .\templates\orders\checkout.html:8
+msgid "Retour"
+msgstr "Back"
+
+#: .\templates\accounts\register.html:907
+msgid "Sécurisez votre compte"
+msgstr "Secure your account"
+
+#: .\templates\accounts\register.html:911
+msgid ""
+"Votre adresse e-mail et votre mot de passe\\n                    vous "
+"permettront d'accéder à votre espace client."
+msgstr ""
+
+#: .\templates\accounts\register.html:930
+msgid "vous@exemple.com"
+msgstr "you@example.com"
+
+#: .\templates\accounts\register.html:969
+msgid "Afficher le mot de passe"
+msgstr "Show password"
+
+#: .\templates\accounts\register.html:988
+msgid "Utilisez un mot de passe suffisamment robuste."
+msgstr "Use a strong enough password."
+
+#: .\templates\accounts\register.html:1007
+msgid "Confirmer le mot de passe"
+msgstr "Confirm password"
+
+#: .\templates\accounts\register.html:1026
+msgid "Afficher la confirmation"
+msgstr "Show confirmation"
+
+#: .\templates\accounts\register.html:1039
+msgid "Les deux mots de passe ne correspondent pas."
+msgstr "The two passwords do not match."
+
+#: .\templates\accounts\register.html:1066
+msgid "J'accepte les"
+msgstr "I accept the"
+
+#: .\templates\accounts\register.html:1069
+msgid "Conditions d'utilisation"
+msgstr "Terms of use"
+
+#: .\templates\accounts\register.html:1072
+msgid "et la"
+msgstr "and the"
+
+#: .\templates\accounts\register.html:1075
+msgid "Politique de confidentialité"
+msgstr "Privacy policy"
+
+#: .\templates\accounts\register.html:1110
+msgid "Créer mon compte"
+msgstr "Create my account"
+
+#: .\templates\accounts\register.html:1120
+msgid "Création..."
+msgstr "Creating..."
+
+#: .\templates\accounts\register.html:1135
+msgid "Vous avez déjà un compte ?"
+msgstr "Already have an account?"
+
+#: .\templates\base.html:9 .\templates\base.html:28 .\templates\base.html:104
+msgid "Gestion Boutique"
+msgstr "Shop Management"
+
+#: .\templates\base.html:26
+msgid "Gestion Boutique, accueil"
+msgstr "Shop Management, home"
+
+#: .\templates\base.html:28
+msgid "Votre sélection, simplement."
+msgstr "Your selection, made simple."
+
+#: .\templates\base.html:31
+msgid "Ouvrir le menu"
+msgstr "Open menu"
+
+#: .\templates\base.html:39
+msgid "Rechercher…"
+msgstr "Search…"
+
+#: .\templates\base.html:39
+msgid "Rechercher dans la boutique"
+msgstr "Search the shop"
+
+#: .\templates\base.html:40
+msgid "Lancer la recherche"
+msgstr "Search"
+
+#: .\templates\base.html:44
+msgid "Accueil"
+msgstr "Home"
+
+#: .\templates\base.html:45 .\templates\base.html:105
+#: .\templates\categories\category_detail.html:3
+#: .\templates\dashboard\admin_dashboard.html:3
+#: .\templates\products\product_detail.html:5
+msgid "Boutique"
+msgstr "Shop"
+
+#: .\templates\base.html:58
+msgid "Finance"
+msgstr "Finance"
+
+#: .\templates\base.html:60 .\templates\orders\delivery\liste.html:2
+#: .\templates\orders\delivery\liste.html:4
+msgid "Mes livraisons"
+msgstr "My deliveries"
+
+#: .\templates\base.html:60
+msgid "Livraisons"
+msgstr "Deliveries"
+
+#: .\templates\base.html:64
+msgid "Connecté en tant que"
+msgstr "Signed in as"
+
+#: .\templates\base.html:68 .\templates\dashboard\admin_alertes.html:3
+msgid "Pilotage"
+msgstr "Overview"
+
+#: .\templates\base.html:68 .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\admin_dashboard_v2.html:6
+msgid "Paiements"
+msgstr "Payments"
+
+#: .\templates\base.html:68 .\templates\dashboard\admin_clients.html:1
+msgid "Clients"
+msgstr "Customers"
+
+#: .\templates\base.html:68 .\templates\dashboard\admin_dashboard_v2.html:11
+#: .\templates\dashboard\admin_performance.html:5
+msgid "Performance vendeurs"
+msgstr "Sales assistant performance"
+
+#: .\templates\base.html:68
+msgid "Alertes"
+msgstr "Alerts"
+
+#: .\templates\base.html:68
+msgid "Journal d’activité"
+msgstr "Activity log"
+
+#: .\templates\base.html:68 .\templates\dashboard\admin_parametres.html:1
+msgid "Paramètres boutique"
+msgstr "Shop settings"
+
+#: .\templates\base.html:69
+msgid "Outils financiers"
+msgstr "Financial tools"
+
+#: .\templates\base.html:71
+msgid "Se déconnecter"
+msgstr "Sign out"
+
+#: .\templates\base.html:78
+msgid "Changer de thème"
+msgstr "Change theme"
+
+#: .\templates\base.html:78
+msgid "Revenir au thème clair"
+msgstr "Switch to light theme"
+
+#: .\templates\base.html:78
+msgid "Passer au thème sombre"
+msgstr "Switch to dark theme"
+
+#: .\templates\base.html:104
+msgid "Une expérience d'achat plus simple."
+msgstr "A simpler shopping experience."
+
+#: .\templates\base.html:104
+msgid ""
+"Une sélection pensée pour vos envies, avec un service clair du premier clic "
+"au suivi de votre commande."
+msgstr "A selection designed around your needs, with clear service from the "
+"first click to order tracking."
+
+#: .\templates\base.html:105
+msgid "Tous les produits"
+msgstr "All products"
+
+#: .\templates\base.html:106 .\templates\dashboard\admin_clients.html:1
+msgid "Inscription"
+msgstr "Sign up"
+
+#: .\templates\base.html:107
+msgid "Besoin d'aide ?"
+msgstr "Need help?"
+
+#: .\templates\base.html:107
+msgid "Notre équipe est disponible pour vous accompagner."
+msgstr "Our team is here to help."
+
+#: .\templates\base.html:107
+msgid "contact@gestionboutique.ml"
+msgstr "contact@shopmanagement.ml"
+
+#: .\templates\base.html:107
+msgid "Écrire sur WhatsApp"
+msgstr "Contact us on WhatsApp"
+
+#: .\templates\base.html:109
+msgid "© 2026 Gestion Boutique"
+msgstr "© 2026 Shop Management"
+
+#: .\templates\base.html:109
+msgid "Une boutique pensée pour vous."
+msgstr "A shop designed for you."
+
+#: .\templates\cart\cart_detail.html:2
+msgid "Panier — Gestion Boutique"
+msgstr "Cart — Shop Management"
+
+#: .\templates\cart\cart_detail.html:4 .\templates\orders\checkout.html:9
+#: .\templates\orders\order_detail.html:4 .\templates\products\wishlist.html:3
+msgid "Votre sélection"
+msgstr "Your selection"
+
+#: .\templates\cart\cart_detail.html:4
+msgid "Votre panier."
+msgstr "Your cart."
+
+#: .\templates\cart\cart_detail.html:4
+msgid "Vérifiez vos articles avant de poursuivre votre commande."
+msgstr "Review your items before continuing with your order."
+
+#: .\templates\cart\cart_detail.html:4
+msgid "article"
+msgstr "item"
+
+#: .\templates\cart\cart_detail.html:5
+msgid "FCFA l'unité"
+msgstr "FCFA per unit"
+
+#: .\templates\cart\cart_detail.html:5
+#: .\templates\products\product_detail.html:6
+msgid "Diminuer"
+msgstr "Decrease"
+
+#: .\templates\cart\cart_detail.html:5
+#: .\templates\products\product_detail.html:6
+msgid "Augmenter"
+msgstr "Increase"
+
+#: .\templates\cart\cart_detail.html:5
+#: .\templates\dashboard\vendeur_ajouter_produit.html:828
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Retirer"
+msgstr "Remove"
+
+#: .\templates\cart\cart_detail.html:5 .\templates\orders\checkout.html:4
+msgid "Récapitulatif"
+msgstr "Summary"
+
+#: .\templates\cart\cart_detail.html:5
+msgid "Votre commande"
+msgstr "Your order"
+
+#: .\templates\cart\cart_detail.html:5
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\vendeur_vente_recu.html:446
+#: .\templates\orders\checkout.html:9 .\templates\orders\receipt.html:921
+msgid "Sous-total"
+msgstr "Subtotal"
+
+#: .\templates\cart\cart_detail.html:5
+msgid "Choisie à l'étape suivante"
+msgstr "Chosen in the next step"
+
+#: .\templates\cart\cart_detail.html:5
+#: .\templates\dashboard\vendeur_dashboard.html:35
+msgid "Total estimé"
+msgstr "Estimated total"
+
+#: .\templates\cart\cart_detail.html:5
+msgid "Passer à la commande"
+msgstr "Proceed to checkout"
+
+#: .\templates\cart\cart_detail.html:5
+msgid ""
+"Vous pourrez vérifier l'adresse, la livraison et le paiement avant "
+"confirmation."
+msgstr ""
+
+#: .\templates\cart\cart_detail.html:5
+msgid "Votre panier est prêt à vous accueillir"
+msgstr "Your cart is ready for you"
+
+#: .\templates\cart\cart_detail.html:5
+msgid ""
+"Ajoutez des produits depuis la boutique. Ils apparaîtront ici avec leur "
+"quantité et leur total."
+msgstr "Add products from the shop. They will appear here with their quantity and total."
+
+#: .\templates\cart\cart_detail.html:5
+msgid "Commencer mes achats"
+msgstr "Start shopping"
+
+#: .\templates\categories\category_detail.html:2
+#: .\templates\orders\order_detail.html:2 .\templates\orders\receipt.html:3
+#: .\templates\products\product_detail.html:2
+msgid "— Gestion Boutique"
+msgstr "— Shop Management"
+
+#: .\templates\categories\category_detail.html:3
+#: .\templates\products\product_detail.html:5
+msgid "Fil d'Ariane"
+msgstr "Breadcrumb"
+
+#: .\templates\categories\category_detail.html:3
+msgid "Collection"
+msgstr "Collection"
+
+#: .\templates\categories\category_detail.html:3
+#: .\templates\categories\category_list.html:3 .\templates\home.html:37
+#: .\templates\products\product_list.html:7
+msgid "produit"
+msgstr "product"
+
+#: .\templates\categories\category_detail.html:3
+msgid "dans cette catégorie"
+msgstr "in this category"
+
+#: .\templates\categories\category_detail.html:3
+msgid "Filtrer cette sélection"
+msgstr "Filter this selection"
+
+#: .\templates\categories\category_detail.html:3
+msgid "Cette catégorie est momentanément vide"
+msgstr "This category is currently empty"
+
+#: .\templates\categories\category_detail.html:3
+msgid ""
+"Découvrez les autres univers de la boutique pour continuer votre visite."
+msgstr ""
+
+#: .\templates\categories\category_detail.html:3 .\templates\home.html:17
+msgid "Voir les catégories"
+msgstr "View categories"
+
+#: .\templates\categories\category_list.html:2
+msgid "Catégories — Gestion Boutique"
+msgstr "Categories — Shop Management"
+
+#: .\templates\categories\category_list.html:3
+msgid "Explorer"
+msgstr "Explore"
+
+#: .\templates\categories\category_list.html:3
+msgid "Choisissez votre univers."
+msgstr "Choose your world."
+
+#: .\templates\categories\category_list.html:3
+msgid ""
+"Parcourez la boutique par catégories et trouvez rapidement ce qui vous "
+"correspond."
+msgstr "Browse the shop by category and quickly find what suits you."
+
+#: .\templates\categories\category_list.html:3
+msgid "Aucune catégorie disponible"
+msgstr "No categories available"
+
+#: .\templates\categories\category_list.html:3
+msgid ""
+"Les catégories de la boutique apparaîtront ici dès qu'elles seront publiées."
+msgstr ""
+
+#: .\templates\categories\category_list.html:3
+msgid "Voir la boutique"
+msgstr "View the shop"
+
+#: .\templates\dashboard\_control_pagination.html:1
+#: .\templates\dashboard\_seller_pagination.html:1
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\notifications\notification_list.html:4
+#: .\templates\orders\my_orders.html:3 .\templates\products\product_list.html:9
+msgid "Page"
+msgstr "Page"
+
+#: .\templates\dashboard\_control_pagination.html:1
+#: .\templates\dashboard\_seller_pagination.html:1
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\notifications\notification_list.html:4
+#: .\templates\orders\my_orders.html:3 .\templates\products\product_list.html:9
+msgid "sur"
+msgstr "of"
+
+#: .\templates\dashboard\_seller_pagination.html:1
+#: .\templates\products\product_list.html:9
+msgid "Pagination"
+msgstr "Pagination"
+
+#: .\templates\dashboard\admin_activites.html:2
+msgid "Journal d'activité — administration"
+msgstr "Activity log — administration"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Audit"
+msgstr "Audit"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Historique paginé des actions métier importantes."
+msgstr "Paginated history of important business actions."
+
+#: .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_liste.html:5
+#: .\templates\dashboard\admin_parametres.html:1
+#: .\templates\dashboard\admin_performance.html:5
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Vue globale"
+msgstr "Overview"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Rechercher dans les détails ou utilisateurs"
+msgstr "Search details or users"
+
+#: .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Tous les rôles"
+msgstr "All roles"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Toutes les actions"
+msgstr "All actions"
+
+#: .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Tous les niveaux"
+msgstr "All levels"
+
+#: .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_liste.html:9
+#: .\templates\dashboard\clotures\liste.html:5
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+#: .\templates\dashboard\depenses\liste.html:14
+#: .\templates\dashboard\finance\journal.html:5
+#: .\templates\dashboard\vendeur_historique.html:5
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:5
+#: .\templates\orders\delivery\liste.html:6 .\templates\orders\my_orders.html:3
+#: .\templates\products\product_list.html:6
+msgid "Filtrer"
+msgstr "Filter"
+
+#: .\templates\dashboard\admin_activites.html:3
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Niveau"
+msgstr "Level"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Détails"
+msgstr "Details"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "IP"
+msgstr "IP address"
+
+#: .\templates\dashboard\admin_activites.html:3
+msgid "Aucune activité pour ces critères."
+msgstr "No activity matches these filters."
+
+#: .\templates\dashboard\admin_alertes.html:2
+msgid "Alertes — administration"
+msgstr "Alerts — administration"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Centre d'alertes"
+msgstr "Alerts center"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid ""
+"Les points nécessitant une attention sont calculés depuis les données "
+"actuelles."
+msgstr ""
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Critiques"
+msgstr "Critical"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Attention"
+msgstr "Warning"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Total alertes"
+msgstr "Total alerts"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Catalogue"
+msgstr "Catalogue"
+
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\finance\comptes.html:5
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Type"
+msgstr "Type"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Alerte"
+msgstr "Alert"
+
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\dashboard\comptable_dashboard.html:25
+#: .\templates\dashboard\depenses\liste.html:17
+msgid "Détail"
+msgstr "Details"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Contexte"
+msgstr "Context"
+
+#: .\templates\dashboard\admin_alertes.html:3
+#: .\templates\notifications\notification_list.html:4
+msgid "Voir"
+msgstr "View"
+
+#: .\templates\dashboard\admin_alertes.html:3
+msgid "Aucune alerte pour ces critères."
+msgstr "No alerts match these criteria."
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Clients — administration"
+msgstr "Customers — administration"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Commerce"
+msgstr "Commerce"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Vision consolidée des clients et de leur activité."
+msgstr "Consolidated view of customers and their activity."
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Nom, e-mail ou téléphone"
+msgstr "Name, email, or phone"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Tous les clients"
+msgstr "All customers"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Ayant commandé"
+msgstr "With orders"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Sans commande"
+msgstr "Without orders"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Total dépensé"
+msgstr "Total spent"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Dernière commande"
+msgstr "Latest order"
+
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Activité"
+msgstr "Activity"
+
+#: .\templates\dashboard\admin_clients.html:1
+#: .\templates\dashboard\admin_liste.html:15
+#: .\templates\dashboard\finance\comptes.html:5
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Actif"
+msgstr "Active"
+
+#: .\templates\dashboard\admin_clients.html:1
+msgid "Aucun client trouvé."
+msgstr "No customers found."
+
+#: .\templates\dashboard\admin_dashboard.html:2
+msgid "Pilotage administrateur"
+msgstr "Administrator overview"
+
+#: .\templates\dashboard\admin_dashboard.html:3
+msgid "Pilotage global"
+msgstr "Overall overview"
+
+#: .\templates\dashboard\admin_dashboard.html:3
+msgid "Administration"
+msgstr "Administration"
+
+#: .\templates\dashboard\admin_dashboard.html:3
+msgid "Une vue synthétique de l'activité et des risques opérationnels."
+msgstr "A summary of activity and operational risks."
+
+#: .\templates\dashboard\admin_dashboard.html:3
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Utilisateurs"
+msgstr "Users"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "Chiffre d'affaires global"
+msgstr "Overall revenue"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "Ventes directes et paiements validés"
+msgstr "Direct sales and confirmed payments"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "FCFA encaissés"
+msgstr "FCFA collected"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "à traiter"
+msgstr "to process"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "Clients / vendeurs"
+msgstr "Customers / sellers"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "Comptes actifs par rôle"
+msgstr "Active accounts by role"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "rupture"
+msgstr "out of stock"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+msgid "stock"
+msgstr "Stock"
+
+#: .\templates\dashboard\admin_dashboard.html:4
+#: .\templates\dashboard\admin_liste.html:15
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "faible"
+msgstr "low"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+msgid "Paiements reçus"
+msgstr "Payments received"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+msgid "FCFA · paiements validés"
+msgstr "FCFA · confirmed payments"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+#: .\templates\dashboard\admin_dashboard.html:6
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+#: .\templates\dashboard\comptable_dashboard.html:15
+msgid "Paiements en attente"
+msgstr "Pending payments"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+#: .\templates\dashboard\comptable_dashboard.html:25
+#: .\templates\dashboard\comptable_transactions_v2.html:6
+msgid "opération"
+msgstr "operation"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+#: .\templates\dashboard\admin_dashboard.html:6
+msgid "Commandes à traiter"
+msgstr "Orders to process"
+
+#: .\templates\dashboard\admin_dashboard.html:5
+msgid "En attente de confirmation"
+msgstr "Awaiting confirmation"
+
+#: .\templates\dashboard\admin_dashboard.html:6
+#: .\templates\dashboard\vendeur_dashboard.html:21
+msgid "Ruptures de stock"
+msgstr "Out-of-stock products"
+
+#: .\templates\dashboard\admin_dashboard.html:6
+#: .\templates\dashboard\admin_dashboard_v2.html:9
+#: .\templates\dashboard\vendeur_dashboard.html:22
+msgid "Stocks faibles"
+msgstr "Low stock"
+
+#: .\templates\dashboard\admin_dashboard.html:6
+#: .\templates\dashboard\comptable_dashboard.html:15
+msgid "Paiements échoués"
+msgstr "Failed payments"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+msgid "Gérer les utilisateurs"
+msgstr "Manage users"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+msgid "Gérer les vendeurs"
+msgstr "Manage sellers"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+#: .\templates\dashboard\vendeur_dashboard.html:26
+msgid "Gérer les produits"
+msgstr "Manage products"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+msgid "Gérer les catégories"
+msgstr "Manage categories"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+msgid "Voir les commandes"
+msgstr "View orders"
+
+#: .\templates\dashboard\admin_dashboard.html:7
+#: .\templates\dashboard\comptable_dashboard.html:27
+msgid "Voir les paiements"
+msgstr "View payments"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+msgid "Flux opérationnel"
+msgstr "Operational flow"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Dernières commandes"
+msgstr "Latest orders"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_liste.html:13
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\orders\checkout.html:9 .\templates\orders\my_orders.html:3
+#: .\templates\orders\order_detail.html:4 .\templates\orders\receipt.html:816
+#: .\templates\orders\receipt.html:952
+msgid "Total"
+msgstr "Total"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+msgid "Aucune commande récente."
+msgstr "No recent orders."
+
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\vendeur_dashboard.html:40
+msgid "Performance"
+msgstr "Performance"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+msgid "Top vendeurs"
+msgstr "Top sellers"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+msgid "Voir les vendeurs"
+msgstr "View sellers"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+#: .\templates\dashboard\vendeur_dashboard.html:14
+#: .\templates\dashboard\vendeur_dashboard.html:15
+msgid "vente"
+msgstr "Sale"
+
+#: .\templates\dashboard\admin_dashboard.html:8
+msgid "Aucune vente directe."
+msgstr "No direct sales."
+
+#: .\templates\dashboard\admin_dashboard.html:9
+msgid "Journal"
+msgstr "Journal"
+
+#: .\templates\dashboard\admin_dashboard.html:9
+msgid "Aucune activité récente."
+msgstr "No recent activity."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:3
+msgid "Tableau de bord — administration"
+msgstr "Dashboard — administration"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:6
+#: .\templates\dashboard\depenses\_navigation.html:2
+msgid "Vue d'ensemble"
+msgstr "Overview"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:6
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:5
+#: .\templates\dashboard\vendeur_historique.html:3
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:6
+msgid "Chiffres encaissés, opérations et stock en un coup d'œil."
+msgstr "Collected amounts, operations, and stock at a glance."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\vendeur_dashboard.html:14
+msgid "CA aujourd'hui"
+msgstr "Today's revenue"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+msgid "Vente comptoir + web payé"
+msgstr "Counter sales + paid web orders"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "Ventes comptoir"
+msgstr "Counter sales"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\admin_performance.html:6
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Aujourd'hui"
+msgstr "Today"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+msgid "Commandes web"
+msgstr "Web orders"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+msgid "Paiements payés aujourd'hui"
+msgstr "Payments paid today"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+msgid "Panier moyen"
+msgstr "Average basket"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:7
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "FCFA par opération"
+msgstr "FCFA per operation"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+msgid "Paiements encaissés"
+msgstr "Collected payments"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+msgid "FCFA aujourd'hui"
+msgstr "FCFA today"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+msgid "À contrôler"
+msgstr "To review"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+msgid "Commandes en attente"
+msgstr "Pending orders"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+#: .\templates\dashboard\vendeur_commandes.html:4
+#: .\templates\dashboard\vendeur_dashboard.html:16
+msgid "À traiter"
+msgstr "To process"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+msgid "Commandes confirmées"
+msgstr "Confirmed orders"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:8
+msgid "Statut confirmé"
+msgstr "Confirmed status"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:9
+msgid "Produits actifs"
+msgstr "Active products"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:9
+#: .\templates\dashboard\vendeur_stock.html:4
+msgid "Ruptures"
+msgstr "Out of stock"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:9
+msgid "Seuil actuel : 5"
+msgstr "Current threshold: 5"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:10
+msgid "Tendance"
+msgstr "Trend"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:10
+msgid "Évolution du chiffre d'affaires sur les 7 derniers jours"
+msgstr "Revenue trend over the last 7 days"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:10
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Évolution du chiffre d'affaires"
+msgstr "Revenue trend"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:10
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Aucune donnée de chiffre d'affaires sur cette période."
+msgstr "No revenue data for this period."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:11
+msgid "Ventes par catégorie"
+msgstr "Sales by category"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:11
+msgid "Aucune donnée de catégorie."
+msgstr "No category data."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:11
+msgid "Aucune donnée vendeur."
+msgstr "No seller data."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "Classement"
+msgstr "Ranking"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "Top 5 produits"
+msgstr "Top 5 products"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "vendu"
+msgstr "sold"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "Aucune vente produit."
+msgstr "No product sales."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "Flux comptoir"
+msgstr "Counter sales"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\vendeur_dashboard.html:40
+msgid "Dernières ventes"
+msgstr "Latest sales"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:12
+msgid "Aucune vente récente."
+msgstr "No recent sales."
+
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+msgid "E-commerce"
+msgstr "E-commerce"
+
+#: .\templates\dashboard\admin_dashboard_v2.html:13
+msgid "Confirmée par"
+msgstr "Confirmed by"
+
+#: .\templates\dashboard\admin_liste.html:2
+msgid "— administration"
+msgstr "— administration"
+
+#: .\templates\dashboard\admin_liste.html:5
+msgid "Recherche, filtres et actions contrôlées depuis l'espace métier."
+msgstr "Search, filters, and actions controlled from the business area."
+
+#: .\templates\dashboard\admin_liste.html:6
+msgid "Rechercher..."
+msgstr "Search..."
+
+#: .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\vendeur_produits.html:5
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Actifs"
+msgstr "Active"
+
+#: .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Inactifs"
+msgstr "Inactive"
+
+#: .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\vendeur_produits.html:6
+msgid "Tous les stocks"
+msgstr "All stock levels"
+
+#: .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:4
+#: .\templates\dashboard\vendeur_stock.html:5
+#: .\templates\products\_product_card.html:6
+msgid "Stock faible"
+msgstr "Low stock"
+
+#: .\templates\dashboard\admin_liste.html:7
+#: .\templates\dashboard\admin_liste.html:15
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\dashboard\vendeur_stock.html:5
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Rupture"
+msgstr "Out of stock"
+
+#: .\templates\dashboard\admin_liste.html:8
+msgid "Tous paiements"
+msgstr "All payments"
+
+#: .\templates\dashboard\admin_liste.html:9
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+msgid "Toutes les méthodes"
+msgstr "All methods"
+
+#: .\templates\dashboard\admin_liste.html:11
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Prix"
+msgstr "Price"
+
+#: .\templates\dashboard\admin_liste.html:11
+#: .\templates\dashboard\vendeur_ajouter_produit.html:869
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Visibilité"
+msgstr "Visibility"
+
+#: .\templates\dashboard\admin_liste.html:12
+msgid "Slug"
+msgstr "Slug"
+
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\clotures\liste.html:6
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\depenses\detail.html:9
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\finance\journal.html:7
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\orders\checkout_confirmation.html:3
+#: .\templates\payments\payment_result.html:9
+msgid "Référence"
+msgstr "Reference"
+
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_dashboard.html:27
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+msgid "Méthode"
+msgstr "Method"
+
+#: .\templates\dashboard\admin_liste.html:14
+#: .\templates\dashboard\comptable_dashboard.html:26
+#: .\templates\dashboard\comptable_dashboard.html:27
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\depenses\_dashboard.html:13
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\finance\regularisations.html:4
+msgid "Montant"
+msgstr "Amount"
+
+#: .\templates\dashboard\admin_liste.html:15
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Inactif"
+msgstr "Inactive"
+
+#: .\templates\dashboard\admin_liste.html:16
+#: .\templates\dashboard\depenses\categories.html:6
+msgid "Active"
+msgstr "Active"
+
+#: .\templates\dashboard\admin_liste.html:16
+#: .\templates\dashboard\depenses\categories.html:6
+msgid "Inactive"
+msgstr "Inactive"
+
+#: .\templates\dashboard\admin_liste.html:17
+#: .\templates\dashboard\admin_liste.html:18
+#: .\templates\dashboard\finance\formulaire.html:9
+msgid "Enregistrer"
+msgstr "Save"
+
+#: .\templates\dashboard\admin_liste.html:19
+msgid "Aucune donnée pour ces critères."
+msgstr "No data matches these criteria."
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Paramètres boutique — administration"
+msgstr "Shop settings — administration"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Configuration"
+msgstr "Configuration"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Identité centralisée pour le pilotage et les reçus."
+msgstr "Centralized identity for management and receipts."
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Nom de la boutique"
+msgstr "Shop name"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Logo"
+msgstr "Logo"
+
+#: .\templates\dashboard\admin_parametres.html:1
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Devise"
+msgstr "Currency"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Seuil stock faible"
+msgstr "Low stock threshold"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Message sur les reçus"
+msgstr "Receipt message"
+
+#: .\templates\dashboard\admin_parametres.html:1
+msgid "Enregistrer les paramètres"
+msgstr "Save settings"
+
+#: .\templates\dashboard\admin_performance.html:2
+msgid "Performance vendeurs — administration"
+msgstr "Seller performance — administration"
+
+#: .\templates\dashboard\admin_performance.html:5
+#: .\templates\orders\receipt.html:988
+msgid "Équipe"
+msgstr "Team"
+
+#: .\templates\dashboard\admin_performance.html:5
+msgid ""
+"Supervision des ventes comptoir et des commandes confirmées par vendeur."
+msgstr ""
+
+#: .\templates\dashboard\admin_performance.html:6
+#: .\templates\dashboard\comptable_calculs.html:388
+msgid "Période"
+msgstr "Period"
+
+#: .\templates\dashboard\admin_performance.html:6
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "7 derniers jours"
+msgstr "Last 7 days"
+
+#: .\templates\dashboard\admin_performance.html:6
+msgid "Mois en cours"
+msgstr "Current month"
+
+#: .\templates\dashboard\admin_performance.html:6
+msgid "Tout"
+msgstr "All"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Classement opérationnel"
+msgstr "Operational ranking"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Résultats par vendeur"
+msgstr "Results by seller"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Rang"
+msgstr "Rank"
+
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+msgid "CA comptoir"
+msgstr "Counter revenue"
+
+#: .\templates\dashboard\admin_performance.html:7
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+msgid "Montant confirmé"
+msgstr "Confirmed amount"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Dernière activité"
+msgstr "Last activity"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Voir détail"
+msgstr "View details"
+
+#: .\templates\dashboard\admin_performance.html:7
+msgid "Aucun vendeur à afficher."
+msgstr "No sellers to display."
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:2
+msgid "Utilisateur — administration"
+msgstr "User — administration"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Fiche compte"
+msgstr "Account profile"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "· créé le"
+msgstr "· created on"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Identité & accès"
+msgstr "Identity & access"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Informations du compte"
+msgstr "Account information"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Identifiant"
+msgstr "Username"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Dernière connexion"
+msgstr "Last sign-in"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Modifier le rôle de cet utilisateur ?"
+msgstr "Change this user's role?"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Enregistrer le rôle"
+msgstr "Save role"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "· x"
+msgstr "· x"
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+msgid "Aucune vente."
+msgstr "No sales."
+
+#: .\templates\dashboard\admin_utilisateur_detail.html:3
+msgid "Aucune commande."
+msgstr "No orders."
+
+#: .\templates\dashboard\admin_utilisateurs.html:2
+msgid "Utilisateurs — administration"
+msgstr "Users — administration"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Accès & rôles"
+msgstr "Access & roles"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Recherchez un compte et gérez son rôle métier."
+msgstr "Search for an account and manage its business role."
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Nom, e-mail ou identifiant"
+msgstr "Name, email, or username"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+#: .\templates\dashboard\vendeur_commandes.html:5
+msgid "Rechercher"
+msgstr "Search"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+#: .\templates\dashboard\vendeur_paniers.html:42
+msgid "Créé le"
+msgstr "Created on"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Modifier le rôle"
+msgstr "Change role"
+
+#: .\templates\dashboard\admin_utilisateurs.html:3
+msgid "Aucun utilisateur trouvé."
+msgstr "No users found."
+
+#: .\templates\dashboard\admin_vendeur_detail.html:2
+msgid "Performance de"
+msgstr "Performance of"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:4
+msgid "Détail vendeur ·"
+msgstr "Seller details ·"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:4
+msgid "Retour aux performances"
+msgstr "Back to performance"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:5
+msgid "Annulations liées"
+msgstr "Related cancellations"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+msgid "Produits les plus vendus"
+msgstr "Top-selling products"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "unité"
+msgstr "unit"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+msgid "Aucune vente sur la période."
+msgstr "No sales for this period."
+
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+msgid "Dernières activités"
+msgstr "Latest activity"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:6
+#: .\templates\dashboard\clotures\detail.html:14
+msgid "Aucune activité."
+msgstr "No activity."
+
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\comptable_dashboard.html:26
+msgid "Dernières ventes comptoir"
+msgstr "Latest counter sales"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:7
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\vendeur_dashboard.html:32
+#: .\templates\dashboard\vendeur_historique.html:6
+#: .\templates\products\product_detail.html:6
+msgid "Quantité"
+msgstr "Quantity"
+
+#: .\templates\dashboard\admin_vendeur_detail.html:8
+msgid "Aucune commande confirmée."
+msgstr "No confirmed orders."
+
+#: .\templates\dashboard\clotures\_dashboard.html:2
+msgid "Clôtures et écarts constatés"
+msgstr "Closings and observed discrepancies"
+
+#: .\templates\dashboard\clotures\_dashboard.html:3
+msgid ""
+"Saisie humaine, sans vérification opérateur. Une clôture constate ; elle ne "
+"corrige pas le solde."
+msgstr "Entered by a user, without operator verification. A closing records the balance; it does not correct it."
+
+#: .\templates\dashboard\clotures\_dashboard.html:4
+msgid "clôture(s) du jour, hors annulées"
+msgstr "closing(s) today, excluding cancelled"
+
+#: .\templates\dashboard\clotures\_dashboard.html:4
+msgid "validée(s)"
+msgstr "validated"
+
+#: .\templates\dashboard\clotures\_dashboard.html:4
+msgid "validée(s) avec écart"
+msgstr "validated with variance"
+
+#: .\templates\dashboard\clotures\_dashboard.html:4
+msgid "avec écart aujourd'hui"
+msgstr "with variance today"
+
+#: .\templates\dashboard\clotures\_dashboard.html:5
+msgid ": écarts positifs cumulés"
+msgstr ": cumulative positive variances"
+
+#: .\templates\dashboard\clotures\_dashboard.html:5
+msgid "; écarts négatifs cumulés"
+msgstr "; cumulative negative variances"
+
+#: .\templates\dashboard\clotures\_dashboard.html:5
+msgid "; écart total constaté du jour"
+msgstr "; total observed variance today"
+
+#: .\templates\dashboard\clotures\_dashboard.html:6
+msgid ""
+"Montants des clôtures validées uniquement. Ce ne sont ni un profit ni une "
+"perte comptable."
+msgstr "Validated closing amounts only. They are neither accounting profit nor loss."
+
+#: .\templates\dashboard\clotures\_dashboard.html:7
+msgid "Comptes actifs non clôturés aujourd'hui ("
+msgstr "Active accounts not closed today ("
+
+#: .\templates\dashboard\clotures\_dashboard.html:8
+msgid "Aucun compte actif en attente de clôture."
+msgstr "No active account awaiting closing."
+
+#: .\templates\dashboard\clotures\_dashboard.html:9
+msgid "Historique des clôtures"
+msgstr "Closing history"
+
+#: .\templates\dashboard\clotures\_private_file_input.html:2
+msgid ""
+"Justificatif privé enregistré. Téléchargement disponible sur le détail de la "
+"clôture."
+msgstr ""
+
+#: .\templates\dashboard\clotures\_private_file_input.html:5
+msgid "Retirer du brouillon"
+msgstr "Remove from draft"
+
+#: .\templates\dashboard\clotures\detail.html:4
+msgid ""
+"Avertissement : des mouvements enregistrés ou affectés après validation "
+"concernent cette période, ou ses données d'ouverture ont changé. Clôture "
+"potentiellement obsolète : le snapshot reste inchangé."
+msgstr ""
+
+#: .\templates\dashboard\clotures\detail.html:5
+msgid "Clôture conforme."
+msgstr "Closing matches."
+
+#: .\templates\dashboard\clotures\detail.html:5
+msgid "Écart à justifier :"
+msgstr "Variance to explain:"
+
+#: .\templates\dashboard\clotures\detail.html:5
+msgid ". Aucun ajustement automatique."
+msgstr ". No automatic adjustment."
+
+#: .\templates\dashboard\clotures\detail.html:6
+msgid "Solde théorique du snapshot"
+msgstr "Snapshot theoretical balance"
+
+#: .\templates\dashboard\clotures\detail.html:6
+msgid "Solde constaté"
+msgstr "Observed balance"
+
+#: .\templates\dashboard\clotures\detail.html:6
+#: .\templates\dashboard\clotures\liste.html:6
+msgid "Écart constaté"
+msgstr "Observed discrepancy"
+
+#: .\templates\dashboard\clotures\detail.html:7
+msgid "Solde initial retenu :"
+msgstr "Opening balance used:"
+
+#: .\templates\dashboard\clotures\detail.html:7
+msgid "; entrées :"
+msgstr "; incoming:"
+
+#: .\templates\dashboard\clotures\detail.html:7
+msgid "; sorties :"
+msgstr "; outgoing:"
+
+#: .\templates\dashboard\clotures\detail.html:7
+msgid "mouvement(s)."
+msgstr "movement(s)."
+
+#: .\templates\dashboard\clotures\detail.html:8
+#: .\templates\dashboard\depenses\detail.html:16
+msgid "Créée par"
+msgstr "Created by"
+
+#: .\templates\dashboard\clotures\detail.html:8
+msgid ", le"
+msgstr ", on"
+
+#: .\templates\dashboard\clotures\detail.html:8
+msgid ". Validée par"
+msgstr ". Validated by"
+
+#: .\templates\dashboard\clotures\detail.html:9
+msgid "Commentaire / justification"
+msgstr "Comment / explanation"
+
+#: .\templates\dashboard\clotures\detail.html:10
+msgid "Télécharger le justificatif privé"
+msgstr "Download private receipt"
+
+#: .\templates\dashboard\clotures\detail.html:11
+msgid "Journal du compte jusqu'à cette date (état actuel)"
+msgstr "Account journal up to this date (current state)"
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid ""
+"À la validation, le théorique sera recalculé avec les mouvements connus :"
+msgstr ""
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid "actuellement. Vérifiez votre constat et son commentaire."
+msgstr "currently. Check your observation and comment."
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid "Valider et figer"
+msgstr "Validate and freeze"
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid "Annuler la clôture"
+msgstr "Cancel closing"
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid "Préparer un ajustement séparé"
+msgstr "Prepare a separate adjustment"
+
+#: .\templates\dashboard\clotures\detail.html:13
+msgid ""
+"Vérifiez les corrections déjà effectuées avant toute nouvelle saisie. La "
+"référence de clôture sera proposée dans le motif ; aucun lien comptable "
+"automatique."
+msgstr ""
+
+#: .\templates\dashboard\clotures\detail.html:14
+msgid "Historique d'activité"
+msgstr "Activity history"
+
+#: .\templates\dashboard\clotures\formulaire.html:3
+#: .\templates\dashboard\clotures\liste.html:3
+msgid "Nouvelle clôture"
+msgstr "New closing"
+
+#: .\templates\dashboard\clotures\formulaire.html:4
+msgid ""
+"Le solde constaté est votre saisie humaine. Le théorique et l'écart sont "
+"calculés côté serveur, puis actualisés une dernière fois à la validation."
+msgstr ""
+
+#: .\templates\dashboard\clotures\formulaire.html:5
+msgid ""
+"Les comptes inactifs restent disponibles, identifiés comme historiques. Un "
+"écart non nul nécessite un commentaire avant validation."
+msgstr ""
+
+#: .\templates\dashboard\clotures\formulaire.html:6
+#: .\templates\dashboard\depenses\formulaire.html:12
+msgid "Enregistrer le brouillon"
+msgstr "Save draft"
+
+#: .\templates\dashboard\clotures\liste.html:3
+#: .\templates\dashboard\depenses\_navigation.html:8
+msgid "Clôtures financières"
+msgstr "Financial closings"
+
+#: .\templates\dashboard\clotures\liste.html:3
+#: .\templates\dashboard\finance\journal.html:3
+msgid "Export CSV filtré"
+msgstr "Export filtered CSV"
+
+#: .\templates\dashboard\clotures\liste.html:6
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Compte / type"
+msgstr "Account / type"
+
+#: .\templates\dashboard\clotures\liste.html:6
+msgid "Théorique"
+msgstr "Theoretical"
+
+#: .\templates\dashboard\clotures\liste.html:6
+msgid "Constaté"
+msgstr "Observed"
+
+#: .\templates\dashboard\clotures\liste.html:6
+msgid "Validateur"
+msgstr "Validated by"
+
+#: .\templates\dashboard\clotures\liste.html:7
+msgid "Aucune clôture pour cette sélection."
+msgstr "No closing for this selection."
+
+#: .\templates\dashboard\comptable_calculs.html:3
+msgid "Calculs Financiers — Espace Comptable"
+msgstr "Financial Calculations — Accounting Area"
+
+#: .\templates\dashboard\comptable_calculs.html:90
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: .\templates\dashboard\comptable_calculs.html:92
+msgid "🧮 Calculatrice Financière"
+msgstr "🧮 Financial Calculator"
+
+#: .\templates\dashboard\comptable_calculs.html:93
+msgid "Effectuez vos calculs financiers en temps réel —"
+msgstr "Perform your financial calculations in real time —"
+
+#: .\templates\dashboard\comptable_calculs.html:99
+msgid "CA mois :"
+msgstr "Monthly revenue:"
+
+#: .\templates\dashboard\comptable_calculs.html:103
+msgid "Panier moyen :"
+msgstr "Average basket:"
+
+#: .\templates\dashboard\comptable_calculs.html:124
+msgid "Choisir un calcul"
+msgstr "Choose a calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:133
+msgid "Calcul TVA"
+msgstr "VAT calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:134
+msgid "HT → TVA → TTC"
+msgstr "Before tax → VAT → Including tax"
+
+#: .\templates\dashboard\comptable_calculs.html:144
+msgid "Marge Bénéficiaire"
+msgstr "Profit margin"
+
+#: .\templates\dashboard\comptable_calculs.html:145
+msgid "Taux de marge & markup"
+msgstr "Margin and markup rates"
+
+#: .\templates\dashboard\comptable_calculs.html:156
+msgid "CA - Charges - Impôts"
+msgstr "Revenue - Costs - Taxes"
+
+#: .\templates\dashboard\comptable_calculs.html:166
+msgid "Seuil de Rentabilité"
+msgstr "Break-even point"
+
+#: .\templates\dashboard\comptable_calculs.html:167
+msgid "Point mort financier"
+msgstr "Financial break-even"
+
+#: .\templates\dashboard\comptable_calculs.html:177
+msgid "Projection de Revenus"
+msgstr "Revenue projection"
+
+#: .\templates\dashboard\comptable_calculs.html:178
+msgid "Croissance sur N périodes"
+msgstr "Growth over N periods"
+
+#: .\templates\dashboard\comptable_calculs.html:193
+msgid "🧾 Calcul de la TVA"
+msgstr "🧾 VAT calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:194
+msgid "Calculez la TVA et le montant TTC à partir du montant hors taxe."
+msgstr "Calculate VAT and the amount including tax from the pre-tax amount."
+
+#: .\templates\dashboard\comptable_calculs.html:200
+msgid "Montant HT (FCFA)"
+msgstr "Amount before tax (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:202
+msgid "Ex: 100000"
+msgstr "E.g. 100000"
+
+#: .\templates\dashboard\comptable_calculs.html:205
+#: .\templates\dashboard\comptable_calculs.html:268
+#, python-format
+msgid "Taux TVA (%%)"
+msgstr "VAT rate (%%)"
+
+#: .\templates\dashboard\comptable_calculs.html:207
+#, python-format
+msgid "18%% (standard Mali)"
+msgstr "18%% (Mali standard)"
+
+#: .\templates\dashboard\comptable_calculs.html:208
+#, python-format
+msgid "0%% (exonéré)"
+msgstr "0%% (exempt)"
+
+#: .\templates\dashboard\comptable_calculs.html:216
+#: .\templates\dashboard\comptable_calculs.html:245
+#: .\templates\dashboard\comptable_calculs.html:287
+#: .\templates\dashboard\comptable_calculs.html:317
+msgid "Calculer"
+msgstr "Calculate"
+
+#: .\templates\dashboard\comptable_calculs.html:227
+msgid "📊 Calcul de Marge Bénéficiaire"
+msgstr "📊 Profit Margin Calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:228
+msgid "Calculez la marge commerciale et le taux de markup d'un produit."
+msgstr "Calculate a product's commercial margin and markup rate."
+
+#: .\templates\dashboard\comptable_calculs.html:234
+msgid "Prix d'achat (FCFA)"
+msgstr "Purchase price (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:236
+msgid "Ex: 50000"
+msgstr "E.g. 50000"
+
+#: .\templates\dashboard\comptable_calculs.html:239
+msgid "Prix de vente (FCFA)"
+msgstr "Selling price (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:241
+msgid "Ex: 75000"
+msgstr "E.g. 75000"
+
+#: .\templates\dashboard\comptable_calculs.html:256
+msgid "💰 Calcul du Bénéfice Net"
+msgstr "💰 Net Profit Calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:257
+msgid "Déduisez charges et impôts pour obtenir le résultat net."
+msgstr "Deduct costs and taxes to obtain net results."
+
+#: .\templates\dashboard\comptable_calculs.html:263
+msgid "Chiffre d'affaires (FCFA)"
+msgstr "Revenue (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:276
+msgid "Charges fixes (FCFA)"
+msgstr "Fixed costs (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:278
+msgid "Loyer, salaires..."
+msgstr "Rent, salaries..."
+
+#: .\templates\dashboard\comptable_calculs.html:281
+msgid "Charges variables (FCFA)"
+msgstr "Variable costs (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:283
+msgid "Matières, transport..."
+msgstr "Materials, transport..."
+
+#: .\templates\dashboard\comptable_calculs.html:298
+msgid "🎯 Calcul du Seuil de Rentabilité"
+msgstr "🎯 Break-even Calculation"
+
+#: .\templates\dashboard\comptable_calculs.html:299
+msgid "Trouvez le chiffre d'affaires minimum pour être rentable."
+msgstr "Find the minimum revenue needed to be profitable."
+
+#: .\templates\dashboard\comptable_calculs.html:305
+msgid "Charges fixes totales (FCFA)"
+msgstr "Total fixed costs (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:307
+msgid "Ex: 500000"
+msgstr "E.g. 500000"
+
+#: .\templates\dashboard\comptable_calculs.html:310
+#, python-format
+msgid "Taux de marge sur CV (%%)"
+msgstr "Margin rate on variable costs (%%)"
+
+#: .\templates\dashboard\comptable_calculs.html:312
+msgid "Ex: 40"
+msgstr "E.g. 40"
+
+#: .\templates\dashboard\comptable_calculs.html:313
+msgid "= (PV - CV) / PV × 100"
+msgstr "= (SP - VC) / SP × 100"
+
+#: .\templates\dashboard\comptable_calculs.html:328
+msgid "📈 Projection de Revenus"
+msgstr "📈 Revenue Projection"
+
+#: .\templates\dashboard\comptable_calculs.html:329
+msgid "Projetez vos revenus sur plusieurs périodes avec un taux de croissance."
+msgstr "Project your revenue over several periods with a growth rate."
+
+#: .\templates\dashboard\comptable_calculs.html:335
+msgid "CA de départ (FCFA)"
+msgstr "Starting revenue (FCFA)"
+
+#: .\templates\dashboard\comptable_calculs.html:338
+msgid "Par défaut : CA du mois en cours"
+msgstr "Default: current month's revenue"
+
+#: .\templates\dashboard\comptable_calculs.html:341
+#, fuzzy, python-format
+#| msgid "Date de naissance"
+msgid "Taux de croissance (%%)"
+msgstr "Date of birth"
+
+#: .\templates\dashboard\comptable_calculs.html:343
+msgid "Ex: 5"
+msgstr "E.g. 5"
+
+#: .\templates\dashboard\comptable_calculs.html:346
+msgid "Nombre de périodes"
+msgstr "Number of periods"
+
+#: .\templates\dashboard\comptable_calculs.html:348
+msgid "3 mois"
+msgstr "3 months"
+
+#: .\templates\dashboard\comptable_calculs.html:349
+msgid "6 mois"
+msgstr "6 months"
+
+#: .\templates\dashboard\comptable_calculs.html:350
+msgid "12 mois"
+msgstr "12 months"
+
+#: .\templates\dashboard\comptable_calculs.html:355
+msgid "Projeter"
+msgstr "Project"
+
+#: .\templates\dashboard\comptable_calculs.html:369
+msgid "Résultats —"
+msgstr "Results —"
+
+#: .\templates\dashboard\comptable_calculs.html:370
+msgid "Calculé le"
+msgstr "Calculated on"
+
+#: .\templates\dashboard\comptable_calculs.html:384
+msgid "Détail des projections :"
+msgstr "Projection details:"
+
+#: .\templates\dashboard\comptable_dashboard.html:3
+msgid "Pilotage financier"
+msgstr "Financial overview"
+
+#: .\templates\dashboard\comptable_dashboard.html:10
+msgid "Finance & rapprochement"
+msgstr "Finance & reconciliation"
+
+#: .\templates\dashboard\comptable_dashboard.html:10
+msgid "Comptabilité"
+msgstr "Accounting"
+
+#: .\templates\dashboard\comptable_dashboard.html:10
+msgid "Suivez les encaissements, les sources de revenus et les anomalies."
+msgstr "Track collections, revenue sources, and anomalies."
+
+#: .\templates\dashboard\comptable_dashboard.html:11
+#: .\templates\dashboard\comptable_transaction_detail.html:5
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:5
+msgid "Transactions"
+msgstr "Transactions"
+
+#: .\templates\dashboard\comptable_dashboard.html:11
+msgid "Export CSV"
+msgstr "Export CSV"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "CA encaissé aujourd'hui"
+msgstr "Revenue collected today"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+#: .\templates\dashboard\comptable_transactions.html:3
+msgid "transaction"
+msgstr "transaction"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "CA encaissé · 7 jours"
+msgstr "Revenue collected · 7 days"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "CA encaissé · mois"
+msgstr "Revenue collected · month"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "CA encaissé · année"
+msgstr "Revenue collected · year"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "encaissées"
+msgstr "collected"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "Paiements web encaissés"
+msgstr "Collected web payments"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "payés"
+msgstr "paid"
+
+#: .\templates\dashboard\comptable_dashboard.html:14
+msgid "Montant moyen encaissé"
+msgstr "Average collected amount"
+
+#: .\templates\dashboard\comptable_dashboard.html:15
+msgid "Transactions à rapprocher"
+msgstr "Transactions to reconcile"
+
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Période du graphique"
+msgstr "Chart period"
+
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Ce mois"
+msgstr "This month"
+
+#: .\templates\dashboard\comptable_dashboard.html:21
+msgid "Cette année"
+msgstr "This year"
+
+#: .\templates\dashboard\comptable_dashboard.html:22
+msgid "Répartition"
+msgstr "Breakdown"
+
+#: .\templates\dashboard\comptable_dashboard.html:22
+msgid "Méthodes de paiement"
+msgstr "Payment methods"
+
+#: .\templates\dashboard\comptable_dashboard.html:22
+msgid "Chiffre d'affaires par méthode de paiement"
+msgstr "Revenue by payment method"
+
+#: .\templates\dashboard\comptable_dashboard.html:22
+msgid "Aucune donnée de paiement sur cette période."
+msgstr "No payment data for this period."
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+#: .\templates\dashboard\depenses\_navigation.html:3
+msgid "Encaissements"
+msgstr "Receipts"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+msgid "Moyens de paiement"
+msgstr "Payment methods"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+msgid "Performance produits"
+msgstr "Product performance"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+msgid "Top produits"
+msgstr "Top products"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "en stock"
+msgstr "In stock"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+msgid "vendus"
+msgstr "sold"
+
+#: .\templates\dashboard\comptable_dashboard.html:25
+msgid "Aucune vente disponible."
+msgstr "No sales available."
+
+#: .\templates\dashboard\comptable_dashboard.html:26
+msgid "Voir toutes les transactions"
+msgstr "View all transactions"
+
+#: .\templates\dashboard\comptable_dashboard.html:26
+msgid "Aucune transaction."
+msgstr "No transactions."
+
+#: .\templates\dashboard\comptable_dashboard.html:27
+msgid "Derniers paiements web encaissés"
+msgstr "Latest collected web payments"
+
+#: .\templates\dashboard\comptable_dashboard.html:27
+msgid "Date encaissement"
+msgstr "Collection date"
+
+#: .\templates\dashboard\comptable_dashboard.html:27
+msgid "Aucun paiement web encaissé."
+msgstr "No collected web payments."
+
+#: .\templates\dashboard\comptable_transaction_detail.html:2
+msgid "Transaction"
+msgstr "Transaction"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:2
+msgid "— comptabilité"
+msgstr "— accounting"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:5
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:5
+msgid "Rapprochement financier"
+msgstr "Financial reconciliation"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:6
+msgid "Détail transaction"
+msgstr "Transaction details"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Source"
+msgstr "Source"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:7
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+msgid "Date comptable"
+msgstr "Accounting date"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+msgid "Vente comptoir"
+msgstr "Counter sale"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+msgid "Encaissé"
+msgstr "Collected"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:10
+#: .\templates\dashboard\vendeur_dashboard.html:33
+msgid "Client / référence"
+msgstr "Customer / reference"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Paiement web"
+msgstr "Web payment"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Référence paiement"
+msgstr "Payment reference"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Date création"
+msgstr "Creation date"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Date paiement"
+msgstr "Payment date"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Non encaissé"
+msgstr "Not collected"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Statut paiement"
+msgstr "Payment status"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Statut commande"
+msgstr "Order status"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Sous-total commande"
+msgstr "Order subtotal"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Frais livraison"
+msgstr "Delivery fee"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Total commande"
+msgstr "Order total"
+
+#: .\templates\dashboard\comptable_transaction_detail.html:12
+msgid "Aucun article."
+msgstr "No items."
+
+#: .\templates\dashboard\comptable_transactions.html:2
+#: .\templates\dashboard\comptable_transactions_v2.html:2
+msgid "Transactions — comptabilité"
+msgstr "Transactions — accounting"
+
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:5
+msgid "Un registre unique des ventes directes et commandes en ligne."
+msgstr "A single register for direct sales and online orders."
+
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:5
+#: .\templates\dashboard\depenses\liste.html:3
+msgid "Exporter la sélection"
+msgstr "Export selection"
+
+#: .\templates\dashboard\comptable_transactions.html:3
+msgid "Total filtré"
+msgstr "Filtered total"
+
+#: .\templates\dashboard\comptable_transactions.html:3
+msgid "Référence, commande, produit ou vendeur"
+msgstr "Reference, order, product, or seller"
+
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+msgid "Vente directe"
+msgstr "Direct sale"
+
+#: .\templates\dashboard\comptable_transactions.html:3
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+msgid "Aucune transaction pour ces critères."
+msgstr "No transactions match these criteria."
+
+#: .\templates\dashboard\comptable_transactions_v2.html:6
+msgid "Total encaissé"
+msgstr "Total collected"
+
+#: .\templates\dashboard\comptable_transactions_v2.html:6
+msgid "dans le périmètre · total brut"
+msgstr "within scope · gross total"
+
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+msgid "Référence, commande, client ou vendeur"
+msgstr "Reference, order, customer, or seller"
+
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+msgid "Toutes les sources"
+msgstr "All sources"
+
+#: .\templates\dashboard\comptable_transactions_v2.html:7
+msgid "Tous les vendeurs"
+msgstr "All sellers"
+
+#: .\templates\dashboard\comptable_transactions_v2.html:8
+msgid "Modifiez les filtres ou élargissez la période."
+msgstr "Change the filters or widen the period."
+
+#: .\templates\dashboard\depenses\_dashboard.html:2
+msgid "Charges et résultat opérationnel"
+msgstr "Costs and operating result"
+
+#: .\templates\dashboard\depenses\_dashboard.html:3
+#: .\templates\dashboard\depenses\liste.html:3
+msgid "Décaissements"
+msgstr "Outgoings"
+
+#: .\templates\dashboard\depenses\_dashboard.html:3
+msgid "Dépenses & résultat opérationnel"
+msgstr "Expenses & operating result"
+
+#: .\templates\dashboard\depenses\_dashboard.html:3
+msgid ""
+"Charges validées, rattachées à leur date de dépense. Le CA encaissé reste "
+"distinct."
+msgstr "Validated costs linked to their expense date. Collected revenue remains separate."
+
+#: .\templates\dashboard\depenses\_dashboard.html:3
+msgid "Consulter les dépenses"
+msgstr "View expenses"
+
+#: .\templates\dashboard\depenses\_dashboard.html:5
+#: .\templates\dashboard\depenses\liste.html:5
+msgid "Dépenses validées aujourd'hui"
+msgstr "Expenses validated today"
+
+#: .\templates\dashboard\depenses\_dashboard.html:6
+#: .\templates\dashboard\depenses\liste.html:6
+msgid "Dépenses validées ce mois"
+msgstr "Expenses validated this month"
+
+#: .\templates\dashboard\depenses\_dashboard.html:7
+#: .\templates\dashboard\depenses\liste.html:7
+msgid "Dépenses validées cette année"
+msgstr "Expenses validated this year"
+
+#: .\templates\dashboard\depenses\_dashboard.html:8
+msgid "Résultat opérationnel aujourd'hui"
+msgstr "Operating result today"
+
+#: .\templates\dashboard\depenses\_dashboard.html:8
+#: .\templates\dashboard\depenses\_dashboard.html:9
+msgid ": CA encaissé moins charges validées"
+msgstr ": revenue collected less validated costs"
+
+#: .\templates\dashboard\depenses\_dashboard.html:9
+msgid "Résultat opérationnel ce mois"
+msgstr "Operating result this month"
+
+#: .\templates\dashboard\depenses\_dashboard.html:12
+msgid "Charges validées par catégorie"
+msgstr "Validated costs by category"
+
+#: .\templates\dashboard\depenses\_dashboard.html:13
+msgid "Répartition relative"
+msgstr "Relative breakdown"
+
+#: .\templates\dashboard\depenses\_dashboard.html:15
+msgid "Aucune dépense validée sur cette période."
+msgstr "No validated expenses for this period."
+
+#: .\templates\dashboard\depenses\_navigation.html:1
+msgid "Navigation comptable"
+msgstr "Accounting navigation"
+
+#: .\templates\dashboard\depenses\_navigation.html:7
+msgid "Trésorerie théorique"
+msgstr "Theoretical cash position"
+
+#: .\templates\dashboard\depenses\_navigation.html:9
+#: .\templates\dashboard\finance\comptes.html:3
+msgid "Comptes financiers"
+msgstr "Financial accounts"
+
+#: .\templates\dashboard\depenses\_navigation.html:10
+#: .\templates\dashboard\finance\journal.html:3
+msgid "Journal financier"
+msgstr "Financial ledger"
+
+#: .\templates\dashboard\depenses\_navigation.html:11
+#: .\templates\dashboard\finance\journal.html:8
+msgid "À régulariser"
+msgstr "To allocate"
+
+#: .\templates\dashboard\depenses\base.html:2
+#: .\templates\dashboard\depenses\liste.html:3
+msgid "Dépenses & charges"
+msgstr "Expenses & costs"
+
+#: .\templates\dashboard\depenses\categories.html:4
+msgid "Configuration des charges"
+msgstr "Cost configuration"
+
+#: .\templates\dashboard\depenses\categories.html:4
+msgid ""
+"Les catégories inactives restent dans l'historique et ne sont plus proposées "
+"pour les nouvelles dépenses."
+msgstr ""
+
+#: .\templates\dashboard\depenses\categories.html:5
+msgid "Créer une catégorie"
+msgstr "Create a category"
+
+#: .\templates\dashboard\depenses\categories.html:5
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1139
+msgid "Créer la catégorie"
+msgstr "Create category"
+
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\depenses\detail.html:15
+#: .\templates\dashboard\vendeur_ajouter_produit.html:421
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Description"
+msgstr "Description"
+
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Désactiver"
+msgstr "Deactivate"
+
+#: .\templates\dashboard\depenses\categories.html:6
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Activer"
+msgstr "Activate"
+
+#: .\templates\dashboard\depenses\categories.html:6
+msgid "Aucune catégorie. Créez votre première catégorie."
+msgstr "No categories. Create your first category."
+
+#: .\templates\dashboard\depenses\detail.html:2
+msgid "| Dépense"
+msgstr "| Expense"
+
+#: .\templates\dashboard\depenses\detail.html:5
+msgid "Valider cette dépense et l’inclure dans les charges ?"
+msgstr "Validate this expense and include it in expenses?"
+
+#: .\templates\dashboard\depenses\detail.html:5
+msgid "Valider la dépense"
+msgstr "Validate expense"
+
+#: .\templates\dashboard\depenses\detail.html:6
+msgid ""
+"Annuler cette dépense ? Elle restera dans l’historique et sera exclue des "
+"charges."
+msgstr ""
+"Cancel this expense? It will remain in the history and be excluded from "
+"expenses."
+
+#: .\templates\dashboard\depenses\detail.html:6
+msgid "Annuler la dépense"
+msgstr "Cancel expense"
+
+#: .\templates\dashboard\depenses\detail.html:10
+msgid "Date de dépense"
+msgstr "Expense date"
+
+#: .\templates\dashboard\depenses\detail.html:11
+msgid "(inactive)"
+msgstr "(inactive)"
+
+#: .\templates\dashboard\depenses\detail.html:12
+#: .\templates\dashboard\depenses\liste.html:16
+#: .\templates\dashboard\finance\journal.html:7
+msgid "Libellé"
+msgstr "Description"
+
+#: .\templates\dashboard\depenses\detail.html:14
+#: .\templates\dashboard\depenses\liste.html:16
+msgid "Bénéficiaire"
+msgstr "Payee"
+
+#: .\templates\dashboard\depenses\detail.html:17
+msgid "Date de création"
+msgstr "Creation date"
+
+#: .\templates\dashboard\depenses\detail.html:18
+msgid "Validée par"
+msgstr "Validated by"
+
+#: .\templates\dashboard\depenses\detail.html:18
+msgid "Non validée"
+msgstr "Not validated"
+
+#: .\templates\dashboard\depenses\detail.html:19
+msgid "Date de validation"
+msgstr "Validation date"
+
+#: .\templates\dashboard\depenses\detail.html:20
+msgid "Justificatif"
+msgstr "Supporting document"
+
+#: .\templates\dashboard\depenses\detail.html:20
+msgid "Télécharger le justificatif"
+msgstr "Download receipt"
+
+#: .\templates\dashboard\depenses\detail.html:20
+msgid "Aucun justificatif"
+msgstr "No receipt"
+
+#: .\templates\dashboard\depenses\detail.html:21
+msgid "Cette dépense entre dans les charges validées."
+msgstr "This expense is included in validated costs."
+
+#: .\templates\dashboard\depenses\detail.html:21
+msgid ""
+"Dépense annulée : historique conservé, aucun impact sur les charges actives."
+msgstr ""
+
+#: .\templates\dashboard\depenses\detail.html:21
+msgid "Brouillon : aucun impact financier."
+msgstr "Draft: no financial impact."
+
+#: .\templates\dashboard\depenses\detail.html:22
+msgid "Historique des actions"
+msgstr "Action history"
+
+#: .\templates\dashboard\depenses\detail.html:22
+msgid "Aucune action journalisée."
+msgstr "No logged actions."
+
+#: .\templates\dashboard\depenses\formulaire.html:2
+#: .\templates\dashboard\depenses\formulaire.html:4
+#: .\templates\dashboard\depenses\liste.html:3
+msgid "Nouvelle dépense"
+msgstr "New expense"
+
+#: .\templates\dashboard\depenses\formulaire.html:4
+msgid ""
+"L'enregistrement ne crée aucune charge tant que la dépense n'est pas validée."
+msgstr ""
+
+#: .\templates\dashboard\depenses\formulaire.html:6
+msgid "Créez d'abord une"
+msgstr "First create an"
+
+#: .\templates\dashboard\depenses\formulaire.html:6
+msgid "catégorie de dépense active"
+msgstr "active expense category"
+
+#: .\templates\dashboard\depenses\formulaire.html:7
+msgid "Montants en"
+msgstr "Amounts in"
+
+#: .\templates\dashboard\depenses\formulaire.html:7
+msgid ""
+". Le moyen de paiement est descriptif et ne modifie aucun solde de compte."
+msgstr ""
+
+#: .\templates\dashboard\depenses\formulaire.html:11
+msgid "Télécharger le justificatif actuel"
+msgstr "Download current receipt"
+
+#: .\templates\dashboard\depenses\formulaire.html:11
+msgid ". Un nouveau fichier le remplacera sur ce brouillon."
+msgstr ". A new file will replace it for this draft."
+
+#: .\templates\dashboard\depenses\liste.html:3
+msgid ""
+"Combien, pourquoi, quand et par qui : retrouvez chaque dépense et sa "
+"validation."
+msgstr "How much, why, when, and by whom: find every expense and its validation."
+
+#: .\templates\dashboard\depenses\liste.html:4
+msgid "Indicateurs globaux"
+msgstr "Overall indicators"
+
+#: .\templates\dashboard\depenses\liste.html:8
+msgid "Brouillons"
+msgstr "Drafts"
+
+#: .\templates\dashboard\depenses\liste.html:8
+msgid "Sans impact financier"
+msgstr "No financial impact"
+
+#: .\templates\dashboard\depenses\liste.html:9
+msgid "Dépenses annulées"
+msgstr "Cancelled expenses"
+
+#: .\templates\dashboard\depenses\liste.html:9
+msgid "Conservées dans l'historique"
+msgstr "Kept in history"
+
+#: .\templates\dashboard\depenses\liste.html:11
+msgid ""
+"Indicateurs globaux jusqu'à aujourd'hui, indépendants des filtres ci-dessous."
+msgstr "Overall indicators up to today, independent of the filters below."
+
+#: .\templates\dashboard\depenses\liste.html:14
+msgid "Réinitialiser"
+msgstr "Reset"
+
+#: .\templates\dashboard\depenses\liste.html:15
+msgid "Charges validées dans la sélection"
+msgstr "Validated costs in selection"
+
+#: .\templates\dashboard\depenses\liste.html:15
+msgid "dépense"
+msgstr "Expense"
+
+#: .\templates\dashboard\depenses\liste.html:16
+msgid "Moyen"
+msgstr "Method"
+
+#: .\templates\dashboard\depenses\liste.html:18
+msgid ""
+"Aucune dépense pour ces critères. Créez un brouillon ou ajustez les filtres."
+msgstr "No expenses match these criteria. Create a draft or adjust the filters."
+
+#: .\templates\dashboard\finance\_liquidites.html:2
+msgid "Liquidités théoriques"
+msgstr "Theoretical liquidity"
+
+#: .\templates\dashboard\finance\_liquidites.html:2
+msgid ""
+"Distinctes du CA et du résultat opérationnel. Soldes initiaux + entrées - "
+"sorties, comptes inactifs inclus."
+msgstr "Separate from revenue and operating results. Opening balances + incoming - outgoing, including inactive accounts."
+
+#: .\templates\dashboard\finance\_liquidites.html:3
+msgid "Aucun compte configuré."
+msgstr "No accounts configured."
+
+#: .\templates\dashboard\finance\_liquidites.html:5
+msgid "mouvement(s) à régulariser"
+msgstr "movement(s) to reconcile"
+
+#: .\templates\dashboard\finance\_liquidites.html:5
+msgid ", exclus des soldes des comptes."
+msgstr ", excluded from account balances."
+
+#: .\templates\dashboard\finance\base.html:2
+msgid "Comptes et journal financier"
+msgstr "Accounts and financial journal"
+
+#: .\templates\dashboard\finance\base.html:6
+msgid ""
+"Espace en ligne uniquement. Liquidités théoriques, sans rapprochement ni "
+"reprise historique automatique."
+msgstr ""
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Défaut"
+msgstr "Default"
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Initial"
+msgstr "Opening balance"
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Entrées"
+msgstr "Inflows"
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Sorties"
+msgstr "Outflows"
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Solde théorique"
+msgstr "Theoretical balance"
+
+#: .\templates\dashboard\finance\comptes.html:5
+msgid "Dernière opération"
+msgstr "Last operation"
+
+#: .\templates\dashboard\finance\comptes.html:6
+msgid "Solde négatif"
+msgstr "Negative balance"
+
+#: .\templates\dashboard\finance\comptes.html:6
+msgid ""
+"Aucun compte. Créez vos comptes et configurez leurs valeurs d'ouverture "
+"avant de régulariser les opérations."
+msgstr ""
+
+#: .\templates\dashboard\finance\formulaire.html:4
+msgid ""
+"Tout changement est journalisé. Un compte utilisé conserve son type, sa "
+"devise et son solde initial. Pour changer le compte par défaut, retirez "
+"d'abord le défaut du compte précédent."
+msgstr ""
+
+#: .\templates\dashboard\finance\formulaire.html:8
+msgid ""
+"Un transfert ou un ajustement peut rendre un solde théorique négatif. Aucun "
+"solde réel n'est vérifié."
+msgstr ""
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "· Actif :"
+msgstr "· Active:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "· Défaut :"
+msgstr "· Default:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Initial :"
+msgstr "Opening:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "· Entrées :"
+msgstr "· Incoming:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "· Sorties :"
+msgstr "· Outgoing:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Solde théorique :"
+msgstr "Theoretical balance:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Attention : solde théorique négatif."
+msgstr "Warning: negative theoretical balance."
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Dernière opération :"
+msgstr "Latest operation:"
+
+#: .\templates\dashboard\finance\journal.html:4
+msgid "Modifier le compte"
+msgstr "Edit account"
+
+#: .\templates\dashboard\finance\journal.html:6
+msgid ""
+"Journal en lecture seule. Toute correction passe par une opération explicite."
+msgstr ""
+
+#: .\templates\dashboard\finance\journal.html:8
+msgid "Aucun mouvement pour cette sélection."
+msgstr "No movements for this selection."
+
+#: .\templates\dashboard\finance\regularisations.html:3
+msgid "Mouvements à régulariser"
+msgstr "Movements awaiting allocation"
+
+#: .\templates\dashboard\finance\regularisations.html:3
+msgid ""
+"Choisissez un compte actif compatible. Une dépense et sa contrepassation "
+"sont affectées ensemble. Réactivez le compte d'origine si une "
+"contrepassation attend sa réouverture."
+msgstr ""
+
+#: .\templates\dashboard\finance\regularisations.html:4
+msgid "Source / référence"
+msgstr "Source / reference"
+
+#: .\templates\dashboard\finance\regularisations.html:4
+msgid "Moyen attendu"
+msgstr "Expected method"
+
+#: .\templates\dashboard\finance\regularisations.html:4
+msgid "Raison"
+msgstr "Reason"
+
+#: .\templates\dashboard\finance\regularisations.html:4
+msgid "Affectation"
+msgstr "Assignment"
+
+#: .\templates\dashboard\finance\regularisations.html:5
+msgid "Compte compatible"
+msgstr "Compatible account"
+
+#: .\templates\dashboard\finance\regularisations.html:5
+msgid "Choisir un compte"
+msgstr "Choose an account"
+
+#: .\templates\dashboard\finance\regularisations.html:5
+msgid "Affecter au compte"
+msgstr "Assign to account"
+
+#: .\templates\dashboard\finance\regularisations.html:5
+msgid "Aucun mouvement à régulariser."
+msgstr "No movements to reconcile."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:3
+msgid "Nouveau produit — Espace vendeur"
+msgstr "New product — Seller area"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:302
+#: .\templates\dashboard\vendeur_modifier_produit.html:5
+msgid "Retour aux produits"
+msgstr "Back to products"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:306
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1052
+#: .\templates\dashboard\vendeur_modifier_produit.html:5
+msgid "Catalogue vendeur"
+msgstr "Seller catalogue"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:310
+#: .\templates\dashboard\vendeur_produits.html:4
+msgid "Nouveau produit"
+msgstr "New product"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:314
+msgid ""
+"Créez une fiche claire et attractive pour présenter\\n                votre "
+"produit dans la boutique."
+msgstr ""
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:327
+#: .\templates\dashboard\vendeur_modifier_produit.html:6
+msgid "Vérifiez les champs signalés avant de continuer."
+msgstr "Check the highlighted fields before continuing."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:371
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Informations générales"
+msgstr "General information"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:375
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Les informations essentielles de votre fiche produit."
+msgstr "Essential information for your product listing."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:387
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Nom du produit"
+msgstr "Product name"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:397
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Ex. Sac à dos urbain en cuir"
+msgstr "E.g. Urban leather backpack"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:429
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Décrivez les caractéristiques et les points forts du produit..."
+msgstr "Describe the product's features and strengths..."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:433
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Une description précise aide vos clients à faire leur choix."
+msgstr "A precise description helps customers make their choice."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:461
+msgid "Nouvelle"
+msgstr "New"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:475
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Choisir une catégorie"
+msgstr "Choose a category"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:509
+msgid ""
+"Choisissez une catégorie existante\\n                                    ou "
+"créez-en une nouvelle."
+msgstr ""
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:520
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Marque"
+msgstr "Brand"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:529
+#: .\templates\dashboard\vendeur_modifier_produit.html:8
+msgid "Ex. Atelier Nova"
+msgstr "E.g. Nova Atelier"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:553
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Tarification"
+msgstr "Pricing"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:557
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Définissez un prix lisible et compétitif."
+msgstr "Set a clear and competitive price."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:571
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Prix normal"
+msgstr "Regular price"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:616
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Prix promotionnel"
+msgstr "Promotional price"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:629
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Optionnel"
+msgstr "Optional"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:653
+msgid "Laissez vide si aucune promotion n'est active."
+msgstr "Leave blank if no promotion is active."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:677
+#: .\templates\dashboard\vendeur_modifier_produit.html:10
+msgid "Inventaire"
+msgstr "Inventory"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:681
+#: .\templates\dashboard\vendeur_modifier_produit.html:10
+msgid "Suivez la quantité actuellement disponible."
+msgstr "Track the quantity currently available."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:691
+#: .\templates\dashboard\vendeur_modifier_produit.html:10
+msgid "Quantité en stock"
+msgstr "Stock quantity"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:721
+#: .\templates\dashboard\vendeur_modifier_produit.html:10
+msgid "Quantité actuellement disponible à la vente."
+msgstr "Quantity currently available for sale."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:754
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Image du produit"
+msgstr "Product image"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:758
+msgid "Une image nette renforce la confiance."
+msgstr "A clear image builds trust."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:778
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Ajouter une photo"
+msgstr "Add a photo"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:782
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "JPG, PNG ou WebP"
+msgstr "JPG, PNG, or WebP"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:786
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Maximum 5 Mo"
+msgstr "Maximum 5 MB"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:795
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Aperçu du produit"
+msgstr "Product preview"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:818
+msgid "Choisir un fichier"
+msgstr "Choose a file"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:838
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Aucun fichier sélectionné"
+msgstr "No file selected"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:873
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+msgid "Contrôlez la présence du produit en boutique."
+msgstr "Control the product's visibility in the shop."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:888
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+msgid "Disponible dans la boutique"
+msgstr "Available in the shop"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:892
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+msgid "Le produit peut être consulté et acheté."
+msgstr "The product can be viewed and purchased."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:917
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+msgid "Mettre en avant"
+msgstr "Feature this product"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:921
+#: .\templates\dashboard\vendeur_modifier_produit.html:12
+msgid "Affiche le produit parmi les sélections de la boutique."
+msgstr "Feature the product among the shop selections."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:952
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Conseils utiles"
+msgstr "Helpful tips"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:963
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Utilisez une photo lumineuse et nette."
+msgstr "Use a bright, clear photo."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:968
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Vérifiez le stock avant de publier."
+msgstr "Check stock before publishing."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:973
+#: .\templates\dashboard\vendeur_modifier_produit.html:13
+msgid "Un nom précis facilite la recherche."
+msgstr "A precise name makes searching easier."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1004
+msgid "Enregistrer le produit"
+msgstr "Save product"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1056
+msgid "Nouvelle catégorie"
+msgstr "New category"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1060
+msgid "Créez une catégorie sans quitter votre produit."
+msgstr "Create a category without leaving your product."
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1086
+msgid "Nom de la catégorie"
+msgstr "Category name"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1103
+msgid "Ex. Informatique"
+msgstr "E.g. Electronics"
+
+#: .\templates\dashboard\vendeur_ajouter_produit.html:1113
+msgid ""
+"Exemples : Informatique, Téléphones,\\n                            Maison, "
+"Mode, Beauté, Accessoires..."
+msgstr ""
+
+#: .\templates\dashboard\vendeur_commande_detail.html:2
+msgid "— espace vendeur"
+msgstr "— seller area"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Retour aux commandes"
+msgstr "Back to orders"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\orders\order_detail.html:4
+msgid "Articles commandés"
+msgstr "Ordered items"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Résumé produits"
+msgstr "Product summary"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_paniers.html:35
+#: .\templates\orders\checkout.html:9 .\templates\orders\order_detail.html:4
+msgid "×"
+msgstr "×"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Informations de livraison"
+msgstr "Delivery information"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Mode :"
+msgstr "Method:"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Frais :"
+msgstr "Fee:"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Action disponible"
+msgstr "Available action"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Confirmer la commande"
+msgstr "Confirm order"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Marquer expédiée"
+msgstr "Mark as shipped"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Marquer livrée"
+msgstr "Mark as delivered"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+#: .\templates\dashboard\vendeur_commandes.html:6
+msgid "Annuler cette commande et restituer le stock ?"
+msgstr "Cancel this order and restore the stock?"
+
+#: .\templates\dashboard\vendeur_commande_detail.html:3
+msgid "Annuler la commande"
+msgstr "Cancel order"
+
+#: .\templates\dashboard\vendeur_commandes.html:2
+msgid "Commandes clients — espace vendeur"
+msgstr "Customer orders — seller area"
+
+#: .\templates\dashboard\vendeur_commandes.html:3
+msgid "Opérations clients"
+msgstr "Customer operations"
+
+#: .\templates\dashboard\vendeur_commandes.html:3
+msgid "Traitez chaque commande avec une visibilité claire sur son statut."
+msgstr "Handle every order with clear status visibility."
+
+#: .\templates\dashboard\vendeur_commandes.html:4
+msgid "Expédiées"
+msgstr "Shipped"
+
+#: .\templates\dashboard\vendeur_commandes.html:4
+msgid "Annulées"
+msgstr "Cancelled"
+
+#: .\templates\dashboard\vendeur_commandes.html:5
+msgid "N° de commande, client ou e-mail"
+msgstr "Order number, customer, or email"
+
+#: .\templates\dashboard\vendeur_commandes.html:6
+msgid "Articles"
+msgstr "Items"
+
+#: .\templates\dashboard\vendeur_commandes.html:6
+#: .\templates\dashboard\vendeur_dashboard.html:38
+msgid "Confirmer"
+msgstr "Confirm"
+
+#: .\templates\dashboard\vendeur_commandes.html:6
+msgid "Expédier"
+msgstr "Ship"
+
+#: .\templates\dashboard\vendeur_commandes.html:6
+msgid "Livrer"
+msgstr "Deliver"
+
+#: .\templates\dashboard\vendeur_commandes.html:6
+msgid "Aucune commande dans cette vue."
+msgstr "No orders in this view."
+
+#: .\templates\dashboard\vendeur_dashboard.html:2
+msgid "Pilotage vendeur"
+msgstr "Seller dashboard"
+
+#: .\templates\dashboard\vendeur_dashboard.html:7
+msgid "Espace professionnel"
+msgstr "Professional area"
+
+#: .\templates\dashboard\vendeur_dashboard.html:7
+msgid "Pilotage boutique"
+msgstr "Shop overview"
+
+#: .\templates\dashboard\vendeur_dashboard.html:7
+msgid ", voici l'activité de votre boutique."
+msgstr ", here is your shop activity."
+
+#: .\templates\dashboard\vendeur_dashboard.html:8
+#: .\templates\dashboard\vendeur_produits.html:7
+#: .\templates\dashboard\vendeur_stock.html:3
+msgid "Ajouter un produit"
+msgstr "Add product"
+
+#: .\templates\dashboard\vendeur_dashboard.html:8
+msgid "Voir le stock"
+msgstr "View stock"
+
+#: .\templates\dashboard\vendeur_dashboard.html:11
+msgid "Vente #"
+msgstr "Sale #"
+
+#: .\templates\dashboard\vendeur_dashboard.html:11
+msgid "enregistrée"
+msgstr "recorded"
+
+#: .\templates\dashboard\vendeur_dashboard.html:11
+msgid "Voir l'historique"
+msgstr "View history"
+
+#: .\templates\dashboard\vendeur_dashboard.html:15
+msgid "CA ce mois"
+msgstr "Revenue this month"
+
+#: .\templates\dashboard\vendeur_dashboard.html:16
+msgid "commande"
+msgstr "Order"
+
+#: .\templates\dashboard\vendeur_dashboard.html:16
+msgid "en attente"
+msgstr "Pending"
+
+#: .\templates\dashboard\vendeur_dashboard.html:17
+msgid "Confirmées"
+msgstr "Confirmed"
+
+#: .\templates\dashboard\vendeur_dashboard.html:17
+msgid "à préparer ou expédier"
+msgstr "to prepare or ship"
+
+#: .\templates\dashboard\vendeur_dashboard.html:23
+msgid "Produits inactifs"
+msgstr "Inactive products"
+
+#: .\templates\dashboard\vendeur_dashboard.html:26
+msgid "Gérer les commandes"
+msgstr "Manage orders"
+
+#: .\templates\dashboard\vendeur_dashboard.html:26
+#: .\templates\dashboard\vendeur_historique.html:3
+msgid "Historique des ventes"
+msgstr "Sales history"
+
+#: .\templates\dashboard\vendeur_dashboard.html:29
+msgid "Point de vente"
+msgstr "Point of sale"
+
+#: .\templates\dashboard\vendeur_dashboard.html:29
+msgid "Enregistrer une vente"
+msgstr "Record a sale"
+
+#: .\templates\dashboard\vendeur_dashboard.html:31
+msgid "Sélectionner un produit"
+msgstr "Select a product"
+
+#: .\templates\dashboard\vendeur_dashboard.html:31
+msgid "disponibles"
+msgstr "available"
+
+#: .\templates\dashboard\vendeur_dashboard.html:33
+#: .\templates\dashboard\vendeur_dashboard.html:34
+msgid "(facultatif)"
+msgstr "(optional)"
+
+#: .\templates\dashboard\vendeur_dashboard.html:33
+msgid "Nom ou référence client"
+msgstr "Customer name or reference"
+
+#: .\templates\dashboard\vendeur_dashboard.html:34
+#: .\templates\dashboard\vendeur_vente_recu.html:475
+#: .\templates\orders\checkout.html:7
+msgid "Note"
+msgstr "Note"
+
+#: .\templates\dashboard\vendeur_dashboard.html:34
+msgid "Information utile pour le suivi"
+msgstr "Useful tracking information"
+
+#: .\templates\dashboard\vendeur_dashboard.html:35
+msgid "0 FCFA"
+msgstr "0 FCFA"
+
+#: .\templates\dashboard\vendeur_dashboard.html:35
+msgid "Enregistrer la vente"
+msgstr "Record sale"
+
+#: .\templates\dashboard\vendeur_dashboard.html:38
+msgid "À traiter maintenant"
+msgstr "To process now"
+
+#: .\templates\dashboard\vendeur_dashboard.html:38
+msgid "Commandes clients"
+msgstr "Customer orders"
+
+#: .\templates\dashboard\vendeur_dashboard.html:38
+msgid "Aucune commande en attente."
+msgstr "No orders awaiting action."
+
+#: .\templates\dashboard\vendeur_dashboard.html:40
+msgid "Historique complet"
+msgstr "Full history"
+
+#: .\templates\dashboard\vendeur_dashboard.html:40
+#: .\templates\dashboard\vendeur_historique.html:6
+msgid "x"
+msgstr "x"
+
+#: .\templates\dashboard\vendeur_dashboard.html:40
+msgid "Les ventes enregistrées apparaîtront ici."
+msgstr "Recorded sales will appear here."
+
+#: .\templates\dashboard\vendeur_historique.html:2
+msgid "Historique des ventes — espace vendeur"
+msgstr "Sales history — seller area"
+
+#: .\templates\dashboard\vendeur_historique.html:3
+msgid "Performance commerciale"
+msgstr "Sales performance"
+
+#: .\templates\dashboard\vendeur_historique.html:3
+msgid "Analysez les ventes directes et retrouvez chaque transaction."
+msgstr "Analyze direct sales and find every transaction."
+
+#: .\templates\dashboard\vendeur_historique.html:4
+msgid "Total de la sélection"
+msgstr "Selection total"
+
+#: .\templates\dashboard\vendeur_historique.html:5
+msgid "Produit ou nom du client"
+msgstr "Product or customer name"
+
+#: .\templates\dashboard\vendeur_historique.html:5
+msgid "Tous les paiements"
+msgstr "All payments"
+
+#: .\templates\dashboard\vendeur_historique.html:6
+msgid "FCFA / unité"
+msgstr "FCFA / unit"
+
+#: .\templates\dashboard\vendeur_historique.html:6
+msgid "Aucune vente pour ces critères."
+msgstr "No sales match these criteria."
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:2
+msgid "— Espace vendeur"
+msgstr "— Seller area"
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:5
+msgid "Modifier le produit"
+msgstr "Edit product"
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:5
+msgid "Mettez à jour la fiche de"
+msgstr "Update the listing"
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:5
+msgid "sans perdre vos informations."
+msgstr "without losing your information."
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:9
+msgid "Laissez vide pour retirer la promotion."
+msgstr "Leave blank to remove the promotion."
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Remplacez l'image sans modifier le reste de la fiche."
+msgstr "Replace the image without changing the rest of the listing."
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Remplacer"
+msgstr "Replace"
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Image actuelle"
+msgstr "Current image"
+
+#: .\templates\dashboard\vendeur_modifier_produit.html:11
+msgid "Laissez vide pour conserver l'image actuelle."
+msgstr "Leave blank to keep the current image."
+
+#: .\templates\dashboard\vendeur_paniers.html:3
+msgid "Paniers Clients — Espace Vendeur"
+msgstr "Customer carts — Seller area"
+
+#: .\templates\dashboard\vendeur_paniers.html:13
+msgid "Paniers clients actifs"
+msgstr "Active customer carts"
+
+#: .\templates\dashboard\vendeur_paniers.html:14
+msgid "panier(s) actif(s) — Valeur totale :"
+msgstr "active cart(s) — Total value:"
+
+#: .\templates\dashboard\vendeur_paniers.html:28
+msgid "article(s)"
+msgstr "item(s)"
+
+#: .\templates\dashboard\vendeur_paniers.html:53
+msgid "Aucun panier actif pour le moment."
+msgstr "No active carts at the moment."
+
+#: .\templates\dashboard\vendeur_produits.html:2
+msgid "Produits — espace vendeur"
+msgstr "Products — seller area"
+
+#: .\templates\dashboard\vendeur_produits.html:4
+msgid "Catalogue marchand"
+msgstr "Merchant catalogue"
+
+#: .\templates\dashboard\vendeur_produits.html:4
+msgid "Gérez la visibilité, les prix et la disponibilité de votre catalogue."
+msgstr "Manage your catalogue's visibility, prices, and availability."
+
+#: .\templates\dashboard\vendeur_produits.html:5
+msgid "En rupture"
+msgstr "Out of stock"
+
+#: .\templates\dashboard\vendeur_produits.html:6
+msgid "Rechercher un produit ou une marque"
+msgstr "Search for a product or brand"
+
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\products\product_list.html:6
+msgid "Toutes les catégories"
+msgstr "All categories"
+
+#: .\templates\dashboard\vendeur_produits.html:6
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Disponible"
+msgstr "Available"
+
+#: .\templates\dashboard\vendeur_produits.html:6
+msgid "Plus récents"
+msgstr "Newest"
+
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Actions"
+msgstr "Actions"
+
+#: .\templates\dashboard\vendeur_produits.html:7
+msgid "Aucun produit ne correspond à ces critères."
+msgstr "No products match these criteria."
+
+#: .\templates\dashboard\vendeur_stock.html:2
+msgid "Stock — espace vendeur"
+msgstr "Stock — seller area"
+
+#: .\templates\dashboard\vendeur_stock.html:3
+msgid "Opérations"
+msgstr "Operations"
+
+#: .\templates\dashboard\vendeur_stock.html:3
+msgid "Surveillez les niveaux disponibles et anticipez les ruptures."
+msgstr "Monitor available levels and anticipate stockouts."
+
+#: .\templates\dashboard\vendeur_stock.html:4
+msgid "Disponibles"
+msgstr "Available"
+
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Rechercher un produit"
+msgstr "Search for a product"
+
+#: .\templates\dashboard\vendeur_stock.html:5
+#: .\templates\products\product_detail.html:6
+#: .\templates\products\product_list.html:6
+msgid "En stock"
+msgstr "In stock"
+
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Actifs et inactifs"
+msgstr "Active and inactive"
+
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Stock croissant"
+msgstr "Stock ascending"
+
+#: .\templates\dashboard\vendeur_stock.html:5
+msgid "Stock décroissant"
+msgstr "Stock descending"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Quantité actuelle"
+msgstr "Current quantity"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Seuil opérationnel"
+msgstr "Operating threshold"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Alerte à 5 unités"
+msgstr "Alert at 5 units"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "À réapprovisionner"
+msgstr "To restock"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Ajuster"
+msgstr "Adjust"
+
+#: .\templates\dashboard\vendeur_stock.html:6
+msgid "Aucun produit dans cette vue stock."
+msgstr "No products in this stock view."
+
+#: .\templates\dashboard\vendeur_vente_recu.html:3
+#: .\templates\dashboard\vendeur_vente_recu.html:343
+#: .\templates\orders\receipt.html:3
+msgid "Reçu"
+msgstr "Receipt"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:3
+msgid "— Vente comptoir"
+msgstr "— Counter sale"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:285
+msgid "Nouvelle vente"
+msgstr "New sale"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:296
+msgid "Copier"
+msgstr "Copy"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:305
+msgid "WhatsApp"
+msgstr "WhatsApp"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:314
+msgid "Imprimer"
+msgstr "Print"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:336
+msgid "Reçu de vente comptoir"
+msgstr "Counter sale receipt"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:359
+msgid "Paiement encaissé"
+msgstr "Payment collected"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:360
+msgid "Vente enregistrée avec succès."
+msgstr "Sale recorded successfully."
+
+#: .\templates\dashboard\vendeur_vente_recu.html:422
+msgid "Quantité :"
+msgstr "Quantity:"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:424
+msgid "/ unité"
+msgstr "/ unit"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:456
+msgid "Total payé"
+msgstr "Total paid"
+
+#: .\templates\dashboard\vendeur_vente_recu.html:494
+msgid "Conservez ce reçu comme justificatif de votre achat."
+msgstr "Keep this receipt as proof of purchase."
+
+#: .\templates\home.html:3
+msgid "Accueil — Gestion Boutique"
+msgstr "Home — Gestion Boutique"
+
+#: .\templates\home.html:12
+msgid "La sélection du moment"
+msgstr "This moment's selection"
+
+#: .\templates\home.html:13
+msgid "Des essentiels choisis pour votre quotidien."
+msgstr "Essentials chosen for your everyday life."
+
+#: .\templates\home.html:14
+msgid ""
+"Découvrez des produits utiles, élégants et soigneusement sélectionnés pour "
+"rendre chaque achat plus simple."
+msgstr "Discover useful, stylish products, carefully selected to make every "
+"purchase simpler."
+
+#: .\templates\home.html:16
+msgid "Découvrir les produits"
+msgstr "Discover our products"
+
+#: .\templates\home.html:20 .\templates\home.html:52
+msgid "Livraison rapide"
+msgstr "Fast delivery"
+
+#: .\templates\home.html:20
+msgid "Suivie jusqu'à chez vous"
+msgstr "Tracked all the way to your door"
+
+#: .\templates\home.html:21 .\templates\home.html:53
+msgid "Paiement sécurisé"
+msgstr "Secure payment"
+
+#: .\templates\home.html:21
+msgid "Un achat en toute confiance"
+msgstr "Shop with confidence"
+
+#: .\templates\home.html:22
+msgid "Support client"
+msgstr "Customer support"
+
+#: .\templates\home.html:22
+msgid "Une équipe à votre écoute"
+msgstr "A team ready to help"
+
+#: .\templates\home.html:25
+msgid "Produit vedette"
+msgstr "Featured product"
+
+#: .\templates\home.html:28
+msgid "Sélection de vêtements de la boutique"
+msgstr "A selection of clothing from the shop"
+
+#: .\templates\home.html:30
+msgid "Coup de cœur"
+msgstr "Our favorites"
+
+#: .\templates\home.html:31
+msgid "Sélection vérifiée"
+msgstr "Verified selection"
+
+#: .\templates\home.html:37
+msgid "À explorer"
+msgstr "Explore"
+
+#: .\templates\home.html:37
+msgid "Catégories populaires"
+msgstr "Popular categories"
+
+#: .\templates\home.html:37
+msgid "Tout ce qu'il faut pour trouver rapidement votre prochain coup de cœur."
+msgstr "Everything you need to quickly find your next favorite."
+
+#: .\templates\home.html:37
+msgid "Voir toutes les catégories"
+msgstr "View all categories"
+
+#: .\templates\home.html:39
+msgid "Tout juste arrivé"
+msgstr "Just arrived"
+
+#: .\templates\home.html:39
+msgid "Les nouveautés"
+msgstr "New arrivals"
+
+#: .\templates\home.html:39
+msgid "Les dernières pièces ajoutées à la boutique."
+msgstr "The latest items added to the shop."
+
+#: .\templates\home.html:39
+msgid "Voir les nouveautés"
+msgstr "View new arrivals"
+
+#: .\templates\home.html:41
+msgid "Offres sélectionnées"
+msgstr "Selected offers"
+
+#: .\templates\home.html:41
+msgid "Les bons produits, au bon moment."
+msgstr "The right products at the right time."
+
+#: .\templates\home.html:41
+msgid "Profitez des prix promotionnels disponibles actuellement."
+msgstr "Enjoy the promotional prices currently available."
+
+#: .\templates\home.html:41
+msgid "Voir les offres"
+msgstr "View offers"
+
+#: .\templates\home.html:43
+msgid "Plébiscités"
+msgstr "Popular picks"
+
+#: .\templates\home.html:43
+msgid "Les meilleures ventes"
+msgstr "Best sellers"
+
+#: .\templates\home.html:43
+msgid "Les produits qui trouvent déjà leur place chez nos clients."
+msgstr "Products already finding a place in our customers' homes."
+
+#: .\templates\home.html:43
+msgid "Voir le classement"
+msgstr "View the rankings"
+
+#: .\templates\home.html:45
+msgid "La sélection Gestion Boutique"
+msgstr "The Gestion Boutique selection"
+
+#: .\templates\home.html:45
+msgid "Des produits choisis avec exigence."
+msgstr "Products carefully selected."
+
+#: .\templates\home.html:45
+msgid ""
+"Explorez notre sélection vedette et trouvez ce qui vous correspond vraiment."
+msgstr "Explore our featured selection and find what truly suits you."
+
+#: .\templates\home.html:45
+msgid "Découvrir toute la boutique"
+msgstr "Discover the entire shop"
+
+#: .\templates\home.html:45
+msgid "Simple."
+msgstr "Simple."
+
+#: .\templates\home.html:45
+msgid "Utile."
+msgstr "Useful."
+
+#: .\templates\home.html:45
+msgid "À vous."
+msgstr "Yours."
+
+#: .\templates\home.html:49
+msgid "Les engagements de la boutique"
+msgstr "Our shop commitments"
+
+#: .\templates\home.html:50
+msgid "Produits de qualité"
+msgstr "Quality products"
+
+#: .\templates\home.html:50
+msgid "Choisis avec exigence"
+msgstr "Carefully selected"
+
+#: .\templates\home.html:51
+msgid "Meilleurs prix"
+msgstr "Best prices"
+
+#: .\templates\home.html:51
+msgid "Des offres qui ont du sens"
+msgstr "Offers that make sense"
+
+#: .\templates\home.html:52
+msgid "Une commande suivie"
+msgstr "Order tracking"
+
+#: .\templates\home.html:53
+msgid "Un parcours rassurant"
+msgstr "A reassuring experience"
+
+#: .\templates\notifications\notification_list.html:2
+msgid "Notifications — Gestion Boutique"
+msgstr "Notifications — Shop Management"
+
+#: .\templates\notifications\notification_list.html:4
+#: .\templates\orders\my_orders.html:3
+msgid "Votre compte"
+msgstr "Your account"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Centre de notifications"
+msgstr "Notification center"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Retrouvez ici les informations importantes sur votre activité."
+msgstr "Find important information about your activity here."
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Tout marquer comme lu"
+msgstr "Mark all as read"
+
+#: .\templates\notifications\notification_list.html:4
+#: .\templates\products\_product_card.html:7
+#: .\templates\products\product_detail.html:6
+msgid "Nouveau"
+msgstr "New"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Marquer comme lue"
+msgstr "Mark as read"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Tout est calme pour le moment"
+msgstr "Everything is quiet for now"
+
+#: .\templates\notifications\notification_list.html:4
+msgid ""
+"Les confirmations de commande et informations importantes apparaîtront ici."
+msgstr ""
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Pagination des notifications"
+msgstr "Notification pagination"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Page précédente"
+msgstr "Previous page"
+
+#: .\templates\notifications\notification_list.html:4
+msgid "Page suivante"
+msgstr "Next page"
+
+#: .\templates\orders\checkout.html:2
+msgid "Finaliser ma commande — Gestion Boutique"
+msgstr "Complete your order — Shop Management"
+
+#: .\templates\orders\checkout.html:4
+msgid "Commande sécurisée"
+msgstr "Secure checkout"
+
+#: .\templates\orders\checkout.html:4
+msgid "Finaliser votre commande"
+msgstr "Complete your order"
+
+#: .\templates\orders\checkout.html:4
+msgid "Quelques étapes simples avant de recevoir votre sélection."
+msgstr "A few simple steps before receiving your order."
+
+#: .\templates\orders\checkout.html:4
+msgid "Retour au panier"
+msgstr "Back to cart"
+
+#: .\templates\orders\checkout.html:4
+msgid "Progression de la commande"
+msgstr "Order progress"
+
+#: .\templates\orders\checkout.html:4
+msgid "Mode"
+msgstr "Method"
+
+#: .\templates\orders\checkout.html:4
+#: .\templates\registration\password_reset_confirm.html:35
+msgid "Confirmation"
+msgstr "Confirmation"
+
+#: .\templates\orders\checkout.html:5
+msgid "Où souhaitez-vous être livré ?"
+msgstr "Where should we deliver your order?"
+
+#: .\templates\orders\checkout.html:5
+msgid ""
+"Utilisez votre adresse enregistrée ou renseignez une nouvelle adresse pour "
+"cette commande."
+msgstr ""
+
+#: .\templates\orders\checkout.html:5
+msgid "Ex. ACI 2000, Rue 234, près de la pharmacie..."
+msgstr "E.g. ACI 2000, Street 234, near the pharmacy..."
+
+#: .\templates\orders\checkout.html:5
+msgid "Bamako"
+msgstr "Bamako"
+
+#: .\templates\orders\checkout.html:5
+msgid "Continuer vers la livraison"
+msgstr "Continue to delivery"
+
+#: .\templates\orders\checkout.html:6
+msgid "Choisissez votre livraison"
+msgstr "Choose your delivery"
+
+#: .\templates\orders\checkout.html:6
+msgid "Le montant affiché sera inclus dans le total final."
+msgstr "The displayed amount will be included in the final total."
+
+#: .\templates\orders\checkout.html:6 .\templates\orders\receipt.html:942
+msgid "Gratuite"
+msgstr "Free"
+
+#: .\templates\orders\checkout.html:6
+msgid "2 500 FCFA"
+msgstr "2,500 FCFA"
+
+#: .\templates\orders\checkout.html:6
+msgid "Voir le récapitulatif"
+msgstr "View summary"
+
+#: .\templates\orders\checkout.html:7
+msgid "Vérifiez votre commande"
+msgstr "Review your order"
+
+#: .\templates\orders\checkout.html:7
+msgid "Relisez les informations avant de choisir votre paiement."
+msgstr "Review the information before choosing your payment."
+
+#: .\templates\orders\checkout.html:7 .\templates\orders\order_detail.html:4
+msgid "Adresse de livraison"
+msgstr "Delivery address"
+
+#: .\templates\orders\checkout.html:7
+msgid "Mode de livraison"
+msgstr "Delivery method"
+
+#: .\templates\orders\checkout.html:7
+#: .\templates\payments\payment_result.html:10
+msgid "Choisir le paiement"
+msgstr "Choose payment"
+
+#: .\templates\orders\checkout.html:8
+msgid "Comment souhaitez-vous payer ?"
+msgstr "How would you like to pay?"
+
+#: .\templates\orders\checkout.html:8
+msgid "Choisissez le moyen de paiement de votre commande."
+msgstr "Choose your order's payment method."
+
+#: .\templates\orders\checkout.html:8 .\templates\orders\my_orders.html:3
+msgid "Paiement en attente"
+msgstr "Payment pending"
+
+#: .\templates\orders\checkout.html:8
+msgid "Le paiement sera validé après confirmation autorisée."
+msgstr "Payment will be validated after authorized confirmation."
+
+#: .\templates\orders\checkout.html:8
+msgid "Continuer"
+msgstr "Continue"
+
+#: .\templates\orders\checkout.html:9
+msgid "Dernière étape"
+msgstr "Final step"
+
+#: .\templates\orders\checkout.html:9
+msgid "Tout est prêt"
+msgstr "Everything is ready"
+
+#: .\templates\orders\checkout.html:9
+msgid ""
+"Confirmez pour enregistrer votre commande. Le paiement restera en attente de "
+"confirmation."
+msgstr ""
+
+#: .\templates\orders\checkout.html:9
+msgid "Confirmer ma commande"
+msgstr "Confirm my order"
+
+#: .\templates\orders\checkout.html:9
+msgid "Résumé"
+msgstr "Summary"
+
+#: .\templates\orders\checkout.html:9
+msgid "Vos informations sont utilisées uniquement pour cette commande."
+msgstr "Your information is used only for this order."
+
+#: .\templates\orders\checkout_confirmation.html:2
+msgid "Commande enregistrée — Gestion Boutique"
+msgstr "Order recorded — Shop Management"
+
+#: .\templates\orders\checkout_confirmation.html:3
+msgid "Merci pour votre confiance"
+msgstr "Thank you for your trust"
+
+#: .\templates\orders\checkout_confirmation.html:3
+msgid "Votre commande est enregistrée."
+msgstr "Your order has been recorded."
+
+#: .\templates\orders\checkout_confirmation.html:3
+msgid ""
+"Votre paiement reste en attente de confirmation. Vous pourrez suivre chaque "
+"étape depuis votre espace."
+msgstr ""
+
+#: .\templates\orders\checkout_confirmation.html:3
+msgid "Voir les instructions de paiement"
+msgstr "View payment instructions"
+
+#: .\templates\orders\checkout_confirmation.html:3
+msgid "Suivre ma commande"
+msgstr "Track my order"
+
+#: .\templates\orders\checkout_confirmation.html:3
+#: .\templates\orders\order_success.html:34
+#: .\templates\products\wishlist.html:3
+msgid "Continuer mes achats"
+msgstr "Continue shopping"
+
+#: .\templates\orders\delivery\_address.html:4
+#: .\templates\orders\receipt.html:785
+msgid "Repère :"
+msgstr "Landmark:"
+
+#: .\templates\orders\delivery\_checkout_fields.html:2
+msgid "Rue"
+msgstr "Street number"
+
+#: .\templates\orders\delivery\_checkout_fields.html:3
+msgid "Porte"
+msgstr "Door number"
+
+#: .\templates\orders\delivery\_checkout_fields.html:4
+msgid "Repère"
+msgstr "Landmark"
+
+#: .\templates\orders\delivery\_checkout_fields.html:4
+msgid "Près de la pharmacie, porte bleue"
+msgstr "Near the pharmacy, blue door"
+
+#: .\templates\orders\delivery\_checkout_fields.html:5
+msgid "Téléphone utile à la livraison"
+msgstr "Delivery contact phone"
+
+#: .\templates\orders\delivery\_summary.html:2
+msgid "Suivi de livraison"
+msgstr "Delivery tracking"
+
+#: .\templates\orders\delivery\_summary.html:4
+msgid "· Livreur :"
+msgstr "· Driver:"
+
+#: .\templates\orders\delivery\_summary.html:4
+#: .\templates\orders\delivery\detail.html:6
+#, fuzzy
+#| msgid "Affectée"
+msgid "Non affecté"
+msgstr "Unassigned"
+
+#: .\templates\orders\delivery\_summary.html:5
+msgid "Suivre la livraison · Discussion ("
+msgstr "Track delivery · Discussion ("
+
+#: .\templates\orders\delivery\_summary.html:6
+msgid "Initialiser la livraison"
+msgstr "Initialize delivery"
+
+#: .\templates\orders\delivery\_summary.html:6
+msgid "Suivi logistique non initialisé."
+msgstr "Logistics tracking has not been initialized."
+
+#: .\templates\orders\delivery\base.html:4
+msgid ""
+"Suivi et discussion en ligne uniquement. Actualisez la page pour recevoir "
+"les nouveautés."
+msgstr ""
+
+#: .\templates\orders\delivery\detail.html:2
+msgid "· Suivi & discussion"
+msgstr "· Tracking & discussion"
+
+#: .\templates\orders\delivery\detail.html:6
+#: .\templates\orders\delivery\liste.html:10
+msgid "Livreur :"
+msgstr "Driver:"
+
+#: .\templates\orders\delivery\detail.html:7
+msgid "Appeler le client"
+msgstr "Call customer"
+
+#: .\templates\orders\delivery\detail.html:7
+msgid "Téléphone non renseigné sur cette commande."
+msgstr "No phone number provided for this order."
+
+#: .\templates\orders\delivery\detail.html:10
+msgid "Affecter / réaffecter"
+msgstr "Assign / reassign"
+
+#: .\templates\orders\delivery\detail.html:10
+msgid "Enregistrer l'affectation"
+msgstr "Save assignment"
+
+#: .\templates\orders\delivery\detail.html:11
+msgid "Actions opérationnelles"
+msgstr "Operational actions"
+
+#: .\templates\orders\delivery\detail.html:11
+msgid "Motif de l'échec"
+msgstr "Reason for failure"
+
+#: .\templates\orders\delivery\detail.html:11
+msgid "Commentaire (obligatoire pour Autre)"
+msgstr "Comment (required for Other)"
+
+#: .\templates\orders\delivery\detail.html:12
+msgid "Chronologie"
+msgstr "Timeline"
+
+#: .\templates\orders\delivery\detail.html:12
+#, fuzzy
+#| msgid "Livreur"
+msgid "Sans livreur"
+msgstr "No driver"
+
+#: .\templates\orders\delivery\detail.html:12
+msgid "Par"
+msgstr "By"
+
+#: .\templates\orders\delivery\detail.html:12
+msgid "Système"
+msgstr "System"
+
+#: .\templates\orders\delivery\detail.html:13
+msgid "Suivi & discussion"
+msgstr "Tracking & discussion"
+
+#: .\templates\orders\delivery\detail.html:13
+msgid "Un message ne change jamais le statut de la livraison."
+msgstr "A message never changes the delivery status."
+
+#: .\templates\orders\delivery\detail.html:14
+msgid "Aucun message pour le moment."
+msgstr "No messages yet."
+
+#: .\templates\orders\delivery\detail.html:15
+msgid "Pages de discussion"
+msgstr "Discussion pages"
+
+#: .\templates\orders\delivery\detail.html:15
+msgid "Messages précédents"
+msgstr "Earlier messages"
+
+#: .\templates\orders\delivery\detail.html:15
+msgid "Messages suivants"
+msgstr "Later messages"
+
+#: .\templates\orders\delivery\detail.html:16
+msgid "1000 caractères maximum. Texte uniquement."
+msgstr "Up to 1,000 characters. Text only."
+
+#: .\templates\orders\delivery\detail.html:16
+msgid "Envoyer"
+msgstr "Send"
+
+#: .\templates\orders\delivery\detail.html:16
+msgid "Discussion conservée en lecture seule."
+msgstr "Discussion retained as read-only."
+
+#: .\templates\orders\delivery\liste.html:2
+msgid "Supervision livraisons"
+msgstr "Delivery supervision"
+
+#: .\templates\orders\delivery\liste.html:4
+msgid "Livraisons boutique"
+msgstr "Shop deliveries"
+
+#: .\templates\orders\delivery\liste.html:9
+msgid "Téléphone :"
+msgstr "Phone:"
+
+#: .\templates\orders\delivery\liste.html:11
+msgid "Affectation :"
+msgstr "Assignment:"
+
+#: .\templates\orders\delivery\liste.html:11
+msgid "· Livrée le"
+msgstr "· Delivered on"
+
+#: .\templates\orders\delivery\liste.html:12
+msgid "Voir · Discussion ("
+msgstr "View · Discussion ("
+
+#: .\templates\orders\delivery\liste.html:12
+msgid "Aucune livraison dans cette sélection."
+msgstr "No deliveries match these filters."
+
+#: .\templates\orders\my_orders.html:2
+msgid "Mes commandes — Gestion Boutique"
+msgstr "My orders — Shop Management"
+
+#: .\templates\orders\my_orders.html:3
+msgid "Retrouvez vos achats et suivez leur progression."
+msgstr "Review your purchases and track their progress."
+
+#: .\templates\orders\my_orders.html:3
+msgid "Numéro de commande"
+msgstr "Order number"
+
+#: .\templates\orders\my_orders.html:3
+msgid "Livraison :"
+msgstr "Delivery:"
+
+#: .\templates\orders\my_orders.html:3
+msgid "et plus"
+msgstr "and more"
+
+#: .\templates\orders\my_orders.html:3
+msgid "Voir le détail"
+msgstr "View details"
+
+#: .\templates\orders\my_orders.html:3
+msgid "Aucune commande trouvée"
+msgstr "No orders found"
+
+#: .\templates\orders\my_orders.html:3
+msgid ""
+"Modifiez vos filtres ou découvrez la boutique pour passer votre première "
+"commande."
+msgstr ""
+
+#: .\templates\orders\order_detail.html:4
+msgid "Suivi de votre commande"
+msgstr "Track your order"
+
+#: .\templates\orders\order_detail.html:4
+msgid "Résumé financier"
+msgstr "Financial summary"
+
+#: .\templates\orders\order_detail.html:4
+msgid "Total de la commande"
+msgstr "Order total"
+
+#: .\templates\orders\order_detail.html:4
+msgid "Sous-total produits"
+msgstr "Products subtotal"
+
+#: .\templates\orders\order_detail.html:4
+#: .\templates\payments\payment_form.html:3
+msgid "Finaliser le paiement"
+msgstr "Complete payment"
+
+#: .\templates\orders\order_detail.html:4
+msgid "Quartier / Rue / Avenue :"
+msgstr "Neighborhood / Street / Avenue:"
+
+#: .\templates\orders\order_detail.html:4
+msgid "Ville :"
+msgstr "City:"
+
+#: .\templates\orders\order_detail.html:4
+msgid "N° de porte / Repère :"
+msgstr "Door number / Landmark:"
+
+#: .\templates\orders\order_success.html:5
+msgid "Commande réussie"
+msgstr "Order successful"
+
+#: .\templates\orders\order_success.html:16
+msgid "Votre commande est confirmée"
+msgstr "Your order is confirmed"
+
+#: .\templates\orders\order_success.html:20
+msgid "Numéro de commande :"
+msgstr "Order number:"
+
+#: .\templates\orders\order_success.html:25
+msgid "Statut :"
+msgstr "Status:"
+
+#: .\templates\orders\receipt.html:596
+#: .\templates\payments\payment_result.html:10
+msgid "Retour à la commande"
+msgstr "Back to order"
+
+#: .\templates\orders\receipt.html:609
+msgid "Imprimer le reçu"
+msgstr "Print receipt"
+
+#: .\templates\orders\receipt.html:640
+msgid "Votre reçu officiel de commande"
+msgstr "Your official order receipt"
+
+#: .\templates\orders\receipt.html:651
+msgid "Reçu officiel"
+msgstr "Official receipt"
+
+#: .\templates\orders\receipt.html:677
+msgid "Commande confirmée"
+msgstr "Order confirmed"
+
+#: .\templates\orders\receipt.html:681
+msgid "Ce reçu atteste de la validation de cette commande."
+msgstr "This receipt confirms that this order was validated."
+
+#: .\templates\orders\receipt.html:748
+msgid "Référence :"
+msgstr "Reference:"
+
+#: .\templates\orders\receipt.html:755
+msgid "Non renseigné"
+msgstr "Not provided"
+
+#: .\templates\orders\receipt.html:759
+msgid "Aucun paiement associé."
+msgstr "No associated payment."
+
+#: .\templates\orders\receipt.html:800
+msgid "Articles de la commande"
+msgstr "Order items"
+
+#: .\templates\orders\receipt.html:813
+msgid "Qté"
+msgstr "Qty"
+
+#: .\templates\orders\receipt.html:897
+msgid "Aucun article enregistré."
+msgstr "No items recorded."
+
+#: .\templates\orders\receipt.html:980
+msgid "VALIDATION VENDEUR"
+msgstr "SELLER VALIDATION"
+
+#: .\templates\orders\receipt.html:1002
+msgid "Confirmée le"
+msgstr "Confirmed on"
+
+#: .\templates\orders\receipt.html:1033
+msgid "Conservez ce reçu comme justificatif de votre commande."
+msgstr "Keep this receipt as proof of your order."
+
+#: .\templates\payments\payment_form.html:2
+msgid "Paiement — Gestion Boutique"
+msgstr "Payment — Shop Management"
+
+#: .\templates\payments\payment_form.html:3
+msgid ""
+"Choisissez votre moyen de paiement. Votre paiement sera confirmé selon le "
+"flux approprié."
+msgstr ""
+
+#: .\templates\payments\payment_form.html:3
+msgid "Dernière tentative :"
+msgstr "Last attempt:"
+
+#: .\templates\payments\payment_form.html:3
+msgid "Montant de la commande"
+msgstr "Order amount"
+
+#: .\templates\payments\payment_form.html:3
+msgid "Continuer vers le paiement"
+msgstr "Continue to payment"
+
+#: .\templates\payments\payment_form.html:3
+msgid "Retour au détail de la commande"
+msgstr "Back to order details"
+
+#: .\templates\payments\payment_result.html:2
+msgid "Statut du paiement — Gestion Boutique"
+msgstr "Payment status — Shop Management"
+
+#: .\templates\payments\payment_result.html:6
+msgid "Suivi du paiement"
+msgstr "Payment tracking"
+
+#: .\templates\payments\payment_result.html:7
+msgid "Paiement en attente de confirmation."
+msgstr "Payment awaiting confirmation."
+
+#: .\templates\payments\payment_result.html:7
+msgid "Moyen de paiement indisponible."
+msgstr "Payment method unavailable."
+
+#: .\templates\payments\payment_result.html:7
+msgid "Paiement non finalisé."
+msgstr "Payment not completed."
+
+#: .\templates\payments\payment_result.html:7
+msgid "Le paiement n'a pas été confirmé."
+msgstr "The payment was not confirmed."
+
+#: .\templates\payments\payment_success.html:2
+msgid "Paiement confirmé — Gestion Boutique"
+msgstr "Payment confirmed — Shop Management"
+
+#: .\templates\payments\payment_success.html:3
+msgid "Paiement confirmé"
+msgstr "Payment confirmed"
+
+#: .\templates\payments\payment_success.html:3
+msgid "Votre paiement est confirmé."
+msgstr "Your payment is confirmed."
+
+#: .\templates\payments\payment_success.html:3
+msgid "Retrouvez le suivi et le reçu depuis votre commande."
+msgstr "Access tracking and the receipt from your order."
+
+#: .\templates\payments\payment_success.html:3
+msgid "Voir ma commande"
+msgstr "View my order"
+
+#: .\templates\products\_product_card.html:5
+#: .\templates\products\product_detail.html:6
+msgid "Promo"
+msgstr "Sale"
+
+#: .\templates\products\_product_card.html:6
+#: .\templates\products\product_detail.html:6
+#: .\templates\products\product_list.html:6
+msgid "Épuisé"
+msgstr "Out of stock"
+
+#: .\templates\products\_product_card.html:15
+#: .\templates\products\product_detail.html:6
+msgid "Ajouter au panier"
+msgstr "Add to cart"
+
+#: .\templates\products\_product_card.html:15
+msgid "Indisponible"
+msgstr "Unavailable"
+
+#: .\templates\products\product_detail.html:6
+#: .\templates\products\product_detail.html:8
+msgid "avis"
+msgstr "reviews"
+
+#: .\templates\products\product_detail.html:6
+msgid "Économie de"
+msgstr "You save"
+
+#: .\templates\products\product_detail.html:6
+msgid "disponible"
+msgstr "available"
+
+#: .\templates\products\product_detail.html:6
+msgid "— revenez bientôt"
+msgstr "— check back soon"
+
+#: .\templates\products\product_detail.html:6
+msgid "Produit indisponible"
+msgstr "Product unavailable"
+
+#: .\templates\products\product_detail.html:6
+msgid "Dans vos favoris"
+msgstr "In your favourites"
+
+#: .\templates\products\product_detail.html:6
+msgid "Ajouter aux favoris"
+msgstr "Add to favourites"
+
+#: .\templates\products\product_detail.html:6
+msgid "Livraison suivie"
+msgstr "Tracked delivery"
+
+#: .\templates\products\product_detail.html:6
+msgid "Les informations sont communiquées au fil de la commande."
+msgstr "Information is shared throughout the order."
+
+#: .\templates\products\product_detail.html:6
+msgid "Achat en confiance"
+msgstr "Shop with confidence"
+
+#: .\templates\products\product_detail.html:6
+msgid "Un parcours clair du panier à la confirmation."
+msgstr "A clear journey from cart to confirmation."
+
+#: .\templates\products\product_detail.html:8
+msgid "Avis clients"
+msgstr "Customer reviews"
+
+#: .\templates\products\product_detail.html:8
+msgid "Ce que les clients en pensent"
+msgstr "What customers think"
+
+#: .\templates\products\product_detail.html:8
+msgid "Pas encore d'avis"
+msgstr "No reviews yet"
+
+#: .\templates\products\product_detail.html:8
+msgid "Soyez le premier à partager votre expérience sur ce produit."
+msgstr "Be the first to share your experience with this product."
+
+#: .\templates\products\product_detail.html:8
+msgid "Votre expérience"
+msgstr "Your experience"
+
+#: .\templates\products\product_detail.html:8
+msgid "Modifier votre avis"
+msgstr "Edit your review"
+
+#: .\templates\products\product_detail.html:8
+msgid "Laisser un avis"
+msgstr "Leave a review"
+
+#: .\templates\products\product_detail.html:8
+msgid "Votre note"
+msgstr "Your rating"
+
+#: .\templates\products\product_detail.html:8
+msgid "Votre commentaire"
+msgstr "Your comment"
+
+#: .\templates\products\product_detail.html:8
+msgid "Publier mon avis"
+msgstr "Post my review"
+
+#: .\templates\products\product_detail.html:8
+msgid "Connectez-vous pour partager votre avis."
+msgstr "Sign in to share your review."
+
+#: .\templates\products\product_detail.html:10
+msgid "À découvrir aussi"
+msgstr "Discover more"
+
+#: .\templates\products\product_detail.html:10
+msgid "Vous aimerez peut-être"
+msgstr "You may also like"
+
+#: .\templates\products\product_detail.html:10
+msgid "Voir la catégorie"
+msgstr "View category"
+
+#: .\templates\products\product_list.html:2
+msgid "La boutique — Gestion Boutique"
+msgstr "Shop — Shop Management"
+
+#: .\templates\products\product_list.html:5
+msgid "La boutique"
+msgstr "The shop"
+
+#: .\templates\products\product_list.html:5
+msgid "Tout ce qui mérite votre attention."
+msgstr "Everything worth your attention."
+
+#: .\templates\products\product_list.html:5
+msgid ""
+"Explorez notre sélection et utilisez les filtres pour trouver plus vite."
+msgstr "Explore our selection and use the filters to find what you're looking for faster."
+
+#: .\templates\products\product_list.html:5
+msgid "Parcourir par catégorie"
+msgstr "Browse by category"
+
+#: .\templates\products\product_list.html:6
+msgid "Nom, marque ou description..."
+msgstr "Name, brand, or description..."
+
+#: .\templates\products\product_list.html:6
+msgid "Filtrer par catégorie"
+msgstr "Filter by category"
+
+#: .\templates\products\product_list.html:6
+msgid "Filtrer par disponibilité"
+msgstr "Filter by availability"
+
+#: .\templates\products\product_list.html:6
+msgid "Disponibilité"
+msgstr "Availability"
+
+#: .\templates\products\product_list.html:6
+msgid "Prix min"
+msgstr "Min price"
+
+#: .\templates\products\product_list.html:6
+msgid "Prix max"
+msgstr "Max price"
+
+#: .\templates\products\product_list.html:6
+msgid "Trier les produits"
+msgstr "Sort products"
+
+#: .\templates\products\product_list.html:6
+msgid "Pertinence"
+msgstr "Relevance"
+
+#: .\templates\products\product_list.html:6
+msgid "Nouveautés"
+msgstr "Newest"
+
+#: .\templates\products\product_list.html:6
+msgid "Popularité"
+msgstr "Popularity"
+
+#: .\templates\products\product_list.html:6
+msgid "Prix croissant"
+msgstr "Price: low to high"
+
+#: .\templates\products\product_list.html:6
+msgid "Prix décroissant"
+msgstr "Price: high to low"
+
+#: .\templates\products\product_list.html:7
+msgid "pour «"
+msgstr "for «"
+
+#: .\templates\products\product_list.html:7
+msgid "Réinitialiser les filtres"
+msgstr "Reset filters"
+
+#: .\templates\products\product_list.html:8
+msgid "Aucun produit trouvé"
+msgstr "No products found"
+
+#: .\templates\products\product_list.html:8
+msgid ""
+"Essayez une autre recherche ou retirez certains filtres pour élargir votre "
+"sélection."
+msgstr ""
+
+#: .\templates\products\product_list.html:8
+msgid "Voir toute la boutique"
+msgstr "View the entire shop"
+
+#: .\templates\products\product_list.html:9
+msgid "Précédent"
+msgstr "Previous"
+
+#: .\templates\products\wishlist.html:2
+msgid "Mes favoris — Gestion Boutique"
+msgstr "My wishlist — Shop Management"
+
+#: .\templates\products\wishlist.html:3
+msgid "Vos favoris, au même endroit."
+msgstr "Your wishlist, all in one place."
+
+#: .\templates\products\wishlist.html:3
+msgid "Retrouvez les produits que vous souhaitez garder à l'œil."
+msgstr "Find the products you want to keep an eye on."
+
+#: .\templates\products\wishlist.html:3
+msgid "Votre sélection est encore vide"
+msgstr "Your selection is still empty"
+
+#: .\templates\products\wishlist.html:3
+msgid ""
+"Enregistrez vos coups de cœur pour les retrouver facilement lors de votre "
+"prochaine visite."
+msgstr "Save your favourites to find them easily on your next visit."
+
+#: .\templates\registration\password_reset_complete.html:3
+msgid "Mot de passe modifié — Gestion Boutique"
+msgstr "Password changed — Shop Management"
+
+#: .\templates\registration\password_reset_complete.html:14
+msgid "Mot de passe modifié"
+msgstr "Password changed"
+
+#: .\templates\registration\password_reset_complete.html:15
+msgid "Votre mot de passe a été réinitialisé avec succès."
+msgstr "Your password has been reset successfully."
+
+#: .\templates\registration\password_reset_confirm.html:3
+msgid "Choisir un nouveau mot de passe — Gestion Boutique"
+msgstr "Choose a new password — Shop Management"
+
+#: .\templates\registration\password_reset_confirm.html:14
+msgid "Choisir un nouveau mot de passe"
+msgstr "Choose a new password"
+
+#: .\templates\registration\password_reset_confirm.html:15
+msgid "Définissez un nouveau mot de passe sécurisé."
+msgstr "Set a new secure password."
+
+#: .\templates\registration\password_reset_confirm.html:47
+msgid "Modifier le mot de passe"
+msgstr "Change password"
+
+#: .\templates\registration\password_reset_confirm.html:52
+msgid "Le lien de réinitialisation n’est pas valide ou a expiré."
+msgstr "The reset link is invalid or has expired."
+
+#: .\templates\registration\password_reset_confirm.html:57
+#: .\templates\registration\password_reset_done.html:25
+#: .\templates\registration\password_reset_form.html:44
+msgid "Retour à la connexion"
+msgstr "Back to sign in"
+
+#: .\templates\registration\password_reset_done.html:3
+msgid "Vérifiez votre messagerie — Gestion Boutique"
+msgstr "Check your inbox — Shop Management"
+
+#: .\templates\registration\password_reset_done.html:14
+msgid "Vérifiez votre messagerie"
+msgstr "Check your inbox"
+
+#: .\templates\registration\password_reset_done.html:15
+msgid ""
+"Si un compte correspond à cette adresse, un lien de réinitialisation a été "
+"envoyé."
+msgstr ""
+
+#: .\templates\registration\password_reset_done.html:21
+msgid ""
+"Consultez votre boîte e-mail (ou les spams) pour finaliser la "
+"réinitialisation de votre mot de passe."
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:3
+#, python-format
+msgid "Bonjour %(user.get_username)s,"
+msgstr "Hello %(user.get_username)s,"
+
+#: .\templates\registration\password_reset_email.html:5
+#, python-format
+msgid ""
+"Vous avez demandé la réinitialisation de votre mot de passe pour votre "
+"compte sur %(site_name)s."
+msgstr ""
+
+#: .\templates\registration\password_reset_email.html:7
+msgid "Cliquez sur le lien suivant pour choisir un nouveau mot de passe :"
+msgstr "Click the following link to choose a new password:"
+
+#: .\templates\registration\password_reset_email.html:11
+msgid "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message."
+msgstr "If you did not request this, ignore this message."
+
+#: .\templates\registration\password_reset_form.html:3
+msgid "Mot de passe oublié ? — Gestion Boutique"
+msgstr "Forgot your password? — Shop Management"
+
+#: .\templates\registration\password_reset_form.html:15
+msgid "Entrez l’adresse e-mail associée à votre compte."
+msgstr "Enter the email address associated with your account."
+
+#: .\templates\registration\password_reset_form.html:39
+msgid "Envoyer le lien"
+msgstr "Send link"
+
+#: .\templates\registration\password_reset_subject.txt:2
+msgid "Réinitialisation de votre mot de passe"
+msgstr "Password reset"
+
+msgid "Rôle invalide."
+msgstr "Invalid role."
+
+msgid "Vous ne pouvez pas modifier votre propre rôle."
+msgstr "You cannot change your own role."
+
+msgid "Impossible de retirer le rôle du dernier administrateur actif."
+msgstr "You cannot remove the role of the last active administrator."
+
+msgid "Le rôle est déjà celui sélectionné."
+msgstr "This role is already selected."
+
+msgid "Le rôle de {username} a été mis à jour : {role}."
+msgstr "Role for {username} updated: {role}."
+
+
+
+
+
+msgid "Votre commande #%(id)s a bien été enregistrée et est en cours de traitement."
+msgstr "Your order #%(id)s has been recorded and is being processed."
+
+
+msgid "La commande #%(id)s attend une prise en charge."
+msgstr "Order #%(id)s is waiting to be handled."
+
+
+msgid "Commande %(status)s"
+msgstr "Order %(status)s"
+
+
+msgid "Votre commande #%(id)s est maintenant : %(status)s."
+msgstr "Your order #%(id)s is now: %(status)s."
+
+
+msgid "Le paiement de la commande #%(id)s a été confirmé."
+msgstr "Payment for order #%(id)s has been confirmed."
+
+
+msgid "Remove %(name)s from favourites"
+msgstr "Remove %(name)s from favourites"
+
+
+msgid "E-mail non renseigné"
+msgstr "Email not provided"
+
+msgid "Aperçu de la photo de profil"
+msgstr "Profile photo preview"
+
+msgid "Désactiver ce produit ?"
+msgstr "Disable this product?"
+
+msgid "Activer ce produit ?"
+msgstr "Enable this product?"
+
+msgid "Détail de %(reference)s"
+msgstr "Details for %(reference)s"
+
+msgid "Retirer %(name)s des favoris"
+msgstr "Remove %(name)s from favourites"
+
+
+msgid "Identité de la boutique"
+msgstr "Shop identity"
+
+msgid "Paramètres"
+msgstr "Settings"
+
+msgid "Modifier le logo"
+msgstr "Change logo"
+
+msgid "Logo actuel"
+msgstr "Current logo"
+
+msgid "Aperçu du logo"
+msgstr "Logo preview"
+
+msgid "Cliquer sur le logo pour le modifier"
+msgstr "Click the logo to change it"
+
+msgid "Informations commerciales"
+msgstr "Business information"
+
+msgid "NIF / Identifiant fiscal"
+msgstr "Tax ID"
+
+msgid "Gestion"
+msgstr "Management"
+
+msgid "Livraison activée"
+msgstr "Delivery enabled"
+
+msgid "Active la gestion des livraisons dans la boutique."
+msgstr "Enable delivery management in the shop."
+
+msgid "Reçus"
+msgstr "Receipts"
+
+msgid "Afficher ce message sur les reçus"
+msgstr "Show this message on receipts"
+
+msgid "Ce message sera affiché sur les reçus clients."
+msgstr "This message will be displayed on customer receipts."
+
+msgid "Les paramètres de la boutique ont été mis à jour."
+msgstr "Shop settings have been updated."
+
+msgid "Pays"
+msgstr "Country"
+
+msgid "NIF"
+msgstr "Tax ID"
+
+msgid "RCCM"
+msgstr "Business registration number"
+
+msgid "Votre adresse e-mail et votre mot de passe vous permettront d'accéder à votre espace client."
+msgstr "Your email address and password will allow you to access your customer area."
+
+msgid "Créez une fiche claire et attractive pour présenter votre produit dans la boutique."
+msgstr "Create a clear and attractive product listing for your shop."
+
+msgid "Choisissez une catégorie existante ou créez-en une nouvelle."
+msgstr "Choose an existing category or create a new one."
+
+msgid "Assistant Boutique"
+msgstr "Shop Assistant"
+
+msgid "Comment puis-je vous aider ?"
+msgstr "How can I help you?"
+
+msgid "Choisissez une option ou posez votre question."
+msgstr "Choose an option or ask your question."
+
+msgid "Comment acheter ?"
+msgstr "How can I buy?"
+
+msgid "Comment payer ?"
+msgstr "How can I pay?"
+
+msgid "Problème de connexion"
+msgstr "Sign-in problem"
+
+msgid "Posez votre question"
+msgstr "Ask your question"
+
+msgid "Posez votre question..."
+msgstr "Ask your question..."

@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
@@ -28,8 +29,8 @@ class Review(models.Model):
     )
 
     class Meta:
-        verbose_name = "Avis"
-        verbose_name_plural = "Avis"
+        verbose_name = gettext_lazy("Avis")
+        verbose_name_plural = gettext_lazy("Avis")
         ordering = ["-date_creation"]
 
     def __str__(self):

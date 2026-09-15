@@ -1,0 +1,23 @@
+{% extends "dashboard/depenses/base.html" %}{% load i18n %}
+{% block title %}{{ depense.reference }} {% trans "| Dépense" %}{% endblock %}
+{% block depense_content %}
+<header class="control-header"><div><span class="control-kicker">{{ depense.get_statut_display }}</span><h1>{{ depense.reference }}</h1><p>{{ depense.libelle }}</p></div><div class="control-actions">
+{% if depense.statut == 'brouillon' %}<a class="btn btn-outline-secondary" href="{% url 'comptable_depense_modifier' depense.id %}">{% trans "Modifier" %}</a><form method="post" action="{% url 'comptable_depense_valider' depense.id %}">{% csrf_token %}<button class="btn btn-dark" type="submit" onclick="return confirm('{% trans "Valider cette dépense et l’inclure dans les charges ?" %}')">{% trans "Valider la dépense" %}</button></form>
+{% elif depense.statut == 'validee' %}<form method="post" action="{% url 'comptable_depense_annuler' depense.id %}">{% csrf_token %}<button class="btn btn-outline-danger" type="submit" onclick="return confirm('{% trans "Annuler cette dépense ? Elle restera dans l’historique et sera exclue des charges." %}')">{% trans "Annuler la dépense" %}</button></form>{% endif %}
+</div></header>
+<section class="control-panel"><div class="control-panel-head"><h2>{{ depense.montant|floatformat:"-2" }} {{ boutique.devise }}</h2><span>{{ depense.get_statut_display }}</span></div><div class="p-4"><dl class="row">
+    <dt class="col-sm-4">{% trans "Référence" %}</dt><dd class="col-sm-8">{{ depense.reference }}</dd>
+    <dt class="col-sm-4">{% trans "Date de dépense" %}</dt><dd class="col-sm-8">{{ depense.date_depense|date:"d/m/Y" }}</dd>
+    <dt class="col-sm-4">{% trans "Catégorie" %}</dt><dd class="col-sm-8">{{ depense.categorie.nom }}{% if not depense.categorie.actif %} {% trans "(inactive)" %}{% endif %}</dd>
+    <dt class="col-sm-4">{% trans "Libellé" %}</dt><dd class="col-sm-8">{{ depense.libelle }}</dd>
+    <dt class="col-sm-4">{% trans "Moyen de paiement" %}</dt><dd class="col-sm-8">{{ depense.get_moyen_paiement_display }}</dd>
+    <dt class="col-sm-4">{% trans "Bénéficiaire" %}</dt><dd class="col-sm-8">{{ depense.beneficiaire|default:"Non renseigné" }}</dd>
+    <dt class="col-sm-4">{% trans "Description" %}</dt><dd class="col-sm-8 text-break">{{ depense.description|default:"Non renseignée"|linebreaksbr }}</dd>
+    <dt class="col-sm-4">{% trans "Créée par" %}</dt><dd class="col-sm-8">{{ depense.cree_par.get_full_name|default:depense.cree_par.username }}</dd>
+    <dt class="col-sm-4">{% trans "Date de création" %}</dt><dd class="col-sm-8">{{ depense.created_at|date:"d/m/Y H:i" }}</dd>
+    <dt class="col-sm-4">{% trans "Validée par" %}</dt><dd class="col-sm-8">{% if depense.validee_par %}{{ depense.validee_par.get_full_name|default:depense.validee_par.username }}{% else %}{% trans "Non validée" %}{% endif %}</dd>
+    <dt class="col-sm-4">{% trans "Date de validation" %}</dt><dd class="col-sm-8">{{ depense.date_validation|date:"d/m/Y H:i"|default:"Non validée" }}</dd>
+    <dt class="col-sm-4">{% trans "Justificatif" %}</dt><dd class="col-sm-8">{% if depense.justificatif %}<a href="{% url 'comptable_depense_justificatif' depense.id %}">{% trans "Télécharger le justificatif" %}</a>{% else %}{% trans "Aucun justificatif" %}{% endif %}</dd>
+</dl><p class="text-muted">{% if depense.statut == 'validee' %}{% trans "Cette dépense entre dans les charges validées." %}{% elif depense.statut == 'annulee' %}{% trans "Dépense annulée : historique conservé, aucun impact sur les charges actives." %}{% else %}{% trans "Brouillon : aucun impact financier." %}{% endif %}</p></div></section>
+<section class="control-panel mt-4"><div class="control-panel-head"><h2>{% trans "Historique des actions" %}</h2></div><div class="table-responsive"><table class="table control-table"><thead><tr><th>{% trans "Date" %}</th><th>{% trans "Utilisateur" %}</th><th>{% trans "Action" %}</th></tr></thead><tbody>{% for activite in activites %}<tr><td>{{ activite.date|date:"d/m/Y H:i" }}</td><td>{{ activite.utilisateur.username }}</td><td>{{ activite.details }}</td></tr>{% empty %}<tr><td colspan="3">{% trans "Aucune action journalisée." %}</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

@@ -71,3 +71,20 @@
 #changelist-actions .clear a:hover {
     background: rgba(96, 165, 250, .26);
 }
+
+/* Admin Django/Unfold sur petits écrans. */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+input, select, textarea, button { max-width: 100%; }
+th, td, label, a, span { overflow-wrap: anywhere; }
+.overflow-x-auto, .overflow-x-scroll { max-width: 100%; -webkit-overflow-scrolling: touch; }
+@media (max-width: 767.98px) {
+    #changelist, #changelist-form, #changelist-filter, #changelist-actions { max-width: 100%; min-width: 0; }
+    #changelist-filter { position: static; width: 100%; }
+    #changelist-form table { min-width: 680px; }
+    #changelist-form .overflow-x-auto { overflow-x: auto; }
+    #changelist-actions { flex-wrap: wrap; gap: .5rem; }
+    #changelist-actions > * { max-width: 100%; }
+    .submit-row, .aligned { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+    .submit-row input, .submit-row a, .aligned input, .aligned select, .aligned textarea { width: 100%; }
+}

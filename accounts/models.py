@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -5,10 +6,11 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
 
     ROLE_CHOICES = [
-        ('admin', 'Administrateur'),
-        ('client', 'Client'),
-        ('vendeur', 'Vendeur'),
-        ('comptable', 'Comptable'),
+        ('admin', gettext_lazy('Administrateur')),
+        ('client', gettext_lazy('Client')),
+        ('vendeur', gettext_lazy('Vendeur')),
+        ('comptable', gettext_lazy('Comptable')),
+        ('livreur', gettext_lazy('Livreur')),
     ]
 
     utilisateur = models.OneToOneField(
@@ -21,7 +23,7 @@ class Profile(models.Model):
         max_length=20,
         choices=ROLE_CHOICES,
         default='client',
-        verbose_name="Rôle"
+        verbose_name=gettext_lazy("Rôle")
     )
 
     telephone = models.CharField(
@@ -47,6 +49,33 @@ class Profile(models.Model):
         null=True
     )
 
+    date_naissance = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=gettext_lazy("Date de naissance")
+    )
+
+    lieu_naissance = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        verbose_name=gettext_lazy("Lieu de naissance")
+    )
+
+    GENRE_CHOICES = [
+        ("homme", gettext_lazy("Homme")),
+        ("femme", gettext_lazy("Femme")),
+        ("non_precise", gettext_lazy("Préfère ne pas préciser")),
+    ]
+
+    genre = models.CharField(
+        max_length=20,
+        choices=GENRE_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name=gettext_lazy("Genre")
+    )
+
     photo = models.ImageField(
         upload_to="profiles/",
         blank=True,
@@ -64,8 +93,8 @@ class Profile(models.Model):
 
     class Meta:
 
-        verbose_name = "Profil utilisateur"
-        verbose_name_plural = "Profils utilisateurs"
+        verbose_name = gettext_lazy("Profil utilisateur")
+        verbose_name_plural = gettext_lazy("Profils utilisateurs")
 
 
     def __str__(self):
