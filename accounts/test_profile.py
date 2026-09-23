@@ -290,3 +290,239 @@ class ProfilePhotoTests(TestCase):
         self.assertRedirects(response, reverse("profile"))
         profile.refresh_from_db()
         self.assertFalse(profile.photo)
+
+
+class ProfilePhotoDiskIntegrationTests(TestCase):
+    """Real multipart requests and filesystem storage, isolated from user media."""
+
+    def setUp(self):
+        from tempfile import TemporaryDirectory
+        self.media = TemporaryDirectory(prefix="profile-upload-integration-")
+        self.addCleanup(self.media.cleanup)
+        self.storage_settings = override_settings(
+            MEDIA_ROOT=self.media.name,
+            STORAGES={
+                "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+                "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+            },
+        )
+        self.storage_settings.enable()
+        self.addCleanup(self.storage_settings.disable)
+        self.user = User.objects.create_user(
+            username="disk-photo-owner", password="secret123",
+            first_name="Hamza", last_name="Diarra", email="disk@example.test",
+        )
+        self.client = Client(enforce_csrf_checks=True)
+        self.client.force_login(self.user)
+
+    def test_real_multipart_upload_replace_delete_and_reload(self):
+        from html.parser import HTMLParser
+
+        class FormInputs(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.active = False
+                self.form = None
+                self.data = {}
+                self.file = None
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == "form":
+                    self.active = "account-form-panel" in attrs.get("class", "").split()
+                    if self.active:
+                        self.form = attrs
+                if self.active and tag == "input" and attrs.get("name"):
+                    if attrs.get("type") == "file":
+                        self.file = attrs
+                    elif attrs.get("type") not in {"checkbox", "radio", "submit"}:
+                        self.data[attrs["name"]] = attrs.get("value", "")
+
+            def handle_endtag(self, tag):
+                if tag == "form":
+                    self.active = False
+
+        profile = Profile.objects.get(utilisateur=self.user)
+        self.assertFalse(profile.photo.name)
+        old_name = None
+        old_url = None
+        for filename, image_format in (("integration-first.png", "PNG"), ("integration-second.jpg", "JPEG")):
+            page = self.client.get(reverse("profile_edit"))
+            self.assertEqual(page.status_code, 200)
+            inputs = FormInputs()
+            inputs.feed(page.content.decode())
+            self.assertEqual(inputs.form["method"], "post")
+            self.assertEqual(inputs.form["enctype"], "multipart/form-data")
+            self.assertEqual(inputs.file["name"], "photo")
+            self.assertNotIn("disabled", inputs.file)
+            self.assertNotIn("form", inputs.file)
+            inputs.data["photo"] = ProfilePhotoTests.image(filename, image_format=image_format)
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.post(reverse("profile_edit"), inputs.data)
+            self.assertTrue(bool(response.wsgi_request.FILES))
+            self.assertEqual(list(response.wsgi_request.FILES.keys()), ["photo"])
+            if response.status_code == 200:
+                self.fail(f"Upload refused: {response.context['form'].errors.as_json()}")
+            self.assertRedirects(response, reverse("profile"))
+            profile.refresh_from_db()
+            self.assertTrue(profile.photo.name)
+            self.assertTrue(profile.photo.url.startswith("/media/profiles/"))
+            self.assertTrue(profile.photo.storage.exists(profile.photo.name))
+            with profile.photo.storage.open(profile.photo.name, "rb") as saved:
+                with Image.open(saved) as image:
+                    image.verify()
+            if old_name:
+                self.assertNotEqual(profile.photo.name, old_name)
+                self.assertNotEqual(profile.photo.url, old_url)
+                self.assertFalse(profile.photo.storage.exists(old_name))
+            for route in ("profile", "profile_edit", "home"):
+                page = self.client.get(reverse(route))
+                self.assertContains(page, f'src="{profile.photo.url}"')
+                self.assertEqual(page.wsgi_request.user.profile.photo.name, profile.photo.name)
+                if old_url:
+                    self.assertNotContains(page, old_url)
+            old_name, old_url = profile.photo.name, profile.photo.url
+
+        page = self.client.get(reverse("profile"))
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(reverse("delete_profile_photo"), {
+                "csrfmiddlewaretoken": get_token(page.wsgi_request),
+            })
+        self.assertRedirects(response, reverse("profile"))
+        profile.refresh_from_db()
+        self.assertFalse(profile.photo.name)
+        self.assertFalse(profile.photo.storage.exists(old_name))
+        for route in ("profile", "profile_edit", "home"):
+            page = self.client.get(reverse(route))
+            self.assertContains(page, "HD")
+            self.assertNotContains(page, old_url)
+
+
+@override_settings(STORAGES={
+    "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
+class DuplicateEmailPhotoTests(TestCase):
+    def setUp(self):
+        self.users = [User.objects.create_user(
+            username=f"duplicate-owner-{index}", password="secret123",
+            email="duplicate@example.com", first_name="Hamza", last_name="Diarra",
+        ) for index in (1, 2)]
+        self.assertNotEqual(self.users[0].pk, self.users[1].pk)
+        for user in self.users:
+            profile = user.profile
+            profile.telephone = "76000123"
+            profile.adresse = "Rue conservee"
+            profile.role = "vendeur"
+            profile.save()
+
+    def data(self, user):
+        profile = Profile.objects.get(utilisateur=user)
+        return {
+            "first_name": user.first_name, "last_name": user.last_name,
+            "email": user.email, "telephone": profile.telephone,
+            "adresse": profile.adresse, "ville": profile.ville or "",
+            "code_postal": profile.code_postal or "",
+            "date_naissance": "", "genre": profile.genre or "",
+        }
+
+    def upload(self, user, name):
+        user.refresh_from_db()
+        self.client.force_login(user)
+        data = self.data(user)
+        before = (user.email, user.username, data["telephone"], data["adresse"], user.profile.role)
+        data.update(photo=ProfilePhotoTests.image(name), user_id=self.users[1].pk,
+                    username="forged-owner", role="admin")
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(reverse("profile_edit"), data)
+        if response.status_code == 200:
+            self.fail(f"Photo upload rejected: {response.context['form'].errors.as_json()}")
+        self.assertRedirects(response, reverse("profile"))
+        user.refresh_from_db()
+        profile = Profile.objects.get(utilisateur=user)
+        profile.refresh_from_db()
+        self.assertEqual(profile.utilisateur_id, user.pk)
+        self.assertTrue(profile.photo.name)
+        self.assertTrue(profile.photo.storage.exists(profile.photo.name))
+        self.assertEqual((user.email, user.username, profile.telephone, profile.adresse, profile.role), before)
+        for route in ("profile", "profile_edit", "home"):
+            page = self.client.get(reverse(route))
+            self.assertContains(page, f'src="{profile.photo.url}"')
+            self.assertEqual(page.wsgi_request.user.profile.utilisateur_id, user.pk)
+        return profile
+
+    def test_same_email_uploads_and_replacements_belong_to_authenticated_ids(self):
+        first = self.upload(self.users[0], "duplicate-first.png")
+        first_name = first.photo.name
+        self.assertFalse(Profile.objects.get(utilisateur=self.users[1]).photo)
+        second = self.upload(self.users[1], "duplicate-second.png")
+        second_name = second.photo.name
+        first.refresh_from_db()
+        self.assertEqual(first.photo.name, first_name)
+        self.assertTrue(first.photo.storage.exists(first_name))
+        first = self.upload(self.users[0], "duplicate-replaced.png")
+        self.assertNotEqual(first.photo.name, first_name)
+        self.assertFalse(first.photo.storage.exists(first_name))
+        second.refresh_from_db()
+        self.assertEqual(second.photo.name, second_name)
+        self.assertTrue(second.photo.storage.exists(second_name))
+
+    def test_same_email_delete_affects_only_authenticated_owner(self):
+        for index, user in enumerate(self.users):
+            user.profile.photo.save(f"delete-owner-{index}.png", ProfilePhotoTests.image())
+        first, second = [Profile.objects.get(utilisateur=user) for user in self.users]
+        first_name, second_name = first.photo.name, second.photo.name
+        self.client.force_login(self.users[0])
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(reverse("delete_profile_photo"), {
+                "user_id": self.users[1].pk, "email": self.users[1].email,
+                "username": self.users[1].username,
+            })
+        self.assertRedirects(response, reverse("profile"))
+        first.refresh_from_db(); second.refresh_from_db()
+        self.assertFalse(first.photo.name)
+        self.assertFalse(first.photo.storage.exists(first_name))
+        self.assertEqual(second.photo.name, second_name)
+        self.assertTrue(second.photo.storage.exists(second_name))
+        for route in ("profile", "home"):
+            self.assertContains(self.client.get(reverse(route)), "HD")
+        for user in self.users:
+            user.refresh_from_db()
+            self.assertEqual(user.email, "duplicate@example.com")
+
+    def test_email_change_keeps_photo_then_photo_change_keeps_email(self):
+        user = self.users[0]
+        user.profile.photo.save("email-change-original.png", ProfilePhotoTests.image())
+        name = user.profile.photo.name
+        self.client.force_login(user)
+        data = self.data(user)
+        data["email"] = "changed@example.com"
+        self.assertRedirects(self.client.post(reverse("profile_edit"), data), reverse("profile"))
+        user.refresh_from_db()
+        self.assertEqual(user.email, "changed@example.com")
+        self.assertEqual(user.profile.photo.name, name)
+        self.assertTrue(user.profile.photo.storage.exists(name))
+        self.upload(user, "after-email-change.png")
+        user.refresh_from_db()
+        self.assertEqual(user.email, "changed@example.com")
+
+    def test_unchanged_email_case_is_preserved_during_upload(self):
+        user = self.users[0]
+        user.email = "Mixed.Case+Tag@Example.com"
+        user.save(update_fields=["email"])
+        self.upload(user, "preserve-exact-email.png")
+        user.refresh_from_db()
+        self.assertEqual(user.email, "Mixed.Case+Tag@Example.com")
+
+    def test_changed_email_still_rejects_another_accounts_address(self):
+        user = self.users[0]
+        user.email = "original@example.com"
+        user.save(update_fields=["email"])
+        self.client.force_login(user)
+        data = self.data(user)
+        data["email"] = "duplicate@example.com"
+        response = self.client.post(reverse("profile_edit"), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("email", response.context["form"].errors)
+        user.refresh_from_db()
+        self.assertEqual(user.email, "original@example.com")

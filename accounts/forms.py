@@ -110,7 +110,12 @@ class ProfileForm(forms.ModelForm):
         self.fields["photo"].validators.append(validate_profile_photo)
 
     def clean_email(self):
-        email = self.cleaned_data["email"].strip().lower()
+        email = self.cleaned_data["email"]
+        # An unchanged address must not block unrelated profile edits, even
+        # when legacy accounts share it. Preserve its exact stored spelling.
+        if email == self.instance.utilisateur.email:
+            return self.instance.utilisateur.email
+        email = email.strip().lower()
         queryset = self.instance.utilisateur.__class__.objects.filter(
             email__iexact=email
         ).exclude(pk=self.instance.utilisateur_id)
