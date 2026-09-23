@@ -32,7 +32,7 @@ msgid "Votre avatar par défaut sera affiché."
 msgstr "Your default avatar will be displayed."
 
 msgid "Supprimer la photo"
-msgstr "Delete photo"
+msgstr "Remove photo"
 
 msgid "Nom utilisateur"
 msgstr "Username"
@@ -4663,7 +4663,7 @@ msgstr "A clear image builds trust."
 #: .\templates\dashboard\vendeur_ajouter_produit.html:778
 #: .\templates\dashboard\vendeur_modifier_produit.html:11
 msgid "Ajouter une photo"
-msgstr "Add a photo"
+msgstr "Add photo"
 
 #: .\templates\dashboard\vendeur_ajouter_produit.html:782
 #: .\templates\dashboard\vendeur_modifier_produit.html:11
@@ -6532,3 +6532,9 @@ msgstr "Ask your question"
 
 msgid "Posez votre question..."
 msgstr "Ask your question..."
+
+msgid "Modifier la photo"
+msgstr "Change photo"
+
+msgid "Paiement en ligne"
+msgstr "Online payment"

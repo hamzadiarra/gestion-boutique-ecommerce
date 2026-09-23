@@ -79,3 +79,58 @@ Lancez `python manage.py runserver 0.0.0.0:8000`, ajoutez l'adresse IP locale du
 ## Déploiement et reprise
 
 En production, désactivez le debug, utilisez une clé Django secrète, configurez les hôtes et origines HTTPS, collectez les fichiers statiques et exécutez `migrate`. Avant une release, lancez les commandes de vérification ci-dessus. Les migrations sont additives et ne doivent pas être réécrites. Le service de paiement, l'assistant et les règles de stock sont isolés dans leurs modules pour faciliter la maintenance.
+
+
+### Démonstration Render / Linux (sans déploiement automatique)
+
+Python 3.12. Installer `pip install -r requirements.txt`, puis compiler les
+traductions avec `python manage.py compilemessages` (GNU gettext requis si les
+catalogues sont modifiés). Les catalogues compilés sont suivis dans Git.
+
+Commande de build :
+
+```sh
+pip install -r requirements.txt && python manage.py collectstatic --noinput
+```
+
+Après sauvegarde de la base de production, exécuter `python manage.py migrate`
+avant le démarrage (commande de pré-déploiement ou shell de l'hébergeur).
+Commande de démarrage Linux :
+
+```sh
+gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+```
+
+Renseigner les variables de `.env.example` dans le panneau de l'hébergeur :
+`DJANGO_DEBUG=False`, une `DJANGO_SECRET_KEY` longue et aléatoire,
+`DJANGO_ALLOWED_HOSTS` (nom d'hôte sans protocole),
+`DJANGO_CSRF_TRUSTED_ORIGINS` (origine HTTPS), `DJANGO_SECURE_PROXY_SSL=True`
+uniquement derrière le proxy HTTPS de confiance, et `DATABASE_URL` avec l'URL
+PostgreSQL fournie par l'hébergeur. Configurer la redirection HTTPS et HSTS selon
+le domaine utilisé, puis lancer `python manage.py check --deploy`.
+
+`DATABASE_URL` absent conserve SQLite local. Présent, il configure la connexion
+PostgreSQL de production via dj-database-url et psycopg. Aucun transfert de
+`db.sqlite3` local n'est automatique. Gunicorn fonctionne sur Linux ; il est
+exclu de l'installation Windows. WhiteNoise sert les fichiers de `STATIC_ROOT`
+après collectstatic. Les doublons `admin/js/actions.js` et
+`admin/js/admin/RelatedObjectLookups.js` viennent du thème Unfold, prioritaire
+sur django.contrib.admin.
+
+**Médias :** les photos et uploads restent dans `MEDIA_ROOT` (`media/`).
+WhiteNoise ne sert pas les médias utilisateurs. En production avec DEBUG=False,
+configurer un service média ou un serveur/volume persistant avant de valider les
+uploads sur l'URL publique. Un disque éphémère gratuit peut perdre les uploads
+au redémarrage ou au redéploiement ; la persistance média n'est pas résolue par
+cette préparation. Vérifier aussi la durée de conservation et les limites de
+l'offre PostgreSQL choisie.
+
+L'application ne charge pas automatiquement `.env` : exporter les variables
+localement ou les saisir dans le panneau de l'hébergeur. Configurer SMTP pour
+que les e-mails de réinitialisation arrivent réellement aux utilisateurs ; le
+backend console local n'envoie pas d'e-mail. Laisser PAYMENT_PROVIDER vide tant
+que les clés marchandes ne sont pas configurées. Les tests techniques des
+providers ne remplacent pas un essai sandbox réel.
+
+Références : https://render.com/docs/deploy-django et
+https://whitenoise.readthedocs.io/en/stable/django.html.

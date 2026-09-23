@@ -482,6 +482,14 @@ def profile_view(request):
 # MODIFIER LE PROFIL
 # ==========================
 
+def _delete_unused_profile_photo(name, storage):
+    """Only uploaded, unreferenced profile files belong to this cleanup."""
+    field = Profile._meta.get_field("photo")
+    if (name and name.startswith("profiles/") and name != field.get_default()
+            and not Profile.objects.filter(photo=name).exists()):
+        storage.delete(name)
+
+
 @login_required
 def profile_edit(request):
 
@@ -502,19 +510,21 @@ def profile_edit(request):
 
     if request.method == "POST" and form.is_valid():
 
-        # Conserver l'ancien FieldFile jusqu'à l'enregistrement réussi de la
-        # nouvelle image. Ainsi une nouvelle image invalide ne supprime jamais
-        # la photo actuelle.
-        form.save()
-
-        if (
-            old_photo_name
-            and old_photo_storage
-            and old_photo_name != getattr(profil.photo, "name", None)
-        ):
-            # Le nom et le storage sont figés avant l'affectation du nouveau
-            # fichier : ModelForm peut réutiliser l'objet FieldFile de l'instance.
-            old_photo_storage.delete(old_photo_name)
+        try:
+            with transaction.atomic():
+                form.save()
+                if old_photo_name and old_photo_name != profil.photo.name:
+                    transaction.on_commit(
+                        lambda: _delete_unused_profile_photo(old_photo_name, old_photo_storage),
+                        robust=True,
+                    )
+        except Exception:
+            # File storage is not transactional: remove a newly written file
+            # when the database save rolls back, keeping the previous photo.
+            new_photo = profil.photo
+            if new_photo and new_photo.name != old_photo_name and new_photo._committed:
+                _delete_unused_profile_photo(new_photo.name, new_photo.storage)
+            raise
 
         messages.success(
             request,
@@ -540,9 +550,11 @@ def delete_profile_photo(request):
     photo = profil.photo if profil.photo else None
 
     if photo and photo.name:
-        photo.delete(save=False)
-        profil.photo = None
-        profil.save(update_fields=["photo", "date_modification"])
+        name, storage = photo.name, photo.storage
+        with transaction.atomic():
+            profil.photo = None
+            profil.save(update_fields=["photo", "date_modification"])
+            transaction.on_commit(lambda: _delete_unused_profile_photo(name, storage), robust=True)
         messages.success(
             request,
             gettext("Votre photo de profil a été supprimée.")

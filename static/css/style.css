@@ -1474,7 +1474,7 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
 .profile-photo-lightbox-close { position:absolute; top:-.75rem; right:-.75rem; z-index:2; display:grid; width:2.5rem; height:2.5rem; place-items:center; border:1px solid rgba(255,255,255,.35); border-radius:50%; color:#fff; background:rgba(0,0,0,.55); }
 .profile-photo-lightbox-close:hover, .profile-photo-lightbox-close:focus-visible { background:rgba(255,255,255,.2); }
 .profile-lightbox-open { overflow:hidden; }
-.profile-photo-input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+.profile-photo-input { display:block; width:100%; max-width:100%; margin-top:.5rem; }
 .account-form-section { margin-bottom: 24px; padding-bottom: 22px; border-bottom: 1px solid var(--color-border); }
 .account-form-section h2 { margin: 0 0 16px; font-size: 1rem; font-weight: 800; }
 .account-nav { display:grid; gap:.15rem; padding:.65rem; }

@@ -24,6 +24,13 @@ class ProfilePhotoTests(TestCase):
             email="hamza@example.com",
         )
         self.client.login(username="profile-owner", password="secret123")
+        # Execute commit callbacks after each request, as in production.
+        original_post = self.client.post
+        def post_with_commit(*args, **kwargs):
+            with self.captureOnCommitCallbacks(execute=True):
+                return original_post(*args, **kwargs)
+        self.client.post = post_with_commit
+
 
     @staticmethod
     def image(name="avatar.png", color="blue", image_format="PNG"):
@@ -193,3 +200,93 @@ class ProfilePhotoTests(TestCase):
 
         self.assertFalse(Profile.objects.get(pk=owner_profile.pk).photo)
         self.assertTrue(storage.exists(other_name))
+
+    def test_empty_profile_exposes_add_photo_action(self):
+        page = self.client.get(reverse("profile"))
+        self.assertContains(page, "Ajouter une photo")
+        self.assertContains(page, "HD")
+        self.assertNotContains(page, "Supprimer la photo")
+
+    def test_uploaded_photo_is_rendered_in_header_and_profile(self):
+        profile = self.upload()
+        page = self.client.get(reverse("profile"))
+        self.assertContains(page, profile.photo.url, count=3)
+        self.assertContains(page, "Modifier la photo")
+        self.assertContains(page, "Supprimer la photo")
+
+    def test_shared_photo_is_preserved_on_delete_and_replace(self):
+        for replace in (False, True):
+            profile = self.upload()
+            old_name = profile.photo.name
+            other = User.objects.create_user("shared-" + str(replace))
+            Profile.objects.filter(utilisateur=other).update(photo=old_name)
+            if replace:
+                self.upload("replacement.png")
+            else:
+                self.client.post(reverse("delete_profile_photo"))
+            self.assertTrue(profile.photo.storage.exists(old_name))
+            self.assertEqual(Profile.objects.get(utilisateur=other).photo.name, old_name)
+
+    def test_default_photo_is_never_deleted(self):
+        from django.core.files.base import ContentFile
+        field = Profile._meta.get_field("photo")
+        name = field.storage.save("defaults/avatar.png", ContentFile(b"default"))
+        Profile.objects.filter(utilisateur=self.user).update(photo=name)
+        self.client.post(reverse("delete_profile_photo"))
+        self.assertTrue(field.storage.exists(name))
+
+    def test_delete_database_failure_preserves_file(self):
+        from unittest.mock import patch
+        profile = self.upload()
+        old_name = profile.photo.name
+        with patch.object(Profile, "save", side_effect=RuntimeError("save failed")):
+            with self.assertRaises(RuntimeError):
+                self.client.post(reverse("delete_profile_photo"))
+        self.assertTrue(profile.photo.storage.exists(old_name))
+
+    def test_failed_replacement_does_not_leave_new_file(self):
+        from unittest.mock import patch
+        from django.db.models import Model
+        profile = self.upload("original.png")
+        before = profile.photo.storage.listdir("profiles")
+        original = Model.save
+        def fail_profile(instance, *args, **kwargs):
+            result = original(instance, *args, **kwargs)
+            if isinstance(instance, Profile):
+                raise RuntimeError("save failed after file write")
+            return result
+        data = self.profile_data()
+        data["photo"] = self.image("failed.png")
+        with patch.object(Model, "save", fail_profile):
+            with self.assertRaises(RuntimeError):
+                self.client.post(reverse("profile_edit"), data)
+        profile.refresh_from_db()
+        self.assertTrue(profile.photo.name.endswith("original.png"))
+        self.assertEqual(profile.photo.storage.listdir("profiles"), before)
+
+    def test_photo_actions_are_translated_in_english(self):
+        self.client.cookies["django_language"] = "en"
+        page = self.client.get(reverse("profile"))
+        self.assertContains(page, "Add photo")
+        self.upload()
+        page = self.client.get(reverse("profile"))
+        self.assertContains(page, "Change photo")
+        self.assertContains(page, "Remove photo")
+
+    def test_upload_without_csrf_is_rejected(self):
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.user)
+        data = self.profile_data()
+        data["photo"] = self.image()
+        self.assertEqual(client.post(reverse("profile_edit"), data).status_code, 403)
+        self.assertFalse(Profile.objects.get(utilisateur=self.user).photo)
+
+    def test_storage_cleanup_failure_does_not_break_saved_profile(self):
+        from unittest.mock import patch
+        profile = self.upload()
+        with patch.object(profile.photo.storage, "delete", side_effect=OSError("storage unavailable")):
+            with self.assertLogs(level="ERROR"):
+                response = self.client.post(reverse("delete_profile_photo"))
+        self.assertRedirects(response, reverse("profile"))
+        profile.refresh_from_db()
+        self.assertFalse(profile.photo)

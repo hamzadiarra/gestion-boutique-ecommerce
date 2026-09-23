@@ -54,3 +54,7 @@ staticfiles/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local validation notes
+A_VALIDER_BAMANANKAN.md
+.venv/

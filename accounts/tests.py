@@ -84,7 +84,7 @@ class AccountFlowTests(TestCase):
         self.client.login(username="client", password="secret123")
         response = self.client.get(reverse("profile"))
         self.assertNotContains(response, 'id="profile-photo-lightbox"')
-        self.assertContains(response, "Modifier la photo")
+        self.assertContains(response, "Ajouter une photo")
 
     def test_profile_edit_hides_legacy_birthplace_and_splits_address_labels(self):
         self.client.login(username="client", password="secret123")
