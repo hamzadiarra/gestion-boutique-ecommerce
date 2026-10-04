@@ -1,73 +1,99 @@
 {% extends "base.html" %}
 
-
-{% block title %}
-Paiement
-{% endblock %}
-
+{% block title %}Paiement — Commande #{{ commande.id }}{% endblock %}
 
 {% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card glass-card border-0 overflow-hidden scroll-animate-scale">
+                
+                <!-- En-tête coloré -->
+                <div class="p-4 text-white text-center" style="background: linear-gradient(135deg, #06d6a0, #118ab2);">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white bg-opacity-25 mb-3" style="width: 64px; height: 64px;">
+                        <i class="bi bi-credit-card-2-front fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Paiement</h3>
+                    <p class="mb-0 opacity-75 small">Commande #{{ commande.id }}</p>
+                </div>
 
-<div class="container mt-5">
-
-    <h2>
-        Paiement de la commande #{{ commande.id }} 💳
-    </h2>
-
-
-    <p>
-        Montant à payer :
-        <strong>
-            {{ commande.total }} FCFA
-        </strong>
-    </p>
-
-
-    <form method="post">
-
-        {% csrf_token %}
-
-
-        <label class="form-label">
-            Choisir un moyen de paiement :
-        </label>
-
-
-        <select name="methode" class="form-select">
-
-            <option value="especes">
-                Espèces
-            </option>
-
-            <option value="orange_money">
-                Orange Money
-            </option>
-
-            <option value="wave">
-                Wave
-            </option>
-
-            <option value="carte">
-                Carte bancaire
-            </option>
-
-            <option value="moov_money">
-                Moov Money
-            </option>
-
-        </select>
-
-
-        <button class="btn btn-success mt-3">
-
-            Payer maintenant 💰
-
-        </button>
-
-
-    </form>
-
-
+                <div class="p-4">
+                    <p class="text-muted small mb-4 text-center">Paiement simulé pour la démonstration locale.</p>
+                    
+                    <!-- Montant -->
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-body-tertiary mb-4">
+                        <span class="text-muted fw-medium">Montant à payer</span>
+                        <span class="fw-bold fs-4 text-primary">{{ commande.total }} FCFA</span>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <label class="form-label fw-semibold mb-3">Moyen de paiement</label>
+                        
+                        <div class="d-flex flex-column gap-2 mb-4">
+                            <label class="payment-method-option">
+                                <input type="radio" name="methode" value="especes" checked class="form-check-input me-3">
+                                <i class="bi bi-cash-coin text-success me-2 fs-5"></i>
+                                <span>Espèces</span>
+                            </label>
+                            <label class="payment-method-option">
+                                <input type="radio" name="methode" value="orange_money" class="form-check-input me-3">
+                                <i class="bi bi-phone text-warning me-2 fs-5"></i>
+                                <span>Orange Money</span>
+                            </label>
+                            <label class="payment-method-option">
+                                <input type="radio" name="methode" value="wave" class="form-check-input me-3">
+                                <i class="bi bi-phone-fill text-info me-2 fs-5"></i>
+                                <span>Wave</span>
+                            </label>
+                            <label class="payment-method-option">
+                                <input type="radio" name="methode" value="carte" class="form-check-input me-3">
+                                <i class="bi bi-credit-card text-primary me-2 fs-5"></i>
+                                <span>Carte bancaire</span>
+                            </label>
+                            <label class="payment-method-option">
+                                <input type="radio" name="methode" value="moov_money" class="form-check-input me-3">
+                                <i class="bi bi-phone-vibrate text-danger me-2 fs-5"></i>
+                                <span>Moov Money</span>
+                            </label>
+                        </div>
+                        
+                        <button class="btn btn-success w-100 py-3 fw-bold fs-5 btn-pulse shadow">
+                            <i class="bi bi-shield-check me-2"></i> Valider le paiement
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted"><i class="bi bi-lock me-1"></i> Transaction sécurisée et chiffrée</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
 
+{% block extra_css %}
+<style>
+    .payment-method-option {
+        display: flex;
+        align-items: center;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        border: 2px solid transparent;
+        background: var(--color-card-bg);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .payment-method-option:hover {
+        border-color: var(--color-primary);
+        background: rgba(var(--color-primary-rgb, 99, 102, 241), 0.05);
+    }
+    .payment-method-option:has(:checked) {
+        border-color: var(--color-primary);
+        background: rgba(var(--color-primary-rgb, 99, 102, 241), 0.08);
+        box-shadow: 0 0 0 1px var(--color-primary);
+    }
+</style>
 {% endblock %}

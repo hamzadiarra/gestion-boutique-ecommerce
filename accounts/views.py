@@ -23,11 +23,7 @@ def register(request):
         password1 = request.POST.get("password1", "")
         password2 = request.POST.get("password2", "")
         telephone = request.POST.get("telephone", "").strip()
-        role = request.POST.get("role", "client").strip()
-
-        # Sécurité : seuls client et vendeur sont autorisés à l'inscription
-        if role not in ('client', 'vendeur'):
-            role = 'client'
+        role = 'client'
 
         # Contexte à retransmettre en cas d'erreur (pour ne pas vider le formulaire)
         form_data = {
@@ -91,7 +87,7 @@ def register(request):
         login(request, user)
 
         role_label = profil.get_role_display()
-        messages.success(request, f"Bienvenue {username} ! Votre compte {role_label} a été créé avec succès. 🎉")
+        messages.success(request, f"Bienvenue {username} ! Votre compte {role_label} a été créé avec succès.")
 
         # Redirection selon le rôle
         if role == 'vendeur':
@@ -208,7 +204,7 @@ def profile_edit(request):
 
         profil.save()
 
-        messages.success(request, "Profil mis à jour avec succès ! ✅")
+        messages.success(request, "Profil mis à jour avec succès.")
         return redirect("profile")
 
     # GET : on passe le profil pour préremplir les champs dans le template

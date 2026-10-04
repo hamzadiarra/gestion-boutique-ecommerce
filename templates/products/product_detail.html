@@ -1,192 +1,312 @@
 {% extends "base.html" %}
 
-{% block title %}{{ produit.nom }} — Boutique{% endblock %}
+{% block title %}{{ produit.nom }} — Gestion Boutique{% endblock %}
 
 {% block content %}
+<div class="container mt-5 fade-in mb-5">
 
-<div class="container mt-5 fade-in">
+    <div class="card glass-card border-0 p-4 mb-5">
+        <div class="row g-5">
+            <!-- Image du produit -->
+            <div class="col-lg-6 text-center position-relative">
+                <div class="position-sticky" style="top: 100px;">
+                    {% if produit.image %}
+                        <div class="shine-effect rounded-4 shadow-sm overflow-hidden bg-white d-flex align-items-center justify-content-center" style="min-height: 400px;">
+                            <img src="{{ produit.image.url }}" class="img-fluid" style="max-height: 500px; object-fit: contain;" alt="{{ produit.nom }}">
+                        </div>
+                    {% else %}
+                        <div class="product-img-placeholder rounded-4" style="height: 400px;">
+                            <i class="bi bi-image text-muted display-1"></i>
+                        </div>
+                    {% endif %}
 
-    {% if messages %}
-    <div class="mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <div class="row bg-white rounded shadow-sm p-4">
-
-        <!-- Image du produit -->
-        <div class="col-md-6 text-center">
-            {% if produit.image %}
-                <img src="{{ produit.image.url }}" class="img-fluid rounded shadow-sm" style="max-height: 450px; object-fit: cover;" alt="{{ produit.nom }}">
-            {% else %}
-                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 350px;">
-                    <i class="bi bi-image text-muted display-1"></i>
+                    {% if produit.prix_promotion %}
+                        <span class="badge badge-promo position-absolute top-0 start-0 m-4 px-3 py-2 fs-6 shadow">Promo</span>
+                    {% endif %}
+                    {% if produit.vedette %}
+                        <span class="badge badge-vedette position-absolute top-0 end-0 m-4 px-3 py-2 fs-6 shadow">⭐ Vedette</span>
+                    {% endif %}
                 </div>
-            {% endif %}
-        </div>
+            </div>
 
-        <!-- Infos du produit -->
-        <div class="col-md-6 d-flex flex-column justify-content-between">
-            <div>
+            <!-- Infos du produit -->
+            <div class="col-lg-6 d-flex flex-column">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Boutique</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'category_detail' produit.categorie.slug %}">{{ produit.categorie.nom }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ produit.nom }}</li>
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="{% url 'product_list' %}" class="text-decoration-none text-muted"><i class="bi bi-shop"></i> Boutique</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'category_detail' produit.categorie.slug %}" class="text-decoration-none text-muted">{{ produit.categorie.nom }}</a></li>
+                        <li class="breadcrumb-item active text-primary fw-medium" aria-current="page">{{ produit.nom }}</li>
                     </ol>
                 </nav>
 
-                <h1 class="fw-bold mt-2">{{ produit.nom }}</h1>
-                <p class="text-muted fs-5 mb-3">{{ produit.marque }}</p>
+                <h1 class="fw-bold mt-2 mb-1 display-5">{{ produit.nom }}</h1>
+                <p class="text-muted fs-5 mb-4 text-uppercase tracking-wide">{{ produit.marque }}</p>
 
                 <!-- Note moyenne en étoiles -->
-                <div class="d-flex align-items-center mb-3">
-                    <div class="star-rating me-2">
+                <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
+                    <div class="star-rating me-3 fs-5">
                         {% for i in stars_filled %}
-                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
                         {% endfor %}
                         {% for i in stars_empty %}
-                            <i class="bi bi-star"></i>
+                            <i class="bi bi-star text-secondary opacity-50"></i>
                         {% endfor %}
                     </div>
-                    <span class="fw-bold text-dark me-2">{{ avg_rating }} / 5</span>
-                    <span class="text-muted">({{ reviews.count }} avis)</span>
+                    <span class="fw-bold fs-5 me-2">{{ avg_rating }} / 5</span>
+                    <a href="#reviews-section" class="text-muted text-decoration-none">(Voir les {{ reviews.count }} avis)</a>
                 </div>
 
-                <hr>
-
-                <div class="my-4">
+                <div class="mb-4">
                     {% if produit.prix_promotion %}
-                        <h2 class="text-danger fw-bold d-inline-block me-3">{{ produit.prix_promotion }} FCFA</h2>
-                        <span class="text-decoration-line-through text-muted fs-5">{{ produit.prix }} FCFA</span>
+                        <div class="d-flex align-items-baseline gap-3">
+                            <h2 class="text-danger fw-bold display-6 mb-0">{{ produit.prix_promotion }} FCFA</h2>
+                            <span class="text-decoration-line-through text-muted fs-4">{{ produit.prix }} FCFA</span>
+                        </div>
                     {% else %}
-                        <h2 class="text-success fw-bold">{{ produit.prix }} FCFA</h2>
+                        <h2 class="text-success fw-bold display-6 mb-0">{{ produit.prix }} FCFA</h2>
                     {% endif %}
                 </div>
 
                 <div class="mb-4">
-                    <h5>Description</h5>
-                    <p class="text-secondary">{{ produit.description|linebreaksbr|default:"Aucune description disponible pour ce produit." }}</p>
+                    <h5 class="fw-bold mb-3">Description</h5>
+                    <p class="text-secondary" style="line-height: 1.8;">{{ produit.description|linebreaksbr|default:"Aucune description disponible pour ce produit." }}</p>
                 </div>
 
                 <div class="mb-4">
-                    <strong>Disponibilité : </strong>
-                    {% if produit.stock > 0 %}
-                        <span class="badge bg-success">En Stock ({{ produit.stock }} restants)</span>
-                    {% else %}
-                        <span class="badge bg-danger">Rupture de stock</span>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Actions panier et wishlist -->
-            <div class="d-flex gap-3 mt-4">
-                {% if produit.stock > 0 %}
-                    <a href="{% url 'add_to_cart' produit.id %}" class="btn btn-success btn-lg flex-grow-1 py-3 shadow-sm">
-                        <i class="bi bi-cart-plus-fill me-2"></i> Ajouter au panier
-                    </a>
-                {% else %}
-                    <button class="btn btn-secondary btn-lg flex-grow-1 py-3" disabled>
-                        <i class="bi bi-cart-x-fill me-2"></i> Rupture de stock
-                    </button>
-                {% endif %}
-
-                <!-- Bouton wishlist dynamique -->
-                <form action="{% url 'toggle_wishlist' produit.id %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger btn-lg px-3 py-3 wishlist-btn-wrap" title="Ajouter à la liste de souhaits">
-                        {% if in_wishlist %}
-                            <i class="bi bi-heart-fill text-danger fs-4"></i>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">Disponibilité :</span>
+                        {% if produit.stock > 10 %}
+                            <span class="status-badge status-livree">En Stock ({{ produit.stock }})</span>
+                        {% elif produit.stock > 0 %}
+                            <span class="status-badge status-attente">Stock limité ({{ produit.stock }})</span>
                         {% else %}
-                            <i class="bi bi-heart fs-4"></i>
+                            <span class="status-badge status-annulee">Rupture de stock</span>
                         {% endif %}
-                    </button>
-                </form>
+                    </div>
+                </div>
+
+                <!-- Actions panier et wishlist -->
+                <div class="mt-auto pt-4">
+                    <div class="d-flex gap-3">
+                        {% if produit.stock > 0 %}
+                            <a href="{% url 'add_to_cart' produit.id %}" class="btn btn-primary btn-lg flex-grow-1 py-3 fw-bold btn-pulse ajax-add-to-cart" data-url="{% url 'add_to_cart' produit.id %}">
+                                <i class="bi bi-cart-plus-fill me-2"></i> Ajouter au panier
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg flex-grow-1 py-3 fw-bold" disabled>
+                                <i class="bi bi-cart-x-fill me-2"></i> Rupture de stock
+                            </button>
+                        {% endif %}
+
+                        <form action="{% url 'toggle_wishlist' produit.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-lg px-4 py-3 wishlist-btn-wrap" style="border-width: 2px;" title="Ajouter aux favoris">
+                                {% if in_wishlist %}
+                                    <i class="bi bi-heart-fill fs-4"></i>
+                                {% else %}
+                                    <i class="bi bi-heart fs-4"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 
     <!-- Section Avis -->
-    <div class="row mt-5">
-
-        <!-- Liste des avis -->
-        <div class="col-md-7 mb-4">
-            <div class="bg-white rounded shadow-sm p-4 h-100">
-                <h3 class="fw-bold mb-4">💬 Avis clients ({{ reviews.count }})</h3>
-
-                {% for review in reviews %}
-                    <div class="border-bottom pb-3 mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px; font-weight: bold;">
-                                    {{ review.utilisateur.username|first|upper }}
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 fw-bold">{{ review.utilisateur.username }}</h6>
-                                    <small class="text-muted">{{ review.date_creation|date:"d/m/Y" }}</small>
-                                </div>
-                            </div>
-                            <div class="star-rating">
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= review.note %}
-                                        <i class="bi bi-star-fill"></i>
-                                    {% else %}
-                                        <i class="bi bi-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <p class="text-secondary mb-0">{{ review.commentaire|linebreaksbr }}</p>
-                    </div>
-                {% empty %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-chat-left-text text-muted display-4 mb-3 d-block"></i>
-                        <p class="text-muted">Aucun avis n'a été publié pour ce produit. Soyez le premier à donner votre avis !</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Formulaire d'avis -->
-        <div class="col-md-5 mb-4">
-            <div class="bg-white rounded shadow-sm p-4 h-100">
+    <div id="reviews-section" class="row mt-5 pt-4 scroll-animate">
+        
+        <!-- Formulaire d'avis (Maintenant à gauche) -->
+        <div class="col-lg-4 mb-4">
+            <div class="card bg-transparent border-2 border-primary-subtle p-4 h-100" style="border-radius: var(--radius-lg);">
                 {% if user.is_authenticated %}
-                    <h3 class="fw-bold mb-4">🖋️ {% if already_reviewed %}Modifier mon avis{% else %}Laisser un avis{% endif %}</h3>
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>
+                        {% if already_reviewed %}Modifier mon avis{% else %}Donner mon avis{% endif %}
+                    </h4>
                     <form action="{% url 'add_review' produit.id %}" method="post">
                         {% csrf_token %}
                         
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Votre note :</label>
-                            {{ review_form.note }}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Note attribuée</label>
+                            <div class="p-3 rounded bg-body-tertiary">
+                                {{ review_form.note }}
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Votre commentaire :</label>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Votre commentaire</label>
                             {{ review_form.commentaire }}
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-3 mt-2 shadow-sm">
-                            <i class="bi bi-send-fill me-2"></i> Soumettre l'avis
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold shadow-sm">
+                            <i class="bi bi-send-fill me-2"></i> Publier l'avis
                         </button>
                     </form>
                 {% else %}
                     <div class="text-center py-5">
-                        <i class="bi bi-lock-fill text-muted display-4 mb-3 d-block"></i>
-                        <p class="text-muted">Vous devez être connecté pour publier ou modifier un avis.</p>
-                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary px-4 mt-2">Se connecter</a>
+                        <div class="mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle" style="width: 80px; height: 80px;">
+                                <i class="bi bi-lock-fill fs-1"></i>
+                            </div>
+                        </div>
+                        <h5 class="fw-bold mb-3">Connectez-vous</h5>
+                        <p class="text-muted mb-4">Vous devez être connecté pour partager votre expérience sur ce produit.</p>
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary px-4 py-2 fw-semibold">Se connecter</a>
                     </div>
                 {% endif %}
             </div>
         </div>
 
+        <!-- Liste des avis (Maintenant à droite) -->
+        <div class="col-lg-8 mb-4">
+            <div class="card glass-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                    <h4 class="fw-bold mb-0">Avis Clients ({{ reviews.count }})</h4>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-4 fw-bold">{{ avg_rating }}</span>
+                        <i class="bi bi-star-fill text-warning fs-5"></i>
+                    </div>
+                </div>
+
+                <div class="reviews-list pe-2" style="max-height: 600px; overflow-y: auto;">
+                    {% for review in reviews %}
+                        <div class="card bg-body-tertiary border-0 mb-3">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-weight: bold; font-size: 1.2rem;">
+                                            {{ review.utilisateur.username|first|upper }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ review.utilisateur.username }}</h6>
+                                            <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> {{ review.date_creation|date:"d M Y" }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="star-rating px-3 py-1 bg-white rounded-pill shadow-sm dark-mode-invert">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.note %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-secondary opacity-25"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-secondary mb-0" style="line-height: 1.6;">{{ review.commentaire|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-5 my-4">
+                            <i class="bi bi-chat-square-quote text-muted opacity-25 display-1 mb-3 d-block"></i>
+                            <h5 class="fw-bold">Aucun avis pour le moment</h5>
+                            <p class="text-muted">Soyez le premier à partager votre expérience !</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
+    <!-- Section Produits Similaires -->
+    {% if related_products %}
+    <div class="mt-5 pt-4 border-top scroll-animate">
+        <h3 class="fw-bold mb-4">Vous pourriez aussi aimer</h3>
+        <div class="row g-4 stagger-children">
+            {% for rel_prod in related_products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card product-card h-100 scroll-animate-scale">
+                    <div class="card-img-wrapper">
+                        {% if rel_prod.image %}
+                        <img src="{{ rel_prod.image.url }}" class="card-img-top" alt="{{ rel_prod.nom }}">
+                        {% else %}
+                        <div class="product-img-placeholder">
+                            <i class="bi bi-image"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-img-overlay-gradient"></div>
+                        <div class="quick-actions">
+                            <a href="{% url 'add_to_cart' rel_prod.id %}" class="btn btn-icon rounded-circle ajax-add-to-cart" data-url="{% url 'add_to_cart' rel_prod.id %}" title="Ajouter au panier">
+                                <i class="bi bi-cart-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-truncate fw-bold mb-2 fs-6">
+                            <a href="{% url 'product_detail' rel_prod.slug %}" class="text-decoration-none text-reset stretched-link">
+                                {{ rel_prod.nom }}
+                            </a>
+                        </h5>
+                        <div class="mt-auto pt-2">
+                            <div class="price-tag mb-0 fs-5">{{ rel_prod.prix }} FCFA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+    /* Inversion spécifique pour les petites pilules blanches dans la liste des avis en dark mode */
+    [data-theme="dark"] .dark-mode-invert {
+        background-color: var(--color-dark) !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.ajax-add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = this.getAttribute('data-url');
+                
+                // Add loading effect
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Ajout...';
+                this.classList.add('disabled');
+
+                fetch(url + "?ajax=1", {
+                    method: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('disabled');
+
+                    if(data.status === 'success') {
+                        showToast('success', data.message);
+                        // Update cart counter
+                        const badge = document.querySelector('.nav-link .badge.bg-danger.rounded-pill');
+                        if(badge) {
+                            badge.textContent = data.cart_count;
+                            badge.classList.add('animate__animated', 'animate__rubberBand');
+                            setTimeout(() => badge.classList.remove('animate__animated', 'animate__rubberBand'), 1000);
+                        } else if (data.cart_count > 0) {
+                            const cartLink = document.querySelector('a[href="/cart/"]');
+                            if(cartLink) {
+                                cartLink.innerHTML += ' <span class="badge bg-danger rounded-pill animate__animated animate__rubberBand" style="font-size: 0.75rem;">' + data.cart_count + '</span>';
+                            }
+                        }
+                    } else {
+                        showToast('danger', data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    window.location.href = url; // Fallback
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}

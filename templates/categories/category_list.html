@@ -1,49 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}Catégories{% endblock %}
+{% block title %}Nos Catégories — Gestion Boutique{% endblock %}
 
 {% block content %}
 
-<div class="container mt-5">
-
-    <h2 class="mb-4">Nos catégories</h2>
-
-    <div class="row">
-
-        {% for categorie in categories %}
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card shadow h-100">
-
-                {% if categorie.image %}
-                <img src="{{ categorie.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
-                {% endif %}
-
-                <div class="card-body">
-
-                    <h5>{{ categorie.nom }}</h5>
-
-                    <p>{{ categorie.description|truncatewords:20 }}</p>
-
-                    <a href="{% url 'category_detail' categorie.slug %}" class="btn btn-primary">
-                        Voir les produits
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <p>Aucune catégorie disponible.</p>
-
-        {% endfor %}
-
+<!-- Hero -->
+<div class="bg-primary text-white py-5 mb-5" style="background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);">
+    <div class="container text-center scroll-animate">
+        <h1 class="display-4 fw-bold mb-3">Nos Catégories</h1>
+        <p class="lead opacity-75 mb-0">Explorez nos collections classées par thème.</p>
     </div>
-
 </div>
 
+<div class="container mb-5">
+    <div class="row g-4 stagger-children">
+        {% for categorie in categories %}
+        <div class="col-lg-4 col-md-6 scroll-animate-scale">
+            <a href="{% url 'category_detail' categorie.slug %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden category-card rounded-4" style="transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                    {% if categorie.image %}
+                    <div class="position-relative overflow-hidden" style="height: 220px;">
+                        <img src="{{ categorie.image.url }}" class="w-100 h-100" style="object-fit: cover; transition: transform 0.4s ease;" alt="{{ categorie.nom }}">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(transparent, rgba(0,0,0,0.7));"></div>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center bg-body-tertiary" style="height: 220px;">
+                        <i class="bi bi-tags text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-2 text-body">{{ categorie.nom }}</h4>
+                        <p class="text-muted mb-3">{{ categorie.description|truncatewords:20 }}</p>
+                        <span class="text-primary fw-semibold small">
+                            Voir les produits <i class="bi bi-arrow-right ms-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state card glass-card">
+                <i class="bi bi-tags empty-state-icon"></i>
+                <h4 class="empty-state-title">Aucune catégorie</h4>
+                <p class="empty-state-text">Les catégories de produits apparaîtront ici.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -1,67 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}
-{{ categorie.nom }}
-{% endblock %}
+{% block title %}{{ categorie.nom }} — Gestion Boutique{% endblock %}
 
 {% block content %}
 
-<div class="container mt-5">
-
-    <h2>{{ categorie.nom }}</h2>
-
-    <p class="text-muted">
-        {{ categorie.description }}
-    </p>
-
-    <hr>
-
-    <div class="row">
-
-        {% for produit in produits %}
-
-        <div class="col-md-4 mb-4">
-
-            <div class="card shadow h-100">
-
-                {% if produit.image %}
-                <img src="{{ produit.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;">
-                {% endif %}
-
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        {{ produit.nom }}
-                    </h5>
-
-                    <p class="card-text">
-                        {{ produit.description|truncatewords:15 }}
-                    </p>
-
-                    <h4 class="text-primary">
-                        {{ produit.prix }} FCFA
-                    </h4>
-
-                    <a href="{% url 'product_detail' produit.slug %}" class="btn btn-primary w-100">
-                        Voir le produit
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div class="alert alert-warning">
-            Aucun produit disponible dans cette catégorie.
-        </div>
-
-        {% endfor %}
-
+<!-- Hero -->
+<div class="bg-primary text-white py-5 mb-5" style="background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);">
+    <div class="container scroll-animate">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider-color: rgba(255,255,255,0.5);">
+                <li class="breadcrumb-item"><a href="{% url 'category_list' %}" class="text-white-50 text-decoration-none">Catégories</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ categorie.nom }}</li>
+            </ol>
+        </nav>
+        <h1 class="display-4 fw-bold mb-2">{{ categorie.nom }}</h1>
+        {% if categorie.description %}
+        <p class="lead opacity-75 mb-0" style="max-width: 600px;">{{ categorie.description }}</p>
+        {% endif %}
     </div>
-
 </div>
 
+<div class="container mb-5">
+    <div class="row g-4 stagger-children">
+
+        {% for produit in produits %}
+        <div class="col-lg-3 col-md-4 col-sm-6 scroll-animate-scale">
+            <div class="card product-card h-100">
+                <div class="card-img-wrapper">
+                    {% if produit.image %}
+                    <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
+                    {% else %}
+                    <div class="product-img-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-img-overlay-gradient"></div>
+
+                    <div class="position-absolute top-0 start-0 p-3 d-flex flex-column gap-2">
+                        {% if produit.prix_promotion %}
+                        <span class="badge badge-promo">Promo</span>
+                        {% endif %}
+                        {% if produit.vedette %}
+                        <span class="badge badge-vedette">⭐ Vedette</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="quick-actions">
+                        <a href="{% url 'add_to_cart' produit.id %}" class="btn btn-icon rounded-circle" title="Ajouter au panier">
+                            <i class="bi bi-cart-plus"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body d-flex flex-column">
+                    <p class="text-muted small mb-1">{{ produit.marque }}</p>
+                    <h5 class="card-title text-truncate fw-bold mb-2 fs-6">
+                        <a href="{% url 'product_detail' produit.slug %}" class="text-decoration-none text-reset stretched-link">
+                            {{ produit.nom }}
+                        </a>
+                    </h5>
+
+                    <div class="mt-auto pt-2">
+                        {% if produit.prix_promotion %}
+                        <div class="price-tag price-tag-promo mb-0">{{ produit.prix_promotion }} FCFA</div>
+                        <div class="price-tag-old">{{ produit.prix }} FCFA</div>
+                        {% else %}
+                        <div class="price-tag mb-0">{{ produit.prix }} FCFA</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state card glass-card">
+                <i class="bi bi-box-seam empty-state-icon"></i>
+                <h4 class="empty-state-title">Aucun produit</h4>
+                <p class="empty-state-text">Cette catégorie ne contient aucun produit pour le moment.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary mt-4 px-4">Voir tous les produits</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

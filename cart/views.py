@@ -7,6 +7,8 @@ from .models import Cart, CartItem
 
 
 
+from django.http import JsonResponse
+
 @login_required
 def add_to_cart(request, product_id):
 
@@ -16,8 +18,12 @@ def add_to_cart(request, product_id):
         actif=True
     )
 
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == '1'
+
     # Vérifier le stock
     if produit.stock <= 0:
+        if is_ajax:
+            return JsonResponse({'status': 'error', 'message': f"« {produit.nom} » est en rupture de stock."})
         messages.warning(request, f"« {produit.nom} » est en rupture de stock.")
         return redirect("product_list")
 
@@ -30,7 +36,7 @@ def add_to_cart(request, product_id):
         panier=panier,
         produit=produit,
         defaults={
-            "prix": produit.prix_promotion or produit.prix,
+            "prix": produit.prix_effectif,
             "quantite": 1
         }
     )
@@ -38,6 +44,8 @@ def add_to_cart(request, product_id):
 
     if not created:
         if article.quantite >= produit.stock:
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': f"Stock maximum atteint pour « {produit.nom} »."})
             messages.warning(
                 request,
                 f"Stock maximum atteint pour « {produit.nom} » ({produit.stock} disponibles)."
@@ -46,6 +54,15 @@ def add_to_cart(request, product_id):
 
         article.quantite += 1
         article.save()
+
+    cart_count = sum(item.quantite for item in panier.items.all())
+
+    if is_ajax:
+        return JsonResponse({
+            'status': 'success', 
+            'message': f"« {produit.nom} » ajouté au panier ! 🛒",
+            'cart_count': cart_count
+        })
 
     messages.success(request, f"« {produit.nom} » ajouté au panier ! 🛒")
 

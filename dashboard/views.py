@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
-from django.urls import reverse
 from accounts.models import Profile
 from accounts.decorators import admin_required
 from products.models import Product
 from orders.models import Order
-from payments.models import Payment
 from django.contrib.auth.models import User
-from .models import Vente, JournalActivite, log_activity
-import json
+from .models import Vente, log_activity
+from .services import revenue_periods
 
 
 @admin_required
@@ -19,11 +17,9 @@ def admin_dashboard(request):
     total_commandes = Order.objects.count()
     total_clients = User.objects.filter(is_staff=False).count()
 
-    # Chiffre d'affaires
-    chiffre_affaires = Payment.objects.filter(statut="paye").aggregate(Sum("montant"))["montant__sum"] or 0
-
-    # CA des ventes directes (vendeurs)
-    ca_ventes_directes = Vente.objects.aggregate(Sum("montant_total"))["montant_total__sum"] or 0
+    revenus = revenue_periods()
+    chiffre_affaires = revenus["total_global"]
+    ca_ventes_directes = revenus["ventes_total"]["total"] or 0
 
     # Dernières commandes
     dernieres_commandes = Order.objects.all().order_by("-date_creation")[:5]
@@ -68,27 +64,9 @@ def admin_dashboard(request):
     # Dernières ventes enregistrées
     dernieres_ventes = Vente.objects.select_related("vendeur", "produit").all()[:10]
 
-    # Journal d'activité récent
-    journal_recent = JournalActivite.objects.select_related("utilisateur").all()[:20]
-
-    # Alertes (actions warning ou danger)
-    alertes = JournalActivite.objects.filter(
-        niveau__in=["warning", "danger"]
-    ).select_related("utilisateur")[:10]
-
     nb_administrateurs = administrateurs.count()
     nb_vendeurs = vendeurs.count()
     nb_ventes_total = Vente.objects.count()
-
-    # Événements pour le calendrier des commandes
-    events = []
-    for order in Order.objects.all():
-        events.append({
-            "title": f"Commande #{order.id} ({order.total()} FCFA)",
-            "start": order.date_creation.strftime("%Y-%m-%d"),
-            "url": reverse("order_detail", args=[order.id]),
-            "className": "bg-success text-white border-0 p-1" if order.statut == "livree" else "bg-warning text-dark border-0 p-1"
-        })
 
     context = {
         "total_produits": total_produits,
@@ -102,7 +80,6 @@ def admin_dashboard(request):
         "commandes_confirmees": commandes_confirmees,
         "commandes_expediees": commandes_expediees,
         "commandes_livrees": commandes_livrees,
-        "events_json": json.dumps(events),
         # Surveillance & Utilisateurs
         "administrateurs": administrateurs,
         "nb_administrateurs": nb_administrateurs,
@@ -112,8 +89,6 @@ def admin_dashboard(request):
         "nb_vendeurs": nb_vendeurs,
         "ventes_par_vendeur": ventes_par_vendeur,
         "dernieres_ventes": dernieres_ventes,
-        "journal_recent": journal_recent,
-        "alertes": alertes,
         "nb_ventes_total": nb_ventes_total,
     }
 
@@ -151,8 +126,7 @@ def changer_role_utilisateur(request, profile_id):
 
             messages.success(
                 request,
-                f"✅ Rôle de {profil.utilisateur.username} mis à jour avec succès : {profil.get_role_display()}"
+                f"Rôle de {profil.utilisateur.username} mis à jour avec succès : {profil.get_role_display()}"
             )
 
     return redirect("admin_dashboard")
-

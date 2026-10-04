@@ -3,114 +3,126 @@
 {% block title %}Mon Profil — Gestion Boutique{% endblock %}
 
 {% block content %}
+<div class="container fade-in">
+    <div class="row justify-content-center mt-4 mb-5">
+        <div class="col-md-10 col-lg-8">
 
-<div class="container">
-<div class="row justify-content-center mt-4 mb-5">
-    <div class="col-md-10 col-lg-8">
+            <div class="card border-0 shadow-sm overflow-hidden scroll-animate-scale" style="border-radius: var(--radius-lg);">
 
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-        </div>
-        {% endfor %}
-        {% endif %}
+                <!-- Bandeau haut coloré -->
+                <div class="profile-banner"></div>
 
-        <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body px-4 pb-4">
 
-            <!-- Bandeau haut coloré -->
-            <div style="height: 110px; background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);"></div>
-
-            <div class="card-body px-4 pb-4">
-
-                <!-- Photo de profil -->
-                <div class="d-flex align-items-end mb-3" style="margin-top: -60px;">
-                    <div class="position-relative me-4">
-                        {% if profil.photo %}
-                        <img src="{{ profil.photo.url }}"
-                             alt="Photo de profil"
-                             class="rounded-circle border border-4 border-white shadow-sm"
-                             style="width: 110px; height: 110px; object-fit: cover;">
-                        {% else %}
-                        <div class="rounded-circle border border-4 border-white shadow-sm bg-primary d-flex align-items-center justify-content-center"
-                             style="width: 110px; height: 110px;">
-                            <span class="text-white fw-bold" style="font-size: 2.5rem;">
-                                {{ profil.utilisateur.username|first|upper }}
-                            </span>
+                    <!-- Photo de profil -->
+                    <div class="d-flex flex-column flex-sm-row align-items-sm-end mb-4" style="margin-top: -60px;">
+                        <div class="position-relative me-sm-4 mb-3 mb-sm-0 text-center text-sm-start">
+                            {% if profil.photo %}
+                            <img src="{{ profil.photo.url }}"
+                                 alt="Photo de profil"
+                                 class="rounded-circle border shadow-sm"
+                                 style="width: 120px; height: 120px; object-fit: cover; border-width: 4px !important; border-color: var(--color-card-bg) !important;">
+                            {% else %}
+                            <div class="rounded-circle shadow-sm bg-primary d-flex align-items-center justify-content-center mx-auto mx-sm-0"
+                                 style="width: 120px; height: 120px; border: 4px solid var(--color-card-bg);">
+                                <span class="text-white fw-bold" style="font-size: 3rem;">
+                                    {{ profil.utilisateur.username|first|upper }}
+                                </span>
+                            </div>
+                            {% endif %}
                         </div>
+                        <div class="text-center text-sm-start pb-2 flex-grow-1">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
+                                <div>
+                                    <h3 class="fw-bold mb-0">
+                                        {{ profil.utilisateur.get_full_name|default:profil.utilisateur.username }}
+                                    </h3>
+                                    <span class="text-muted">@{{ profil.utilisateur.username }}</span>
+                                </div>
+                                <div class="mt-2 mt-sm-0">
+                                    <span class="badge rounded-pill px-3 py-2
+                                        {% if profil.role == 'admin' %}bg-danger
+                                        {% elif profil.role == 'vendeur' %}bg-info
+                                        {% elif profil.role == 'comptable' %}bg-warning text-dark
+                                        {% else %}bg-success{% endif %} shadow-sm">
+                                        <i class="bi bi-person-badge me-1"></i> {{ profil.get_role_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infos du profil -->
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">Informations Personnelles</h5>
+                    
+                    <div class="row g-3 stagger-children mb-4">
+                        <div class="col-md-6 scroll-animate">
+                            <div class="profile-info-item h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-envelope text-primary me-2"></i>Adresse e-mail</div>
+                                <div class="fw-semibold text-break">{{ profil.utilisateur.email|default:"Non renseignée" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 scroll-animate">
+                            <div class="profile-info-item h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-telephone text-primary me-2"></i>Téléphone</div>
+                                <div class="fw-semibold">{{ profil.telephone|default:"Non renseigné" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 scroll-animate">
+                            <div class="profile-info-item h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-geo-alt text-primary me-2"></i>Adresse</div>
+                                <div class="fw-semibold">{{ profil.adresse|default:"Non renseignée" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 scroll-animate">
+                            <div class="profile-info-item h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-building text-primary me-2"></i>Ville</div>
+                                <div class="fw-semibold">{{ profil.ville|default:"Non renseignée" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 scroll-animate">
+                            <div class="profile-info-item h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-mailbox text-primary me-2"></i>Code postal</div>
+                                <div class="fw-semibold">{{ profil.code_postal|default:"—" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 scroll-animate">
+                            <div class="profile-info-item h-100 d-flex align-items-center gap-3">
+                                <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-calendar3"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Membre depuis</div>
+                                    <div class="fw-semibold">{{ profil.date_creation|date:"d F Y" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="d-flex flex-wrap gap-3 pt-3 border-top scroll-animate">
+                        <a href="{% url 'profile_edit' %}" class="btn btn-primary px-4 fw-medium">
+                            <i class="bi bi-pencil-square me-2"></i> Modifier le profil
+                        </a>
+                        <a href="{% url 'change_password' %}" class="btn btn-outline-warning text-dark fw-medium" data-theme="dark">
+                            <i class="bi bi-shield-lock me-2"></i> Mot de passe
+                        </a>
+                        {% if user.is_staff or profil.role == 'admin' %}
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-danger ms-auto fw-medium">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard Admin
+                            </a>
                         {% endif %}
                     </div>
-                    <div class="mb-1">
-                        <h4 class="fw-bold mb-0">
-                            {{ profil.utilisateur.get_full_name|default:profil.utilisateur.username }}
-                        </h4>
-                        <span class="text-muted small">@{{ profil.utilisateur.username }}</span>
-                    </div>
-                </div>
-
-                <!-- Infos du profil -->
-                <div class="row g-3 mt-2">
-
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-envelope me-1"></i>Adresse e-mail</div>
-                            <div class="fw-semibold">{{ profil.utilisateur.email|default:"Non renseignée" }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i>Téléphone</div>
-                            <div class="fw-semibold">{{ profil.telephone|default:"Non renseigné" }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Adresse</div>
-                            <div class="fw-semibold">{{ profil.adresse|default:"Non renseignée" }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-building me-1"></i>Ville</div>
-                            <div class="fw-semibold">{{ profil.ville|default:"Non renseignée" }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-mailbox me-1"></i>Code postal</div>
-                            <div class="fw-semibold">{{ profil.code_postal|default:"—" }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="p-3 rounded-3 bg-light">
-                            <div class="text-muted small mb-1"><i class="bi bi-calendar3 me-1"></i>Membre depuis</div>
-                            <div class="fw-semibold">{{ profil.date_creation|date:"d F Y" }}</div>
-                        </div>
-                    </div>
 
                 </div>
-
-                <!-- Boutons d'action -->
-                <div class="d-flex flex-wrap gap-2 mt-4">
-                    <a href="{% url 'profile_edit' %}" class="btn btn-primary">
-                        <i class="bi bi-pencil-square me-1"></i> Modifier le profil
-                    </a>
-                    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-shield-lock me-1"></i> Changer le mot de passe
-                    </a>
-                </div>
-
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
-</div>
-
 {% endblock %}

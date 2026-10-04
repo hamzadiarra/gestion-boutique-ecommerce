@@ -3,164 +3,133 @@
 {% block title %}Gestion des Commandes — Espace Vendeur{% endblock %}
 
 {% block content %}
-<style>
-  .filter-pill { border-radius: 50px; padding: .4rem 1.2rem; font-weight: 600; font-size: .85rem; transition: .2s; }
-  .filter-pill.active { background: #667eea; color: #fff; border-color: #667eea; }
-  .status-badge-en_attente  { background: #fff3cd; color: #856404; }
-  .status-badge-confirmee   { background: #d1e7dd; color: #0f5132; }
-  .status-badge-expediee    { background: #cff4fc; color: #055160; }
-  .status-badge-livree      { background: #d3f9d8; color: #1a6b35; }
-  .status-badge-annulee     { background: #f8d7da; color: #842029; }
-  .commande-row:hover { background: #f8f9ff; }
-</style>
-
-<div class="container mt-4 fade-in">
+<div class="container mt-4 mb-5 fade-in">
 
     <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 scroll-animate">
         <div>
             <a href="{% url 'vendeur_dashboard' %}" class="btn btn-sm btn-outline-secondary mb-2">
-                <i class="bi bi-arrow-left me-1"></i> Retour
+                <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
             </a>
-            <h2 class="fw-bold mb-1">📦 Gestion des Commandes</h2>
+            <h1 class="h3 fw-bold mb-1">Gestion des commandes</h1>
             <p class="text-muted mb-0">Confirmez, expédiez ou annulez les commandes de vos clients.</p>
         </div>
     </div>
 
-    <!-- Messages -->
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-
     <!-- Filtres par statut -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <a href="?statut=toutes" class="btn btn-outline-secondary filter-pill {% if statut_filtre == 'toutes' %}active{% endif %}">
+    <div class="d-flex flex-wrap gap-2 mb-4 scroll-animate" style="animation-delay: 0.1s;">
+        <a href="?statut=toutes" class="btn {% if statut_filtre == 'toutes' %}btn-secondary fw-semibold{% else %}btn-outline-secondary border-0 bg-body-tertiary text-body{% endif %} rounded-pill px-4">
             Toutes
         </a>
-        <a href="?statut=en_attente" class="btn btn-outline-warning filter-pill {% if statut_filtre == 'en_attente' %}active{% endif %}">
-            ⏳ En attente
-            {% if nb_attente > 0 %}<span class="badge bg-warning text-dark ms-1">{{ nb_attente }}</span>{% endif %}
+        <a href="?statut=en_attente" class="btn {% if statut_filtre == 'en_attente' %}btn-warning text-dark fw-semibold{% else %}btn-outline-warning border-0 bg-warning-subtle text-warning{% endif %} rounded-pill px-4">
+            En attente {% if nb_attente > 0 %}<span class="badge bg-white text-dark ms-1 rounded-pill">{{ nb_attente }}</span>{% endif %}
         </a>
-        <a href="?statut=confirmee" class="btn btn-outline-success filter-pill {% if statut_filtre == 'confirmee' %}active{% endif %}">
-            ✅ Confirmées <span class="badge bg-success ms-1">{{ nb_confirmees }}</span>
+        <a href="?statut=confirmee" class="btn {% if statut_filtre == 'confirmee' %}btn-info text-dark fw-semibold{% else %}btn-outline-info border-0 bg-info-subtle text-info{% endif %} rounded-pill px-4">
+            Confirmées {% if nb_confirmees > 0 %}<span class="badge bg-white text-dark ms-1 rounded-pill">{{ nb_confirmees }}</span>{% endif %}
         </a>
-        <a href="?statut=expediee" class="btn btn-outline-info filter-pill {% if statut_filtre == 'expediee' %}active{% endif %}">
-            🚚 Expédiées <span class="badge bg-info ms-1">{{ nb_expediees }}</span>
+        <a href="?statut=expediee" class="btn {% if statut_filtre == 'expediee' %}btn-primary fw-semibold{% else %}btn-outline-primary border-0 bg-primary-subtle text-primary{% endif %} rounded-pill px-4">
+            Expédiées {% if nb_expediees > 0 %}<span class="badge bg-white text-primary ms-1 rounded-pill">{{ nb_expediees }}</span>{% endif %}
         </a>
-        <a href="?statut=livree" class="btn btn-outline-success filter-pill {% if statut_filtre == 'livree' %}active{% endif %}">
-            📦 Livrées <span class="badge bg-success ms-1">{{ nb_livrees }}</span>
+        <a href="?statut=livree" class="btn {% if statut_filtre == 'livree' %}btn-success fw-semibold{% else %}btn-outline-success border-0 bg-success-subtle text-success{% endif %} rounded-pill px-4">
+            Livrées {% if nb_livrees > 0 %}<span class="badge bg-white text-success ms-1 rounded-pill">{{ nb_livrees }}</span>{% endif %}
         </a>
-        <a href="?statut=annulee" class="btn btn-outline-danger filter-pill {% if statut_filtre == 'annulee' %}active{% endif %}">
-            ❌ Annulées <span class="badge bg-danger ms-1">{{ nb_annulees }}</span>
+        <a href="?statut=annulee" class="btn {% if statut_filtre == 'annulee' %}btn-danger fw-semibold{% else %}btn-outline-danger border-0 bg-danger-subtle text-danger{% endif %} rounded-pill px-4">
+            Annulées {% if nb_annulees > 0 %}<span class="badge bg-white text-danger ms-1 rounded-pill">{{ nb_annulees }}</span>{% endif %}
         </a>
     </div>
 
     <!-- Tableau des commandes -->
-    <div class="card shadow-sm border-0">
+    <div class="card glass-card border-0 scroll-animate" style="animation-delay: 0.2s;">
         <div class="card-body p-0">
             {% if commandes %}
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-dark">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th class="ps-4">#Commande</th>
-                            <th>Client</th>
-                            <th>Produits</th>
-                            <th>Total</th>
-                            <th>Statut</th>
-                            <th>Confirmé par</th>
-                            <th>Date</th>
-                            <th class="pe-4 text-center">Actions</th>
+                            <th class="ps-4 py-3 text-muted small text-uppercase">#</th>
+                            <th class="py-3 text-muted small text-uppercase">Client</th>
+                            <th class="py-3 text-muted small text-uppercase">Produits</th>
+                            <th class="py-3 text-muted small text-uppercase text-end">Total</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Statut</th>
+                            <th class="py-3 text-muted small text-uppercase">Infos</th>
+                            <th class="pe-4 py-3 text-muted small text-uppercase text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for commande in commandes %}
-                        <tr class="commande-row">
-                            <td class="ps-4">
-                                <span class="fw-bold text-primary">#{{ commande.id }}</span>
-                            </td>
+                        <tr>
+                            <td class="ps-4 fw-medium text-body-tertiary">#{{ commande.id }}</td>
                             <td>
                                 <div class="fw-semibold">{{ commande.utilisateur.get_full_name|default:commande.utilisateur.username }}</div>
                                 <small class="text-muted">{{ commande.utilisateur.email }}</small>
                             </td>
                             <td>
-                                <div style="max-width:220px;">
+                                <div class="d-flex flex-wrap gap-1" style="max-width: 250px;">
                                     {% for item in commande.items.all %}
-                                    <span class="badge bg-light text-dark border me-1 mb-1">
-                                        {{ item.produit.nom }} <strong>×{{ item.quantite }}</strong>
+                                    <span class="badge bg-body-tertiary text-body border fw-normal">
+                                        {{ item.produit.nom }} <span class="fw-bold ms-1">×{{ item.quantite }}</span>
                                     </span>
                                     {% endfor %}
                                 </div>
                             </td>
-                            <td class="fw-bold text-success">{{ commande.total }} FCFA</td>
-                            <td>
-                                <span class="badge rounded-pill status-badge-{{ commande.statut }} px-3 py-2">
-                                    {% if commande.statut == 'en_attente' %}⏳ En attente
-                                    {% elif commande.statut == 'confirmee' %}✅ Confirmée
-                                    {% elif commande.statut == 'expediee' %}🚚 Expédiée
-                                    {% elif commande.statut == 'livree' %}📦 Livrée
-                                    {% elif commande.statut == 'annulee' %}❌ Annulée
-                                    {% endif %}
-                                </span>
-                            </td>
-                            <td class="text-muted small">
-                                {% if commande.vendeur_confirmateur %}
-                                    {{ commande.vendeur_confirmateur.username }}
-                                    {% if commande.date_confirmation %}
-                                    <br><span class="text-muted">{{ commande.date_confirmation|date:"d/m H:i" }}</span>
-                                    {% endif %}
+                            <td class="text-end fw-bold text-primary">{{ commande.total|floatformat:0 }} FCFA</td>
+                            <td class="text-center">
+                                {% if commande.statut == 'attente' or commande.statut == 'en_attente' %}
+                                    <span class="status-badge status-attente">En attente</span>
+                                {% elif commande.statut == 'confirmee' %}
+                                    <span class="status-badge status-confirmee">Confirmée</span>
+                                {% elif commande.statut == 'expediee' %}
+                                    <span class="status-badge status-expediee">Expédiée</span>
+                                {% elif commande.statut == 'livree' %}
+                                    <span class="status-badge status-livree">Livrée</span>
+                                {% elif commande.statut == 'annulee' %}
+                                    <span class="status-badge status-annulee">Annulée</span>
                                 {% else %}
-                                    <span class="text-muted">—</span>
+                                    <span class="badge bg-secondary">{{ commande.get_statut_display }}</span>
                                 {% endif %}
                             </td>
-                            <td class="text-muted small">{{ commande.date_creation|date:"d/m/Y H:i" }}</td>
+                            <td class="text-muted small">
+                                <div><i class="bi bi-calendar-event me-1"></i>{{ commande.date_creation|date:"d/m/y H:i" }}</div>
+                                {% if commande.vendeur_confirmateur %}
+                                <div class="mt-1" title="Confirmé par {{ commande.vendeur_confirmateur.username }} le {{ commande.date_confirmation|date:'d/m/y H:i' }}">
+                                    <i class="bi bi-person-check me-1 text-success"></i>{{ commande.vendeur_confirmateur.username }}
+                                </div>
+                                {% endif %}
+                            </td>
                             <td class="pe-4 text-center">
-                                {% if commande.statut == 'en_attente' %}
-                                <div class="d-flex gap-1 justify-content-center flex-wrap">
-                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="d-inline">
+                                {% if commande.statut == 'attente' or commande.statut == 'en_attente' %}
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value="confirmer">
-                                        <button type="submit" class="btn btn-success btn-sm fw-semibold">
-                                            <i class="bi bi-check-lg"></i> Confirmer
+                                        <button type="submit" class="btn btn-sm btn-success px-3 fw-semibold" title="Confirmer">
+                                            <i class="bi bi-check-lg"></i>
                                         </button>
                                     </form>
-                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="d-inline">
+                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value="annuler">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm"
-                                            onclick="return confirm('Annuler la commande #{{ commande.id }} ?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-2" onclick="return confirm('Annuler la commande #{{ commande.id }} ?')" title="Annuler">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
                                     </form>
                                 </div>
-
                                 {% elif commande.statut == 'confirmee' %}
-                                <div class="d-flex gap-1 justify-content-center">
-                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="expediee">
-                                        <button type="submit" class="btn btn-info btn-sm text-white fw-semibold">
-                                            <i class="bi bi-truck me-1"></i> Expédier
-                                        </button>
-                                    </form>
-                                </div>
-
+                                <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="text-center">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="expediee">
+                                    <button type="submit" class="btn btn-sm btn-info text-dark fw-semibold px-3">
+                                        <i class="bi bi-truck me-1"></i> Expédier
+                                    </button>
+                                </form>
                                 {% elif commande.statut == 'expediee' %}
-                                <div class="d-flex gap-1 justify-content-center">
-                                    <form method="POST" action="{% url 'confirmer_commande' commande.id %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="livree">
-                                        <button type="submit" class="btn btn-primary btn-sm fw-semibold">
-                                            <i class="bi bi-check2-all me-1"></i> Livrée
-                                        </button>
-                                    </form>
-                                </div>
-
+                                <form method="POST" action="{% url 'confirmer_commande' commande.id %}" class="text-center">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="livree">
+                                    <button type="submit" class="btn btn-sm btn-primary fw-semibold px-3">
+                                        <i class="bi bi-box-seam me-1"></i> Livrée
+                                    </button>
+                                </form>
                                 {% else %}
                                 <span class="text-muted small">—</span>
                                 {% endif %}
@@ -172,8 +141,8 @@
             </div>
             {% else %}
             <div class="text-center py-5">
-                <i class="bi bi-inbox text-muted" style="font-size:3.5rem;"></i>
-                <p class="text-muted mt-3 mb-0 fs-5">Aucune commande dans cette catégorie.</p>
+                <i class="bi bi-inbox empty-state-icon text-muted" style="font-size: 3.5rem;"></i>
+                <p class="text-muted mt-3 mb-0 fs-5 fw-medium">Aucune commande trouvée.</p>
             </div>
             {% endif %}
         </div>

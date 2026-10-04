@@ -17,3 +17,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "statut",
         "methode",
     )
+
+    list_editable = (
+        "statut",
+    )

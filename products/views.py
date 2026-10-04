@@ -78,6 +78,12 @@ def product_detail(request, slug):
     stars_filled = range(avg_rating_int)
     stars_empty = range(5 - avg_rating_int)
 
+    # Produits Similaires
+    related_products = Product.objects.filter(
+        categorie=produit.categorie, 
+        actif=True
+    ).exclude(id=produit.id).order_by('?')[:4]
+
     context = {
         "produit": produit,
         "reviews": reviews,
@@ -87,6 +93,7 @@ def product_detail(request, slug):
         "review_form": review_form,
         "already_reviewed": user_review is not None,
         "in_wishlist": in_wishlist,
+        "related_products": related_products,
     }
 
     return render(

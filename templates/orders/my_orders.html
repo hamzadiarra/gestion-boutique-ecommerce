@@ -1,113 +1,104 @@
 {% extends "base.html" %}
 
-
-{% block title %}
-Mes commandes
-{% endblock %}
-
+{% block title %}Mes Commandes — Gestion Boutique{% endblock %}
 
 {% block content %}
-
-<div class="container mt-5">
-
-    <h2>
-        Mes commandes 📦
-    </h2>
-
+<div class="container mt-5 mb-5 fade-in">
+    
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Mes commandes</h1>
+            <p class="text-muted mb-0">Suivez l'état de vos achats et gérez vos paiements.</p>
+        </div>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary d-none d-sm-inline-flex align-items-center gap-2">
+            <i class="bi bi-shop"></i> Boutique
+        </a>
+    </div>
 
     {% if commandes %}
-
-    <table class="table table-bordered mt-4">
-
-        <thead>
-
-            <tr>
-                <th>Numéro</th>
-                <th>Date</th>
-                <th>Statut</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-
-
+    <div class="row stagger-children">
         {% for commande in commandes %}
+        <div class="col-12 mb-3">
+            <div class="order-card scroll-animate-scale d-flex flex-column flex-md-row align-items-md-center gap-4">
+                
+                <!-- Info principale -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary-subtle text-primary rounded d-flex align-items-center justify-content-center p-3">
+                        <i class="bi bi-box-seam fs-3"></i>
+                    </div>
+                    <div>
+                        <div class="order-number mb-1">Commande #{{ commande.id }}</div>
+                        <div class="text-muted small">
+                            <i class="bi bi-calendar-event me-1"></i> {{ commande.date_creation|date:"d M Y à H:i" }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statut & Total -->
+                <div class="d-flex flex-wrap gap-4 align-items-center ms-md-auto">
+                    
+                    <div class="d-flex flex-column">
+                        <span class="text-muted small mb-1">Statut</span>
+                        {% if commande.statut == 'attente' %}
+                            <span class="status-badge status-attente">{{ commande.get_statut_display }}</span>
+                        {% elif commande.statut == 'confirmee' %}
+                            <span class="status-badge status-confirmee">{{ commande.get_statut_display }}</span>
+                        {% elif commande.statut == 'expediee' %}
+                            <span class="status-badge status-expediee">{{ commande.get_statut_display }}</span>
+                        {% elif commande.statut == 'livree' %}
+                            <span class="status-badge status-livree">{{ commande.get_statut_display }}</span>
+                        {% elif commande.statut == 'annulee' %}
+                            <span class="status-badge status-annulee">{{ commande.get_statut_display }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ commande.get_statut_display }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex flex-column">
+                        <span class="text-muted small mb-1">Paiement</span>
+                        {% if commande.payment %}
+                            <span class="status-badge status-paye"><i class="bi bi-check-circle-fill"></i> Payé</span>
+                        {% else %}
+                            <span class="status-badge status-attente"><i class="bi bi-clock-history"></i> En attente</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex flex-column align-items-end" style="min-width: 100px;">
+                        <span class="text-muted small mb-1">Total</span>
+                        <span class="fw-bold fs-5 text-primary">{{ commande.total }} FCFA</span>
+                    </div>
 
-            <tr>
-
-                <td>
-                    #{{ commande.id }}
-                </td>
-
-
-                <td>
-                    {{ commande.date_creation }}
-                </td>
-
-
-                <td>
-                    {{ commande.get_statut_display }}
-                </td>
-
-
-                <td>
-                    {{ commande.total }} FCFA
-                </td>
-
-
-                <td>
-
-                    <a href="{% url 'order_detail' commande.id %}"
-                       class="btn btn-info btn-sm">
-                        Voir
-                    </a>
-
-
-                    {% if not commande.payment %}
-
-                    <a href="{% url 'payment_form' commande.id %}"
-                       class="btn btn-success btn-sm">
-                        Payer 💳
-                    </a>
-
-                    {% else %}
-
-                    <span class="badge bg-success">
-                        Payé
-                    </span>
-
-                    {% endif %}
-
-
-                </td>
-
-
-            </tr>
-
-
-        {% endfor %}
-
-
-        </tbody>
-
-
-    </table>
-
-
-    {% else %}
-
-        <div class="alert alert-info">
-            Vous n'avez aucune commande.
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 border-start ps-4 ms-2">
+                        <a href="{% url 'order_detail' commande.id %}" class="btn btn-outline-primary" title="Voir les détails">
+                            <i class="bi bi-eye"></i><span class="d-none d-sm-inline ms-2">Détails</span>
+                        </a>
+                        
+                        {% if not commande.payment %}
+                        <a href="{% url 'payment_form' commande.id %}" class="btn btn-success" title="Procéder au paiement">
+                            <i class="bi bi-credit-card"></i><span class="d-none d-sm-inline ms-2">Payer</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                
+            </div>
         </div>
-
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row scroll-animate">
+        <div class="col-12">
+            <div class="empty-state card glass-card">
+                <i class="bi bi-box-seam empty-state-icon"></i>
+                <h4 class="empty-state-title">Aucune commande</h4>
+                <p class="empty-state-text">Vous n'avez pas encore passé de commande. Découvrez nos produits et faites votre premier achat !</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary mt-4 px-4 py-2">Parcourir la boutique</a>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
-
 </div>
-
-
 {% endblock %}

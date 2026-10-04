@@ -23,10 +23,6 @@ urlpatterns = [
     path("vendeur/produits/<int:produit_id>/modifier/", vendeur_views.vendeur_modifier_produit, name="vendeur_modifier_produit"),
     path("vendeur/produits/<int:produit_id>/toggle/", vendeur_views.vendeur_toggle_produit, name="vendeur_toggle_produit"),
 
-    # Dashboard vendeur — Paniers clients
-    path("vendeur/paniers/", vendeur_views.vendeur_paniers, name="vendeur_paniers"),
-
     # Dashboard Comptable
     path("comptable/", comptable_views.comptable_dashboard, name="comptable_dashboard"),
-    path("comptable/calculs/", comptable_views.comptable_calculs, name="comptable_calculs"),
 ]

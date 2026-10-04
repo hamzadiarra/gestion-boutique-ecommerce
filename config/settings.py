@@ -38,10 +38,6 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    "unfold",
-    "unfold.contrib.filters",
-    "unfold.contrib.forms",
-    "unfold.contrib.inlines",
     "django.contrib.admin",
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,22 +45,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Applications externes
-'crispy_forms',
-'crispy_bootstrap5',
-'django_filters',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'django_filters',
 
-# Applications du projet
-'core',
-'accounts',
-'products',
-'categories',
-'cart',
-'orders',
-'payments',
-# 'delivery',
-'reviews',
-'dashboard',
-'notifications',
+    # Applications du projet
+    'core',
+    'accounts',
+    'products',
+    'categories',
+    'cart',
+    'orders',
+    'payments',
+    # 'delivery',
+    'reviews',
+    'dashboard',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -163,11 +159,11 @@ LOGIN_URL = 'login'
 # CONFIGURATION DJANGO UNFOLD (ADMIN PANEL)
 # ==========================================
 UNFOLD = {
-    "SITE_TITLE": "Gestion Boutique Admin",
-    "SITE_HEADER": "👑 Gestion Boutique — Administration",
+    "SITE_TITLE": "Gestion Boutique",
+    "SITE_HEADER": "Gestion Boutique",
     "SITE_URL": "/",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
     "THEME": "auto",
     "BORDER_RADIUS": "12px",
-}
+}

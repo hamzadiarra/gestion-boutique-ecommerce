@@ -1,0 +1,17 @@
+start
+03_panier_client.png ERROR Error: TypeError: Cannot set property cookie of [object Object] which has only a getter
+    at __playwrightEvaluate (<anonymous>:2641:60)
+    at <anonymous>:2642:14
+    at runUserScript (<anonymous>:2643:10)
+    at <anonymous>:2647:10
+    at <anonymous>:2648:3
+    at kI (C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4098:379)
+    at C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:1451:964
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:2429
+    at async FP (C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:6993)
+    at async C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:7255
+    at async Object.WH [as withCommandTelemetry] (C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:7231)
+    at async C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:2387
+    at async Object.run (C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:3768)
+    at async Jo.executeAgentCommand (C:\Users\hamza\.codex\plugins\cache\openai-bundled\browser\26.803.81509\scripts\browser-client.mjs:4122:2300)

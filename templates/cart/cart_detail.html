@@ -1,106 +1,118 @@
 {% extends "base.html" %}
 
-{% block title %}Mon panier{% endblock %}
+{% block title %}Mon Panier — Gestion Boutique{% endblock %}
 
 {% block content %}
-
-<div class="container mt-5">
-
-    <h2>Mon panier 🛒</h2>
+<div class="container mt-5 mb-5 fade-in">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Mon panier</h1>
+            <p class="text-muted mb-0">Vérifiez vos articles avant de passer commande.</p>
+        </div>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary px-4 shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i> Continuer les achats
+        </a>
+    </div>
 
     {% if articles %}
+    <div class="row g-4">
+        <!-- Liste des articles (Gauche) -->
+        <div class="col-lg-8 stagger-children">
+            {% for article in articles %}
+            <div class="cart-item-card mb-3 scroll-animate-left">
+                {% if article.produit.image %}
+                    <img src="{{ article.produit.image.url }}" alt="{{ article.produit.nom }}" class="cart-item-img shadow-sm">
+                {% else %}
+                    <div class="cart-item-placeholder shadow-sm">
+                        <i class="bi bi-image text-muted fs-3"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="flex-grow-1">
+                    <h5 class="fw-bold mb-1">
+                        <a href="{% url 'product_detail' article.produit.slug %}" class="text-decoration-none text-reset">
+                            {{ article.produit.nom }}
+                        </a>
+                    </h5>
+                    <p class="text-muted small mb-2">{{ article.produit.marque }}</p>
+                    <div class="fw-semibold text-primary">{{ article.prix }} FCFA</div>
+                </div>
 
-    <table class="table table-bordered">
+                <div class="d-flex flex-column align-items-end gap-3 ms-auto">
+                    <div class="quantity-control">
+                        <a href="{% url 'decrease_quantity' article.id %}" title="Diminuer">
+                            <i class="bi bi-dash"></i>
+                        </a>
+                        <span>{{ article.quantite }}</span>
+                        <a href="{% url 'increase_quantity' article.id %}" title="Augmenter">
+                            <i class="bi bi-plus"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="fw-bold fs-5">{{ article.sous_total }} FCFA</div>
+                        <a href="{% url 'remove_from_cart' article.id %}" class="btn btn-sm btn-outline-danger px-2" title="Retirer l'article">
+                            <i class="bi bi-trash3"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-        <thead>
-            <tr>
-                <th>Produit</th>
-                <th>Prix</th>
-                <th>Quantité</th>
-                <th>Sous-total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+        <!-- Résumé (Droite) -->
+        <div class="col-lg-4 scroll-animate-right">
+            <div class="cart-summary shadow-sm">
+                <h4 class="fw-bold mb-4 pb-3 border-bottom">Résumé de la commande</h4>
+                
+                <div class="d-flex justify-content-between mb-3 text-secondary">
+                    <span>Sous-total ({{ articles|length }} articles)</span>
+                    <span class="fw-medium">{{ total }} FCFA</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-4 text-secondary">
+                    <span>Frais de livraison</span>
+                    <span class="text-success fw-medium">Gratuit</span>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top mb-4">
+                    <span class="fs-5 fw-semibold">Total</span>
+                    <span class="cart-summary-total">{{ total }} FCFA</span>
+                </div>
 
-        <tbody>
-
-        {% for article in articles %}
-
-            <tr>
-
-                <td>
-                    {{ article.produit.nom }}
-                </td>
-
-                <td>
-                    {{ article.prix }} FCFA
-                </td>
-
-                <td>
-
-                    <a href="{% url 'decrease_quantity' article.id %}" 
-                       class="btn btn-secondary btn-sm">
-                        -
-                    </a>
-
-                    {{ article.quantite }}
-
-                    <a href="{% url 'increase_quantity' article.id %}" 
-                       class="btn btn-primary btn-sm">
-                        +
-                    </a>
-
-                </td>
-
-                <td>
-                    {{ article.sous_total }} FCFA
-                </td>
-
-                <td>
-                    <a href="{% url 'remove_from_cart' article.id %}" 
-                       class="btn btn-danger btn-sm">
-                        Supprimer
-                    </a>
-                </td>
-
-            </tr>
-
-        {% endfor %}
-
-        </tbody>
-
-    </table>
-
-
-    <div class="row mt-4">
-        <div class="col-md-6 ms-auto">
-            <div class="card p-3 shadow-sm bg-light">
                 <form action="{% url 'create_order' %}" method="post">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">📝 Note d'achat / Instructions de livraison :</label>
-                        <textarea name="note" class="form-control" rows="3" placeholder="Ex: Livraison à domicile, appeler avant d'arriver..."></textarea>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary">Note ou instruction de livraison</label>
+                        <textarea name="note" class="form-control bg-body-tertiary" rows="3" placeholder="Ex: Livrer à l'accueil, code porte 1234..."></textarea>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0 fw-bold">Total : <span class="text-success">{{ total }} FCFA</span></h4>
-                        <button type="submit" class="btn btn-success btn-lg">
-                            Passer la commande 📦
-                        </button>
-                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold fs-5 btn-pulse shadow">
+                        Valider la commande <i class="bi bi-check2-circle ms-2"></i>
+                    </button>
                 </form>
+                
+                <div class="mt-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-muted small">
+                        <i class="bi bi-shield-lock"></i> Paiement 100% sécurisé
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
     {% else %}
-
-        <p>
-            Votre panier est vide.
-        </p>
-
+    <div class="row scroll-animate">
+        <div class="col-12">
+            <div class="empty-state card glass-card">
+                <i class="bi bi-cart-x empty-state-icon"></i>
+                <h4 class="empty-state-title">Votre panier est vide</h4>
+                <p class="empty-state-text">Vous n'avez pas encore ajouté d'articles à votre panier. Découvrez nos produits et trouvez votre bonheur !</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary mt-4 px-4 py-2">Parcourir la boutique</a>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
 </div>
-
 {% endblock %}

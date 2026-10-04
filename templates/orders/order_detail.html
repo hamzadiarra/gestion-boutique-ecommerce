@@ -1,126 +1,131 @@
 {% extends "base.html" %}
 
-
-{% block title %}
-Commande #{{ commande.id }}
-{% endblock %}
-
+{% block title %}Commande #{{ commande.id }} — Gestion Boutique{% endblock %}
 
 {% block content %}
+<div class="container mt-5 mb-5 fade-in">
+    
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'my_orders' %}" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i> Mes commandes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Commande #{{ commande.id }}</li>
+        </ol>
+    </nav>
 
-<div class="container mt-5">
-
-    <h2>
-        📦 Détail de la commande #{{ commande.id }}
-    </h2>
-
-    <div class="card shadow mt-4">
-
-        <div class="card-header d-flex justify-content-between align-items-center">
-
-            <span>
-                <strong>Date :</strong>
-                {{ commande.date_creation|date:"d/m/Y à H:i" }}
-            </span>
-
-            <span class="badge 
-                {% if commande.statut == 'en_attente' %}bg-warning text-dark
-                {% elif commande.statut == 'confirmee' %}bg-info
-                {% elif commande.statut == 'expediee' %}bg-primary
-                {% elif commande.statut == 'livree' %}bg-success
-                {% endif %}">
-                {{ commande.get_statut_display }}
-            </span>
-
-        </div>
-
-        <div class="card-body">
-
-            <table class="table table-bordered">
-
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Prix unitaire</th>
-                        <th>Quantité</th>
-                        <th>Sous-total</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                {% for item in commande.items.all %}
-
-                    <tr>
-                        <td>
-                            {{ item.produit.nom }}
-                        </td>
-                        <td>
-                            {{ item.prix }} FCFA
-                        </td>
-                        <td>
-                            {{ item.quantite }}
-                        </td>
-                        <td>
-                            {{ item.sous_total }} FCFA
-                        </td>
-                    </tr>
-
-                {% endfor %}
-
-                </tbody>
-
-                <tfoot>
-                    <tr class="table-dark">
-                        <th colspan="3" class="text-end">
-                            Total :
-                        </th>
-                        <th>
-                            {{ commande.total }} FCFA
-                        </th>
-                    </tr>
-                </tfoot>
-
-            </table>
-
-            {% if commande.note %}
-            <div class="card bg-light border-0 mb-4">
-                <div class="card-body">
-                    <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Note d'achat :</h6>
-                    <p class="mb-0 text-secondary italic">{{ commande.note }}</p>
+    <!-- En-tête -->
+    <div class="card glass-card border-0 p-4 mb-4 scroll-animate">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+                    <i class="bi bi-receipt fs-3"></i>
+                </div>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">Commande #{{ commande.id }}</h1>
+                    <span class="text-muted small"><i class="bi bi-calendar-event me-1"></i> {{ commande.date_creation|date:"d M Y à H:i" }}</span>
                 </div>
             </div>
-            {% endif %}
-
-            {% if commande.payment %}
-
-            <div class="alert alert-success">
-                <strong>Paiement :</strong>
-                {{ commande.payment.get_methode_display }} —
-                {{ commande.payment.get_statut_display }}
+            <div class="d-flex gap-3 align-items-center">
+                {% if commande.statut == 'attente' %}
+                    <span class="status-badge status-attente">{{ commande.get_statut_display }}</span>
+                {% elif commande.statut == 'confirmee' %}
+                    <span class="status-badge status-confirmee">{{ commande.get_statut_display }}</span>
+                {% elif commande.statut == 'expediee' %}
+                    <span class="status-badge status-expediee">{{ commande.get_statut_display }}</span>
+                {% elif commande.statut == 'livree' %}
+                    <span class="status-badge status-livree">{{ commande.get_statut_display }}</span>
+                {% elif commande.statut == 'annulee' %}
+                    <span class="status-badge status-annulee">{{ commande.get_statut_display }}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{{ commande.get_statut_display }}</span>
+                {% endif %}
             </div>
-
-            {% else %}
-
-            <a href="{% url 'payment_form' commande.id %}"
-               class="btn btn-success no-print">
-                Payer cette commande 💳
-            </a>
-
-            {% endif %}
-
         </div>
-
     </div>
 
-    <a href="{% url 'my_orders' %}" class="btn btn-secondary mt-3 no-print">
-        ← Retour à mes commandes
-    </a>
+    <!-- Tableau des articles -->
+    <div class="card glass-card border-0 mb-4 overflow-hidden scroll-animate" style="animation-delay: 0.1s;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr style="background: var(--color-card-bg);">
+                        <th class="ps-4 py-3 fw-semibold text-muted text-uppercase small">Produit</th>
+                        <th class="py-3 fw-semibold text-muted text-uppercase small">Prix unitaire</th>
+                        <th class="py-3 fw-semibold text-muted text-uppercase small">Quantité</th>
+                        <th class="pe-4 py-3 fw-semibold text-muted text-uppercase small text-end">Sous-total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in commande.items.all %}
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <div class="d-flex align-items-center gap-3">
+                                {% if item.produit.image %}
+                                <img src="{{ item.produit.image.url }}" alt="{{ item.produit.nom }}" class="rounded shadow-sm" style="width: 48px; height: 48px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded bg-body-tertiary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <span class="fw-semibold">{{ item.produit.nom }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3">{{ item.prix }} FCFA</td>
+                        <td class="py-3"><span class="badge bg-body-tertiary text-body px-3 py-2 fw-medium">× {{ item.quantite }}</span></td>
+                        <td class="pe-4 py-3 text-end fw-bold">{{ item.sous_total }} FCFA</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr style="background: var(--color-card-bg);">
+                        <th colspan="3" class="text-end py-3 pe-3 text-muted text-uppercase small">Total</th>
+                        <th class="text-end pe-4 py-3 fs-5 text-primary">{{ commande.total }} FCFA</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
-    <button onclick="window.print()" class="btn btn-outline-dark mt-3 ms-2 no-print">
-        <i class="bi bi-printer"></i> Imprimer le bon d'achat
-    </button>
+    <div class="row g-4">
+        <!-- Note -->
+        {% if commande.note %}
+        <div class="col-md-6 scroll-animate" style="animation-delay: 0.2s;">
+            <div class="card glass-card border-0 p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="bi bi-sticky text-warning me-2"></i>Note de livraison</h5>
+                <p class="mb-0 text-secondary" style="line-height: 1.7;">{{ commande.note }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Paiement & Actions -->
+        <div class="{% if commande.note %}col-md-6{% else %}col-12{% endif %} scroll-animate" style="animation-delay: 0.3s;">
+            <div class="card glass-card border-0 p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="bi bi-credit-card text-success me-2"></i>Paiement</h5>
+                {% if commande.payment %}
+                    <div class="d-flex align-items-center gap-3 p-3 rounded bg-success-subtle mb-3">
+                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        <div>
+                            <div class="fw-semibold text-success">Paiement {{ commande.payment.get_statut_display }}</div>
+                            <div class="text-muted small">Via {{ commande.payment.get_methode_display }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="d-flex align-items-center gap-3 p-3 rounded bg-warning-subtle mb-3">
+                        <i class="bi bi-clock-history text-warning fs-4"></i>
+                        <div>
+                            <div class="fw-semibold text-warning">En attente de paiement</div>
+                            <div class="text-muted small">Cliquez ci-dessous pour procéder</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'payment_form' commande.id %}" class="btn btn-success w-100 py-2 fw-semibold no-print mb-2">
+                        <i class="bi bi-credit-card me-2"></i> Payer cette commande
+                    </a>
+                {% endif %}
+                <button onclick="window.print()" class="btn btn-outline-secondary w-100 no-print">
+                    <i class="bi bi-printer me-2"></i> Imprimer le récapitulatif
+                </button>
+            </div>
+        </div>
+    </div>
 
 </div>
-
 {% endblock %}

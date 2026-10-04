@@ -21,3 +21,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = (
         'active',
     )
+
+    list_editable = (
+        'active',
+    )

@@ -1,73 +1,88 @@
 {% extends "base.html" %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion — Gestion Boutique{% endblock %}
 
 {% block content %}
-
-<div class="container mt-5" style="max-width:500px;">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-success text-white text-center">
-            <h3>🔐 Connexion</h3>
+<div class="auth-page">
+    <!-- Orb elements are handled by CSS pseudo-elements, but adding the 3rd orb -->
+    <div class="auth-orb-3"></div>
+    
+    <div class="auth-card scroll-animate-scale animate-in" style="animation-delay: 0.1s;">
+        <div class="auth-icon">
+            <i class="bi bi-person-fill fs-2 text-white"></i>
         </div>
-
-        <div class="card-body">
-
-            <form method="post">
-
-                {% csrf_token %}
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Nom d'utilisateur
-                    </label>
-
-                    <input
-                        type="text"
-                        name="username"
-                        class="form-control"
-                        required>
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Mot de passe
-                    </label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        class="form-control"
-                        required>
-
-                </div>
-
-                <button class="btn btn-success w-100">
-                    Se connecter
-                </button>
-
-            </form>
-
-            <hr>
-
-            <p class="text-center">
-
-                Vous n'avez pas encore de compte ?
-
-                <a href="{% url 'register' %}">
-                    Créer un compte
-                </a>
-
-            </p>
-
+        
+        <h3 class="text-center fw-bold mb-4">Bienvenue !</h3>
+        
+        {% if error %}
+        <div class="alert alert-danger d-flex align-items-center mb-4" role="alert" style="background: rgba(220, 53, 69, 0.2); border-color: rgba(220, 53, 69, 0.3); color: #ff6b6b;">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+            <div>
+                {{ error }}
+            </div>
         </div>
-
+        {% endif %}
+        
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label class="form-label">Nom d'utilisateur</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0" style="border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6);">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" name="username" class="form-control border-start-0 ps-0" placeholder="Votre identifiant" required autofocus>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label d-flex justify-content-between">
+                    Mot de passe
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0" style="border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6);">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" name="password" id="passwordField" class="form-control border-start-0 border-end-0 ps-0" placeholder="••••••••" required>
+                    <button class="btn border-start-0" type="button" id="togglePassword" title="Afficher/Masquer le mot de passe">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100 btn-pulse mb-3">
+                Se connecter
+            </button>
+        </form>
+        
+        <div class="auth-divider">Nouveau sur la plateforme ?</div>
+        
+        <p class="text-center mb-0">
+            <a href="{% url 'register' %}" class="d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-person-plus"></i> Créer un compte
+            </a>
+        </p>
     </div>
-
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('passwordField');
+    
+    if (togglePassword && passwordField) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
+    }
+});
+</script>
 {% endblock %}

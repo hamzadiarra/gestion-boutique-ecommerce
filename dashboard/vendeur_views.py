@@ -1,36 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Sum, Count
-from django.utils import timezone
 from django.utils.text import slugify
 
 from accounts.decorators import vendeur_required
 from products.models import Product
 from categories.models import Category
-from orders.models import Order, OrderItem
-from cart.models import Cart, CartItem
+from orders.models import Order
+from orders.services import BusinessRuleError, change_order_status
 from .models import Vente, log_activity
+from .services import create_direct_sale, seller_stats
 
 
 @vendeur_required
 def vendeur_dashboard(request):
     """Dashboard principal du vendeur avec ses statistiques."""
 
-    aujourd_hui = timezone.now().date()
-    debut_mois = aujourd_hui.replace(day=1)
-
-    # Ventes du vendeur
+    stats = seller_stats(request.user)
     mes_ventes = Vente.objects.filter(vendeur=request.user)
-    ventes_jour = mes_ventes.filter(date_vente__date=aujourd_hui)
-    ventes_mois = mes_ventes.filter(date_vente__date__gte=debut_mois)
-
-    # Statistiques
-    total_ventes_jour = ventes_jour.aggregate(Sum("montant_total"))["montant_total__sum"] or 0
-    total_ventes_mois = ventes_mois.aggregate(Sum("montant_total"))["montant_total__sum"] or 0
-    total_ventes_global = mes_ventes.aggregate(Sum("montant_total"))["montant_total__sum"] or 0
-    nb_ventes_jour = ventes_jour.count()
-    nb_ventes_mois = ventes_mois.count()
-    nb_ventes_total = mes_ventes.count()
 
     # Produits disponibles pour la vente
     produits = Product.objects.filter(actif=True, stock__gt=0).order_by("nom")
@@ -46,12 +32,7 @@ def vendeur_dashboard(request):
     nb_commandes_attente = Order.objects.filter(statut="en_attente").count()
 
     context = {
-        "total_ventes_jour": total_ventes_jour,
-        "total_ventes_mois": total_ventes_mois,
-        "total_ventes_global": total_ventes_global,
-        "nb_ventes_jour": nb_ventes_jour,
-        "nb_ventes_mois": nb_ventes_mois,
-        "nb_ventes_total": nb_ventes_total,
+        **stats,
         "produits": produits,
         "dernieres_ventes": dernieres_ventes,
         "commandes_en_attente": commandes_en_attente,
@@ -76,50 +57,32 @@ def enregistrer_vente(request):
 
     try:
         quantite = int(quantite)
-        if quantite <= 0:
-            raise ValueError
     except (ValueError, TypeError):
         messages.error(request, "La quantité doit être un nombre positif.")
         return redirect("vendeur_dashboard")
 
     produit = get_object_or_404(Product, id=produit_id, actif=True)
 
-    # Vérifier le stock
-    if quantite > produit.stock:
-        messages.error(
-            request,
-            f"Stock insuffisant pour « {produit.nom} » — disponible : {produit.stock}, demandé : {quantite}."
+    try:
+        vente = create_direct_sale(
+            vendeur=request.user,
+            produit=produit,
+            quantite=quantite,
+            methode_paiement=methode_paiement,
+            reference_client=reference_client,
+            notes=notes,
         )
+    except BusinessRuleError as exc:
+        messages.error(request, str(exc))
         return redirect("vendeur_dashboard")
-
-    # Calculer le montant
-    prix_unitaire = produit.prix_promotion if produit.prix_promotion else produit.prix
-    montant_total = prix_unitaire * quantite
-
-    # Créer la vente
-    vente = Vente.objects.create(
-        vendeur=request.user,
-        produit=produit,
-        quantite=quantite,
-        prix_unitaire=prix_unitaire,
-        montant_total=montant_total,
-        methode_paiement=methode_paiement,
-        reference_client=reference_client or None,
-        notes=notes or None,
-    )
-
-    # Mettre à jour le stock
-    produit.stock -= quantite
-    produit.quantite_vendue += quantite
-    produit.save()
 
     # Logger l'activité
     log_activity(
         user=request.user,
         action="vente_creee",
         details=(
-            f"Vente #{vente.id} — {produit.nom} x{quantite} à {prix_unitaire} FCFA/unité. "
-            f"Total : {montant_total} FCFA. Paiement : {vente.get_methode_paiement_display()}. "
+            f"Vente #{vente.id} - {produit.nom} x{vente.quantite} à {vente.prix_unitaire} FCFA/unité. "
+            f"Total : {vente.montant_total} FCFA. Paiement : {vente.get_methode_paiement_display()}. "
             f"Client : {reference_client or 'Non spécifié'}. Stock restant : {produit.stock}."
         ),
         request=request,
@@ -128,7 +91,7 @@ def enregistrer_vente(request):
 
     messages.success(
         request,
-        f"✅ Vente #{vente.id} enregistrée — {produit.nom} x{quantite} = {montant_total} FCFA"
+        f"Vente #{vente.id} enregistrée - {produit.nom} x{vente.quantite} = {vente.montant_total} FCFA"
     )
     return redirect("vendeur_dashboard")
 
@@ -198,11 +161,13 @@ def confirmer_commande(request, commande_id):
     commande = get_object_or_404(Order, id=commande_id)
     action = request.POST.get("action")
 
+    try:
+        change_order_status(commande, action, user=request.user)
+    except BusinessRuleError as exc:
+        messages.error(request, str(exc))
+        return redirect("vendeur_commandes")
+
     if action == "confirmer":
-        commande.statut = "confirmee"
-        commande.vendeur_confirmateur = request.user
-        commande.date_confirmation = timezone.now()
-        commande.save()
 
         log_activity(
             user=request.user,
@@ -211,29 +176,15 @@ def confirmer_commande(request, commande_id):
             request=request,
             niveau="info"
         )
-        messages.success(request, f"✅ Commande #{commande.id} confirmée avec succès !")
+        messages.success(request, f"Commande #{commande.id} confirmée avec succès.")
 
     elif action == "expediee":
-        commande.statut = "expediee"
-        commande.save()
-        messages.success(request, f"🚚 Commande #{commande.id} marquée comme expédiée.")
+        messages.success(request, f"Commande #{commande.id} marquée comme expédiée.")
 
     elif action == "livree":
-        commande.statut = "livree"
-        commande.save()
-        messages.success(request, f"📦 Commande #{commande.id} marquée comme livrée.")
+        messages.success(request, f"Commande #{commande.id} marquée comme livrée.")
 
     elif action == "annuler":
-        if commande.statut == "en_attente":
-            # Remettre le stock des produits
-            for item in commande.items.all():
-                item.produit.stock += item.quantite
-                item.produit.quantite_vendue -= item.quantite
-                item.produit.save()
-
-        commande.statut = "annulee"
-        commande.save()
-
         log_activity(
             user=request.user,
             action="autre",
@@ -241,7 +192,7 @@ def confirmer_commande(request, commande_id):
             request=request,
             niveau="warning"
         )
-        messages.warning(request, f"❌ Commande #{commande.id} annulée.")
+        messages.warning(request, f"Commande #{commande.id} annulée.")
 
     else:
         messages.error(request, "Action non reconnue.")
@@ -353,7 +304,7 @@ def vendeur_ajouter_produit(request):
             niveau="info"
         )
 
-        messages.success(request, f"✅ Produit « {nom} » ajouté avec succès !")
+        messages.success(request, f"Produit « {nom} » ajouté avec succès.")
         return redirect("vendeur_liste_produits")
 
     return render(request, "dashboard/vendeur_ajouter_produit.html", {"categories": categories})
@@ -427,7 +378,7 @@ def vendeur_modifier_produit(request, produit_id):
             niveau="info"
         )
 
-        messages.success(request, f"✅ Produit « {nom} » modifié avec succès !")
+        messages.success(request, f"Produit « {nom} » modifié avec succès.")
         return redirect("vendeur_liste_produits")
 
     return render(request, "dashboard/vendeur_modifier_produit.html", {
@@ -450,25 +401,3 @@ def vendeur_toggle_produit(request, produit_id):
 
     return redirect("vendeur_liste_produits")
 
-
-# =============================================
-# GESTION DES PANIERS (Vendeur)
-# =============================================
-
-@vendeur_required
-def vendeur_paniers(request):
-    """Vue des paniers actifs des clients."""
-
-    paniers = Cart.objects.select_related("utilisateur").prefetch_related(
-        "items__produit"
-    ).exclude(items=None).order_by("-date_creation")
-
-    # Valeur totale de tous les paniers actifs
-    total_paniers = sum(panier.total() for panier in paniers)
-
-    context = {
-        "paniers": paniers,
-        "nb_paniers": paniers.count(),
-        "total_paniers": total_paniers,
-    }
-    return render(request, "dashboard/vendeur_paniers.html", context)

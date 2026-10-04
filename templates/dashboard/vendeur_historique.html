@@ -3,76 +3,72 @@
 {% block title %}Historique des Ventes — Gestion Boutique{% endblock %}
 
 {% block content %}
-<div class="container mt-5 fade-in">
+<div class="container mt-4 mb-5 fade-in">
 
-    <!-- Breadcrumb & Header -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'vendeur_dashboard' %}" class="text-decoration-none">Espace
-                    Vendeur</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Historique des Ventes</li>
-        </ol>
-    </nav>
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 scroll-animate">
         <div>
-            <h2 class="fw-bold mb-1">📋 Historique des Ventes</h2>
+            <a href="{% url 'vendeur_dashboard' %}" class="btn btn-sm btn-outline-secondary mb-2">
+                <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
+            </a>
+            <h1 class="h3 fw-bold mb-1">Historique des Ventes</h1>
             <p class="text-muted mb-0">Liste complète de toutes vos transactions directes enregistrées.</p>
         </div>
-        <a href="{% url 'vendeur_dashboard' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Retour Dashboard
-        </a>
     </div>
 
     <!-- Sales Table Card -->
-    <div class="card shadow-sm border-0 mb-5">
+    <div class="card glass-card border-0 mb-5 scroll-animate" style="animation-delay: 0.1s;">
         <div class="card-body p-0">
             {% if ventes %}
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
-                            <th class="ps-4">Numéro</th>
-                            <th>Date / Heure</th>
-                            <th>Produit</th>
-                            <th>Quantité</th>
-                            <th>Prix Unitaire</th>
-                            <th>Montant Total</th>
-                            <th>Mode de Paiement</th>
-                            <th>Nom/Réf Client</th>
-                            <th class="pe-4">Notes</th>
+                            <th class="ps-4 py-3 text-muted small text-uppercase">#</th>
+                            <th class="py-3 text-muted small text-uppercase">Date & Heure</th>
+                            <th class="py-3 text-muted small text-uppercase">Produit</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Qté</th>
+                            <th class="py-3 text-muted small text-uppercase text-end">Montant Total</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Paiement</th>
+                            <th class="py-3 text-muted small text-uppercase">Client</th>
+                            <th class="pe-4 py-3 text-muted small text-uppercase">Notes</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for vente in ventes %}
                         <tr>
-                            <td class="ps-4 fw-semibold text-primary">#{{ vente.id }}</td>
-                            <td class="text-muted">{{ vente.date_vente|date:"d/m/Y H:i" }}</td>
+                            <td class="ps-4 fw-medium text-body-tertiary">#{{ vente.id }}</td>
+                            <td class="text-muted small">
+                                <div><i class="bi bi-calendar3 me-1"></i>{{ vente.date_vente|date:"d/m/y" }}</div>
+                                <div><i class="bi bi-clock me-1"></i>{{ vente.date_vente|date:"H:i" }}</div>
+                            </td>
                             <td>
-                                <div class="fw-bold text-dark">{{ vente.produit.nom }}</div>
+                                <div class="fw-semibold text-body">{{ vente.produit.nom }}</div>
                                 {% if vente.produit.marque %}
-                                <span class="badge bg-light text-dark text-muted small border"
-                                    style="font-size: 0.75rem;">{{ vente.produit.marque }}</span>
+                                <span class="text-muted small">{{ vente.produit.marque }}</span>
                                 {% endif %}
                             </td>
-                            <td>x{{ vente.quantite }}</td>
-                            <td>{{ vente.prix_unitaire }} FCFA</td>
-                            <td class="fw-bold text-success">{{ vente.montant_total }} FCFA</td>
-                            <td>
+                            <td class="text-center"><span class="badge bg-body-tertiary text-body px-2 border">×{{ vente.quantite }}</span></td>
+                            <td class="text-end fw-bold text-success">{{ vente.montant_total|floatformat:0 }} FCFA</td>
+                            <td class="text-center">
                                 <span class="badge rounded-pill 
-                                    {% if vente.methode_paiement == 'especes' %}bg-secondary-subtle text-dark
-                                    {% elif vente.methode_paiement == 'orange_money' %}bg-warning-subtle text-dark
-                                    {% elif vente.methode_paiement == 'wave' %}bg-info-subtle text-dark
+                                    {% if vente.methode_paiement == 'especes' %}bg-secondary-subtle text-secondary
+                                    {% elif vente.methode_paiement == 'orange_money' %}bg-warning-subtle text-warning
+                                    {% elif vente.methode_paiement == 'wave' %}bg-info-subtle text-info
                                     {% elif vente.methode_paiement == 'carte' %}bg-primary-subtle text-primary
-                                    {% endif %}">
+                                    {% else %}bg-body-tertiary text-muted{% endif %} px-3">
                                     {{ vente.get_methode_paiement_display }}
                                 </span>
                             </td>
-                            <td class="text-dark">{{ vente.reference_client|default:"—" }}</td>
-                            <td class="pe-4 text-muted small"
-                                style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                title="{{ vente.notes }}">
-                                {{ vente.notes|default:"—" }}
+                            <td>{{ vente.reference_client|default:"—" }}</td>
+                            <td class="pe-4 text-muted small">
+                                {% if vente.notes %}
+                                <span class="d-inline-block text-truncate" style="max-width: 150px;" title="{{ vente.notes }}">
+                                    <i class="bi bi-chat-left-text me-1 text-primary-subtle"></i>{{ vente.notes }}
+                                </span>
+                                {% else %}
+                                —
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -81,10 +77,11 @@
             </div>
             {% else %}
             <div class="text-center py-5">
-                <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
-                <p class="text-muted mt-3 mb-0">Vous n'avez pas encore enregistré de ventes.</p>
-                <a href="{% url 'vendeur_dashboard' %}" class="btn btn-primary mt-3">
-                    <i class="bi bi-cart-plus me-1"></i> Enregistrer ma première vente
+                <i class="bi bi-journal-x text-muted mb-3 d-block" style="font-size: 4rem; opacity: 0.5;"></i>
+                <h4 class="text-muted fw-medium">Aucune vente enregistrée</h4>
+                <p class="text-muted mb-4">Vous n'avez pas encore enregistré de ventes directes.</p>
+                <a href="{% url 'vendeur_dashboard' %}" class="btn btn-primary fw-semibold px-4 btn-pulse">
+                    <i class="bi bi-cart-plus me-2"></i> Enregistrer une vente
                 </a>
             </div>
             {% endif %}

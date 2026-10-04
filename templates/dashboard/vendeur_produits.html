@@ -3,147 +3,137 @@
 {% block title %}Gestion des Produits — Espace Vendeur{% endblock %}
 
 {% block content %}
-<style>
-  .product-card { border-radius:12px; transition: transform .2s, box-shadow .2s; }
-  .product-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
-  .product-img { width:60px; height:60px; object-fit:cover; border-radius:8px; background:#f0f0f0; }
-  .stock-low { background:#fff3cd; color:#856404; }
-  .stock-out { background:#f8d7da; color:#842029; }
-  .stock-ok  { background:#d1e7dd; color:#0f5132; }
-</style>
-
-<div class="container mt-4 fade-in">
+<div class="container mt-4 mb-5 fade-in">
 
     <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 scroll-animate">
         <div>
             <a href="{% url 'vendeur_dashboard' %}" class="btn btn-sm btn-outline-secondary mb-2">
-                <i class="bi bi-arrow-left me-1"></i> Retour
+                <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
             </a>
-            <h2 class="fw-bold mb-1">🗂️ Gestion des Produits</h2>
+            <h1 class="h3 fw-bold mb-1">Gestion des Produits</h1>
             <p class="text-muted mb-0">Ajoutez, modifiez ou désactivez des produits de la boutique.</p>
         </div>
-        <a href="{% url 'vendeur_ajouter_produit' %}" class="btn btn-success fw-semibold shadow-sm">
-            <i class="bi bi-plus-circle me-2"></i> Nouveau Produit
+        <a href="{% url 'vendeur_ajouter_produit' %}" class="btn btn-success fw-semibold px-4 py-2 shadow-sm btn-pulse">
+            <i class="bi bi-plus-lg me-2"></i> Nouveau Produit
         </a>
     </div>
 
-    <!-- Messages -->
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-
     <!-- Stats rapides -->
-    <div class="row g-3 mb-4">
-        <div class="col-4">
-            <div class="card text-center border-0 shadow-sm py-3">
-                <div class="fs-2 fw-bold text-primary">{{ nb_produits }}</div>
-                <small class="text-muted">Total produits</small>
+    <div class="row g-3 mb-4 stagger-children">
+        <div class="col-md-4 scroll-animate-scale">
+            <div class="card glass-card border-0 text-center py-4">
+                <div class="fs-1 fw-bold text-primary mb-1">{{ nb_produits }}</div>
+                <div class="text-muted small text-uppercase fw-semibold">Total produits</div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card text-center border-0 shadow-sm py-3">
-                <div class="fs-2 fw-bold text-success">{{ nb_actifs }}</div>
-                <small class="text-muted">Actifs</small>
+        <div class="col-md-4 scroll-animate-scale">
+            <div class="card glass-card border-0 text-center py-4">
+                <div class="fs-1 fw-bold text-success mb-1">{{ nb_actifs }}</div>
+                <div class="text-muted small text-uppercase fw-semibold">Actifs en ligne</div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card text-center border-0 shadow-sm py-3">
-                <div class="fs-2 fw-bold text-danger">{{ nb_rupture }}</div>
-                <small class="text-muted">En rupture</small>
+        <div class="col-md-4 scroll-animate-scale">
+            <div class="card glass-card border-0 text-center py-4 {% if nb_rupture > 0 %}border-bottom border-4 border-danger{% endif %}">
+                <div class="fs-1 fw-bold {% if nb_rupture > 0 %}text-danger{% else %}text-muted{% endif %} mb-1">{{ nb_rupture }}</div>
+                <div class="text-muted small text-uppercase fw-semibold">En rupture</div>
             </div>
         </div>
     </div>
 
     <!-- Recherche -->
-    <form method="GET" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control" value="{{ recherche }}" placeholder="Rechercher un produit...">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
+    <div class="card glass-card border-0 p-3 mb-4 scroll-animate" style="animation-delay: 0.1s;">
+        <form method="GET" class="d-flex gap-2 w-100">
+            <div class="position-relative flex-grow-1">
+                <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left: 1rem;"></i>
+                <input type="text" name="q" class="form-control form-control-lg bg-body-tertiary border-0 ps-5" value="{{ recherche }}" placeholder="Rechercher un produit (nom, marque)...">
+            </div>
+            <button type="submit" class="btn btn-primary px-4 fw-semibold">Rechercher</button>
             {% if recherche %}
-            <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-x-circle"></i>
+            <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-outline-secondary px-3" title="Effacer la recherche">
+                <i class="bi bi-x-lg"></i>
             </a>
             {% endif %}
-        </div>
-    </form>
+        </form>
+    </div>
 
     <!-- Tableau produits -->
-    <div class="card shadow-sm border-0">
+    <div class="card glass-card border-0 scroll-animate" style="animation-delay: 0.2s;">
         <div class="card-body p-0">
             {% if produits %}
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
+                    <thead>
                         <tr>
-                            <th class="ps-4">Produit</th>
-                            <th>Catégorie</th>
-                            <th>Prix</th>
-                            <th>Stock</th>
-                            <th>Vendus</th>
-                            <th>Statut</th>
-                            <th class="pe-4 text-center">Actions</th>
+                            <th class="ps-4 py-3 text-muted small text-uppercase">Produit</th>
+                            <th class="py-3 text-muted small text-uppercase">Catégorie</th>
+                            <th class="py-3 text-muted small text-uppercase text-end">Prix</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Stock</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Vendus</th>
+                            <th class="py-3 text-muted small text-uppercase text-center">Statut</th>
+                            <th class="pe-4 py-3 text-muted small text-uppercase text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for produit in produits %}
                         <tr>
-                            <td class="ps-4">
+                            <td class="ps-4 py-3">
                                 <div class="d-flex align-items-center gap-3">
                                     {% if produit.image %}
-                                    <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="product-img">
+                                    <div class="flex-shrink-0">
+                                        <img src="{{ produit.image.url }}" alt="{{ produit.nom }}" class="rounded shadow-sm" style="width: 48px; height: 48px; object-fit: cover;">
+                                    </div>
                                     {% else %}
-                                    <div class="product-img d-flex align-items-center justify-content-center text-muted">
-                                        <i class="bi bi-image"></i>
+                                    <div class="flex-shrink-0 bg-body-tertiary rounded d-flex align-items-center justify-content-center text-muted" style="width: 48px; height: 48px;">
+                                        <i class="bi bi-image fs-5"></i>
                                     </div>
                                     {% endif %}
                                     <div>
-                                        <div class="fw-semibold">{{ produit.nom }}</div>
-                                        {% if produit.marque %}<small class="text-muted">{{ produit.marque }}</small>{% endif %}
-                                        {% if produit.vedette %}<span class="badge bg-warning text-dark ms-1" style="font-size:.65rem;">⭐ Vedette</span>{% endif %}
+                                        <div class="fw-bold text-body">{{ produit.nom }}</div>
+                                        <div class="text-muted small">
+                                            {{ produit.marque|default:"Sans marque" }}
+                                            {% if produit.vedette %}<span class="text-warning ms-1" title="Produit vedette"><i class="bi bi-star-fill"></i></span>{% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="badge bg-light text-dark border">{{ produit.categorie.nom }}</span></td>
-                            <td>
-                                <div class="fw-semibold">{{ produit.prix }} FCFA</div>
+                            <td><span class="badge bg-body-tertiary text-body fw-normal border px-2 py-1">{{ produit.categorie.nom }}</span></td>
+                            <td class="text-end">
                                 {% if produit.prix_promotion %}
-                                <small class="text-success fw-bold">Promo: {{ produit.prix_promotion }} FCFA</small>
+                                <div class="fw-bold text-success">{{ produit.prix_promotion }} FCFA</div>
+                                <div class="text-muted small text-decoration-line-through">{{ produit.prix }} FCFA</div>
+                                {% else %}
+                                <div class="fw-bold">{{ produit.prix }} FCFA</div>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 {% if produit.stock == 0 %}
-                                <span class="badge stock-out px-2 py-1">Rupture</span>
+                                <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill">Rupture</span>
                                 {% elif produit.stock <= 5 %}
-                                <span class="badge stock-low px-2 py-1">{{ produit.stock }} (faible)</span>
+                                <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill">{{ produit.stock }} (faible)</span>
                                 {% else %}
-                                <span class="badge stock-ok px-2 py-1">{{ produit.stock }}</span>
+                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill">{{ produit.stock }}</span>
                                 {% endif %}
                             </td>
-                            <td class="text-muted">{{ produit.quantite_vendue }}</td>
-                            <td>
+                            <td class="text-center"><span class="badge bg-body-tertiary text-muted">{{ produit.quantite_vendue }}</span></td>
+                            <td class="text-center">
                                 {% if produit.actif %}
-                                <span class="badge bg-success">Actif</span>
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Actif</span>
                                 {% else %}
-                                <span class="badge bg-secondary">Inactif</span>
+                                <span class="badge bg-secondary"><i class="bi bi-dash-circle me-1"></i> Inactif</span>
                                 {% endif %}
                             </td>
                             <td class="pe-4 text-center">
-                                <div class="d-flex gap-1 justify-content-center">
-                                    <a href="{% url 'vendeur_modifier_produit' produit.id %}" class="btn btn-outline-primary btn-sm" title="Modifier">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="{% url 'vendeur_modifier_produit' produit.id %}" class="btn btn-outline-primary btn-sm px-2" title="Modifier">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form method="POST" action="{% url 'vendeur_toggle_produit' produit.id %}" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm {% if produit.actif %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                                        <button type="submit" class="btn btn-sm {% if produit.actif %}btn-outline-secondary{% else %}btn-outline-success{% endif %} px-2"
                                             title="{% if produit.actif %}Désactiver{% else %}Activer{% endif %}"
-                                            onclick="return confirm('Changer le statut de ce produit ?')">
-                                            <i class="bi bi-{% if produit.actif %}pause-circle{% else %}play-circle{% endif %}"></i>
+                                            onclick="return confirm('{% if produit.actif %}Masquer{% else %}Publier{% endif %} ce produit ?')">
+                                            <i class="bi bi-{% if produit.actif %}eye-slash{% else %}eye{% endif %}"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -155,11 +145,17 @@
             </div>
             {% else %}
             <div class="text-center py-5">
-                <i class="bi bi-box-seam text-muted" style="font-size:3.5rem;"></i>
-                <p class="text-muted mt-3 mb-0 fs-5">Aucun produit trouvé.</p>
-                <a href="{% url 'vendeur_ajouter_produit' %}" class="btn btn-success mt-3">
-                    <i class="bi bi-plus-circle me-2"></i> Ajouter un produit
+                <i class="bi bi-box-seam text-muted mb-3 d-block" style="font-size: 4rem; opacity: 0.5;"></i>
+                <h4 class="text-muted fw-medium">Aucun produit trouvé</h4>
+                {% if recherche %}
+                <p class="text-muted">Aucun produit ne correspond à votre recherche "<strong>{{ recherche }}</strong>".</p>
+                <a href="{% url 'vendeur_liste_produits' %}" class="btn btn-outline-primary mt-2">Réinitialiser la recherche</a>
+                {% else %}
+                <p class="text-muted">Vous n'avez pas encore ajouté de produits à votre catalogue.</p>
+                <a href="{% url 'vendeur_ajouter_produit' %}" class="btn btn-success mt-2">
+                    <i class="bi bi-plus-lg me-2"></i> Ajouter votre premier produit
                 </a>
+                {% endif %}
             </div>
             {% endif %}
         </div>

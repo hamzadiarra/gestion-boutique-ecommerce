@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from orders.models import Order
-from .models import Payment
+from orders.services import BusinessRuleError
+from .services import pay_order
 
 
 @login_required
@@ -19,17 +21,11 @@ def payment_form(request, order_id):
 
         methode = request.POST.get("methode")
 
-
-        paiement = Payment.objects.create(
-            commande=commande,
-            montant=commande.total(),
-            methode=methode,
-            statut="paye"
-        )
-
-
-        commande.statut = "confirmee"
-        commande.save()
+        try:
+            paiement = pay_order(commande, methode)
+        except BusinessRuleError as exc:
+            messages.error(request, str(exc))
+            return redirect("payment_form", order_id=commande.id)
 
 
         return render(

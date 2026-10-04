@@ -1,60 +1,44 @@
 {% extends "base.html" %}
 
-
-{% block title %}
-Paiement réussi
-{% endblock %}
-
+{% block title %}Paiement validé — Gestion Boutique{% endblock %}
 
 {% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card glass-card border-0 text-center p-5 scroll-animate-scale">
+                
+                <!-- Icône de succès animée -->
+                <div class="mx-auto mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" 
+                         style="width: 100px; height: 100px; background: linear-gradient(135deg, #06d6a0, #118ab2); animation: pulse 2s ease-in-out infinite;">
+                        <i class="bi bi-check-circle-fill text-white" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
 
-
-<div class="container mt-5">
-
-
-<div class="alert alert-success">
-
-<h3>
-Paiement effectué avec succès 🎉
-</h3>
-
-
-<p>
-Commande :
-#{{ paiement.commande.id }}
-</p>
-
-
-<p>
-Montant :
-{{ paiement.montant }} FCFA
-</p>
-
-
-<p>
-Méthode :
-{{ paiement.get_methode_display }}
-</p>
-
-
-<p>
-Statut :
-{{ paiement.get_statut_display }}
-</p>
-
-
+                <h2 class="fw-bold mb-2 text-success">Paiement validé !</h2>
+                <p class="text-muted mb-4">Votre paiement a été enregistré avec succès.</p>
+                
+                <div class="card bg-body-tertiary border-0 rounded-3 p-3 mb-4 text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Commande</span>
+                        <span class="fw-bold">#{{ paiement.commande.id }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Montant</span>
+                        <span class="fw-bold text-success">{{ paiement.montant }} FCFA</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Méthode</span>
+                        <span class="fw-semibold">{{ paiement.get_methode_display }}</span>
+                    </div>
+                </div>
+                
+                <a href="{% url 'my_orders' %}" class="btn btn-primary py-2 fw-semibold w-100">
+                    <i class="bi bi-bag-check me-2"></i> Voir mes commandes
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-<a href="{% url 'my_orders' %}"
-class="btn btn-primary">
-
-Voir mes commandes
-
-</a>
-
-
-</div>
-
-
 {% endblock %}

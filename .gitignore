@@ -47,3 +47,6 @@ media/
 # System files
 .DS_Store
 Thumbs.db
+
+# Temp
+tmp/

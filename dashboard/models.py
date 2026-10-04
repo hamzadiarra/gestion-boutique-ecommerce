@@ -86,15 +86,15 @@ class JournalActivite(models.Model):
     """
 
     ACTION_CHOICES = [
-        ("vente_creee", "🛒 Vente enregistrée"),
-        ("vente_modifiee", "✏️ Vente modifiée"),
-        ("vente_supprimee", "🗑️ Vente supprimée"),
-        ("connexion", "🔑 Connexion"),
-        ("deconnexion", "🚪 Déconnexion"),
-        ("stock_modifie", "📦 Stock modifié"),
-        ("prix_modifie", "💰 Prix modifié"),
-        ("acces_refuse", "⛔ Accès refusé"),
-        ("autre", "📝 Autre action"),
+        ("vente_creee", "Vente enregistrée"),
+        ("vente_modifiee", "Vente modifiée"),
+        ("vente_supprimee", "Vente supprimée"),
+        ("connexion", "Connexion"),
+        ("deconnexion", "Déconnexion"),
+        ("stock_modifie", "Stock modifié"),
+        ("prix_modifie", "Prix modifié"),
+        ("acces_refuse", "Accès refusé"),
+        ("autre", "Autre action"),
     ]
 
     NIVEAU_CHOICES = [

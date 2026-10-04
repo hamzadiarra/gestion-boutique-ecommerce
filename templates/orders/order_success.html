@@ -1,39 +1,45 @@
 {% extends "base.html" %}
 
-
-{% block title %}
-Commande réussie
-{% endblock %}
-
+{% block title %}Commande créée — Gestion Boutique{% endblock %}
 
 {% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card glass-card border-0 text-center p-5 scroll-animate-scale">
+                
+                <!-- Icône de succès animée -->
+                <div class="success-checkmark mx-auto mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle" 
+                         style="width: 100px; height: 100px; animation: pulse 2s ease-in-out infinite;">
+                        <i class="bi bi-check-lg text-success" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
 
-<div class="container mt-5">
-
-    <div class="alert alert-success">
-
-        <h3>
-            Votre commande est confirmée 🎉
-        </h3>
-
-        <p>
-            Numéro de commande :
-            {{ commande.id }}
-        </p>
-
-        <p>
-            Statut :
-            {{ commande.get_statut_display }}
-        </p>
-
+                <h2 class="fw-bold mb-2">Commande créée !</h2>
+                <p class="text-muted mb-4">Votre commande a été enregistrée avec succès.</p>
+                
+                <div class="card bg-body-tertiary border-0 rounded-3 p-3 mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Numéro</span>
+                        <span class="fw-bold">#{{ commande.id }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Statut</span>
+                        <span class="status-badge status-attente">{{ commande.get_statut_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% url 'payment_form' commande.id %}" class="btn btn-success py-2 fw-semibold btn-pulse">
+                        <i class="bi bi-credit-card me-2"></i> Passer au paiement
+                    </a>
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary py-2">
+                        <i class="bi bi-bag me-2"></i> Continuer mes achats
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-
-
-    <a href="{% url 'product_list' %}" 
-       class="btn btn-primary">
-        Continuer mes achats
-    </a>
-
 </div>
-
 {% endblock %}

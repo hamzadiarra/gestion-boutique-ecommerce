@@ -1,239 +1,288 @@
 {% extends "base.html" %}
 
-{% block title %}
-Nos Produits
-{% endblock %}
+{% block title %}Nos Produits — Gestion Boutique{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
+<!-- Hero Banner (Optionnel mais joli) -->
+<div class="bg-primary text-white py-5 mb-5" style="background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);">
+    <div class="container text-center scroll-animate">
+        <h1 class="display-4 fw-bold mb-3">Notre Catalogue</h1>
+        <p class="lead opacity-75 mb-0">Découvrez tous nos produits au meilleur prix.</p>
+    </div>
+</div>
 
-    <h2 class="text-center mb-4">
-        🛍 Nos Produits
-    </h2>
+<div class="container">
 
-    <!-- Recherche -->
-    <form method="get" class="row mb-4">
+    <!-- Breadcrumb Premium -->
+    <nav aria-label="breadcrumb" class="breadcrumb-premium scroll-animate">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/"><i class="bi bi-house"></i> Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Produits</li>
+        </ol>
+    </nav>
 
-        <div class="col-md-8">
-            <input
-                type="text"
-                name="q"
-                class="form-control"
-                placeholder="Rechercher un produit..."
-                value="{{ recherche }}">
+    <!-- Recherche et Catégories -->
+    <div class="row align-items-center mb-5 scroll-animate" style="animation-delay: 0.1s;">
+        <div class="col-lg-6 mb-3 mb-lg-0">
+            <!-- Recherche premium -->
+            <form method="get" class="search-bar">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" name="q" class="form-control" placeholder="Rechercher un produit, une marque..." value="{{ recherche }}">
+                <button type="submit" class="btn btn-primary position-absolute end-0 top-0 h-100 px-4 rounded-start-0" style="border-radius: 0 var(--radius) var(--radius) 0;">
+                    Rechercher
+                </button>
+            </form>
         </div>
 
-        <div class="col-md-4">
-            <button class="btn btn-primary w-100">
-                <i class="bi bi-search"></i>
-                Rechercher
-            </button>
+        <div class="col-lg-6">
+            <!-- Catégories pills -->
+            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                <a href="{% url 'product_list' %}" class="category-pill {% if not request.GET.categorie %}active{% endif %}">
+                    Toutes
+                </a>
+                {% for categorie in categories %}
+                <a href="?categorie={{ categorie.id }}" class="category-pill {% if request.GET.categorie == categorie.id|stringformat:'s' %}active{% endif %}">
+                    {{ categorie.nom }}
+                </a>
+                {% endfor %}
+            </div>
         </div>
-
-    </form>
-
-    <!-- Catégories -->
-    <div class="mb-4">
-
-        <a href="{% url 'product_list' %}"
-           class="btn btn-outline-dark btn-sm mb-2">
-            Toutes
-        </a>
-
-        {% for categorie in categories %}
-
-        <a
-            href="?categorie={{ categorie.id }}"
-            class="btn btn-outline-primary btn-sm mb-2">
-
-            {{ categorie.nom }}
-
-        </a>
-
-        {% endfor %}
-
     </div>
 
     <!-- Produits -->
-
-    <div class="row">
+    <div class="row stagger-children" id="products-grid">
 
         {% for produit in page_obj %}
 
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-item">
+            <div class="card product-card h-100 scroll-animate-scale">
 
-            <div class="card shadow h-100">
-
-                {% if produit.image %}
-                <img
-                    src="{{ produit.image.url }}"
-                    class="card-img-top"
-                    style="height:260px; object-fit:cover;">
-                {% endif %}
-
-                <div class="card-body">
-
-                    {% if produit.vedette %}
-                    <span class="badge bg-warning text-dark">
-                        ⭐ Vedette
-                    </span>
-                    {% endif %}
-
-                    {% if produit.prix_promotion %}
-                    <span class="badge bg-danger">
-                        Promo
-                    </span>
-                    {% endif %}
-
-                    <h5 class="mt-3">
-                        {{ produit.nom }}
-                    </h5>
-
-                    <p class="text-muted">
-                        {{ produit.marque }}
-                    </p>
-
-                    {% if produit.prix_promotion %}
-
-                    <h5 class="text-danger">
-
-                        {{ produit.prix_promotion }} FCFA
-
-                    </h5>
-
-                    <small class="text-decoration-line-through">
-
-                        {{ produit.prix }} FCFA
-
-                    </small>
-
+                <div class="card-img-wrapper">
+                    {% if produit.image %}
+                    <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
                     {% else %}
-
-                    <h5 class="text-success">
-
-                        {{ produit.prix }} FCFA
-
-                    </h5>
-
+                    <div class="product-img-placeholder">
+                        <i class="bi bi-image"></i>
+                    </div>
                     {% endif %}
+                    
+                    <div class="card-img-overlay-gradient"></div>
 
-                    <p>
-
-                        Stock :
-
-                        {% if produit.stock > 0 %}
-
-                        <span class="text-success">
-
-                            {{ produit.stock }}
-
-                        </span>
-
-                        {% else %}
-
-                        <span class="text-danger">
-
-                            Rupture
-
-                        </span>
-
+                    <!-- Badges Absolus -->
+                    <div class="position-absolute top-0 start-0 p-3 d-flex flex-column gap-2">
+                        {% if produit.prix_promotion %}
+                        <span class="badge badge-promo">Promo</span>
                         {% endif %}
+                        {% if produit.vedette %}
+                        <span class="badge badge-vedette">⭐ Vedette</span>
+                        {% endif %}
+                    </div>
 
-                    </p>
-
+                    <!-- Actions Rapides au survol -->
+                    <div class="quick-actions">
+                        <a href="{% url 'add_to_cart' produit.id %}" class="btn btn-icon rounded-circle ajax-add-to-cart" data-url="{% url 'add_to_cart' produit.id %}" title="Ajouter au panier">
+                            <i class="bi bi-cart-plus"></i>
+                        </a>
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-icon rounded-circle wishlist-btn" title="Ajouter aux favoris">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <div class="card-footer bg-white">
+                <div class="card-body d-flex flex-column">
+                    <p class="text-muted small mb-1">{{ produit.categorie.nom|default:produit.marque }}</p>
+                    <h5 class="card-title text-truncate fw-bold mb-2">
+                        <a href="{% url 'product_detail' produit.slug %}" class="text-decoration-none text-reset stretched-link">
+                            {{ produit.nom }}
+                        </a>
+                    </h5>
 
-                    <a
-                        href="{% url 'product_detail' produit.slug %}"
-                        class="btn btn-info btn-sm">
+                    <!-- Prix -->
+                    <div class="mt-auto pt-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            {% if produit.prix_promotion %}
+                            <div class="price-tag price-tag-promo mb-0">{{ produit.prix_promotion }} FCFA</div>
+                            <div class="price-tag-old">{{ produit.prix }} FCFA</div>
+                            {% else %}
+                            <div class="price-tag mb-0">{{ produit.prix }} FCFA</div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-                        <i class="bi bi-eye"></i>
-
-                        Voir
-
-                    </a>
-
-                    <a
-                        href="{% url 'add_to_cart' produit.id %}"
-                        class="btn btn-success btn-sm">
-
-                        <i class="bi bi-cart-plus"></i>
-
-                        Panier
-
-                    </a>
-
+                    <!-- Stock Status -->
+                    <div class="mt-3 pt-3 border-top d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Stock :</small>
+                        {% if produit.stock > 10 %}
+                        <span class="badge bg-success-subtle text-success">En stock ({{ produit.stock }})</span>
+                        {% elif produit.stock > 0 %}
+                        <span class="badge bg-warning-subtle text-warning">Reste {{ produit.stock }}</span>
+                        {% else %}
+                        <span class="badge bg-danger-subtle text-danger">Rupture</span>
+                        {% endif %}
+                    </div>
                 </div>
 
             </div>
-
         </div>
 
         {% empty %}
 
-        <div class="alert alert-warning">
-
-            Aucun produit trouvé.
-
+        <div class="col-12 scroll-animate">
+            <div class="empty-state card glass-card">
+                <i class="bi bi-search empty-state-icon"></i>
+                <h4 class="empty-state-title">Aucun produit trouvé</h4>
+                <p class="empty-state-text">Nous n'avons trouvé aucun produit correspondant à vos critères de recherche. Essayez d'autres mots-clés ou parcourez nos catégories.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary mt-4 px-4">Effacer la recherche</a>
+            </div>
         </div>
 
         {% endfor %}
 
     </div>
 
-    <!-- Pagination -->
-
-    <nav>
-
-        <ul class="pagination justify-content-center">
-
+    <!-- Pagination Premium -->
+    {% if page_obj.has_other_pages %}
+    <nav class="scroll-animate mt-4" style="animation-delay: 0.3s;">
+        <ul class="pagination pagination-premium">
+            
+            <!-- First / Previous -->
             {% if page_obj.has_previous %}
-
             <li class="page-item">
-
-                <a class="page-link"
-                   href="?page={{ page_obj.previous_page_number }}">
-
-                    Précédent
-
+                <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" title="Première page">
+                    <i class="bi bi-chevron-double-left"></i>
                 </a>
-
             </li>
-
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" title="Précédent">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+            </li>
             {% endif %}
 
-            <li class="page-item active">
+            <!-- Page Numbers -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
 
-                <span class="page-link">
-
-                    {{ page_obj.number }}
-
-                </span>
-
-            </li>
-
+            <!-- Next / Last -->
             {% if page_obj.has_next %}
-
             <li class="page-item">
-
-                <a class="page-link"
-                   href="?page={{ page_obj.next_page_number }}">
-
-                    Suivant
-
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" title="Suivant">
+                    <i class="bi bi-chevron-right"></i>
                 </a>
-
             </li>
-
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.categorie %}&categorie={{ request.GET.categorie }}{% endif %}" title="Dernière page">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+            </li>
             {% endif %}
 
         </ul>
-
     </nav>
+    {% endif %}
 
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.querySelector('input[name="q"]');
+        const productsGrid = document.getElementById('products-grid');
+
+        // Live Search
+        if(searchInput && productsGrid) {
+            searchInput.addEventListener('keyup', function(e) {
+                const query = e.target.value;
+                const url = new URL(window.location.href);
+                url.searchParams.set('q', query);
+
+                fetch(url.toString(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newGrid = doc.getElementById('products-grid');
+                    if(newGrid) {
+                        productsGrid.innerHTML = newGrid.innerHTML;
+                        attachAjaxCart(); // Re-attach listeners to new DOM elements
+                    }
+                });
+            });
+        }
+
+        // AJAX Add to Cart
+        function attachAjaxCart() {
+            document.querySelectorAll('.ajax-add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = this.getAttribute('data-url');
+                    
+                    fetch(url + "?ajax=1", {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.status === 'success') {
+                            showToast('success', data.message);
+                            // Update cart counter in navbar
+                            const badge = document.querySelector('.nav-link .badge.bg-danger.rounded-pill');
+                            if(badge) {
+                                badge.textContent = data.cart_count;
+                                badge.classList.add('animate__animated', 'animate__rubberBand');
+                                setTimeout(() => badge.classList.remove('animate__animated', 'animate__rubberBand'), 1000);
+                            } else if (data.cart_count > 0) {
+                                // If badge didn't exist, we can reload or add it via DOM
+                                // A simple reload or ignoring it for first item is okay, 
+                                // but let's try to add it.
+                                const cartLink = document.querySelector('a[href="/cart/"]');
+                                if(cartLink) {
+                                    cartLink.innerHTML += ' <span class="badge bg-danger rounded-pill" style="font-size: 0.75rem;">' + data.cart_count + '</span>';
+                                }
+                            }
+                        } else {
+                            showToast('danger', data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        window.location.href = url; // Fallback
+                    });
+                });
+            });
+        }
+        
+        attachAjaxCart();
+    });
+</script>
 {% endblock %}

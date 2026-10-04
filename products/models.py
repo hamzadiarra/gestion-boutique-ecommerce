@@ -58,6 +58,10 @@ class Product(models.Model):
             self.slug = slugify(self.nom)
         super().save(*args, **kwargs)
 
+    @property
+    def prix_effectif(self):
+        return self.prix_promotion or self.prix
+
     def __str__(self):
         return self.nom
 
