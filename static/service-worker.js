@@ -1,4 +1,4 @@
-const CACHE_NAME = "gestion-boutique-shell-v3-refonte";
+const CACHE_NAME = "gestion-boutique-shell-v4-corrections";
 const STATIC_ASSETS = [
   "/",
   "/static/css/style.css",

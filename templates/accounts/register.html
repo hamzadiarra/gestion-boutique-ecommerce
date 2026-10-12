@@ -298,11 +298,30 @@
 }
 
 .account-password-meter span {
-    height: 4px;
+    height: 8px;
     flex: 1;
     border-radius: 99px;
     background: var(--color-border);
     transition: background .2s ease;
+}
+
+.account-password-levels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem .75rem;
+    margin-top: 8px;
+    font-size: .75rem;
+    color: var(--color-muted);
+}
+
+.account-password-levels span::before {
+    content: "";
+    display: inline-block;
+    width: .65em;
+    height: .65em;
+    margin-right: .3em;
+    border-radius: 50%;
+    background: var(--strength-color);
 }
 
 .account-password-feedback {
@@ -974,11 +993,17 @@
                     </div>
 
 
-                    <div class="account-password-meter">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                    <div class="account-password-meter" aria-describedby="password-feedback">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </div>
+                    <div class="account-password-levels" aria-label="{% trans "Niveaux de robustesse" %}">
+                        <span style="--strength-color: #dc3545">1 · {% trans "Très faible" %}</span>
+                        <span style="--strength-color: #e0a800">2 · {% trans "Moyen" %}</span>
+                        <span style="--strength-color: #198754">3 · {% trans "Bon" %}</span>
+                        <span style="--strength-color: #0d6efd">4 · {% trans "Robuste" %}</span>
                     </div>
 
                     <div
@@ -1637,7 +1662,7 @@
         if ((value.length >= 14 && classes >= 3) || (value.length >= 20 && classes >= 2)) score = 4;
         if (predictable) score = Math.min(score, 1);
         const colors = ["var(--color-border)", "#dc3545", "#e0a800", "#198754", "#0d6efd"];
-        const labels = ["Saisissez un mot de passe long et unique.", "Très faible — évitez les suites et vos informations personnelles.", "Moyen ou insuffisant — ajoutez longueur et variété.", "Bon — allongez-le pour renforcer sa robustesse.", "Robuste — utilisez-le uniquement pour cette boutique."];
+        const labels = ["Saisissez un mot de passe long et unique.", "Très faible — évitez les suites et vos informations personnelles.", "Moyen — visez au moins 10 caractères et trois types de caractères.", "Bon — visez 14 caractères pour renforcer sa robustesse.", "Robuste — utilisez-le uniquement pour cette boutique."];
         document.querySelectorAll(".account-password-meter span").forEach((bar, index) => { bar.style.background = index < score ? colors[score] : colors[0]; });
         const meter = document.querySelector(".account-password-meter");
         meter.setAttribute("role", "progressbar"); meter.setAttribute("aria-label", "Robustesse du mot de passe");
@@ -1645,6 +1670,9 @@
         if (passwordFeedback) { passwordFeedback.textContent = labels[score]; passwordFeedback.setAttribute("aria-live", "polite"); }
     }
     updatePasswordStrength();
+    ["id_first_name", "id_last_name", "id_email"].forEach(id => {
+        document.getElementById(id)?.addEventListener("input", updatePasswordStrength);
+    });
 
     password1?.addEventListener(
         "input",

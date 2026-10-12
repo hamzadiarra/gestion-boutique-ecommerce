@@ -1211,7 +1211,6 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
 .shop-hero-blue-shape { position: absolute; inset: 0 auto 0 0; width: 56%; z-index: 0; background: linear-gradient(135deg, #4d5ee8 0%, #3847c7 58%, #303ca9 100%); clip-path: ellipse(98% 116% at 2% 50%); }
 .shop-hero-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 55% 45%; align-items: stretch; gap: 0; width: 100%; max-width: none; margin: 0; padding: 0; }
 .shop-hero-copy { position: relative; z-index: 2; max-width: 700px; padding: 7rem clamp(2rem, 5vw, 6rem) 5rem clamp(2rem, 7vw, 7rem); }
-.shop-hero-eyebrow { color: #dfe4ff; opacity: 0; animation: shopHeroRise .65s .08s ease forwards; }
 .shop-hero h1 { max-width: 680px; margin: 0; color: #fff; font-size: clamp(3rem, 5.3vw, 4.5rem); line-height: 1.02; letter-spacing: -.065em; opacity: 0; animation: shopHeroRise .75s .18s ease forwards; }
 .shop-hero p { max-width: 560px; margin: 1.5rem 0 0; color: rgba(255,255,255,.84); font-size: 1.15rem; line-height: 1.7; opacity: 0; animation: shopHeroRise .75s .3s ease forwards; }
 .shop-hero-actions { opacity: 0; animation: shopHeroRise .7s .42s ease forwards; }
@@ -1228,18 +1227,12 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
 .shop-hero-halo { position: absolute; width: min(35vw, 440px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.9) 0%, rgba(222,228,255,.82) 40%, rgba(222,228,255,0) 72%); filter: blur(2px); }
 .shop-hero-product { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; display: block; overflow: hidden; opacity: 0; animation: shopHeroProductIn .9s .35s cubic-bezier(.2,.75,.25,1) forwards; }
 .shop-hero-product img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center center; filter: none; }
-.shop-hero-floating-badge, .shop-hero-floating-note { position: absolute; z-index: 3; display: inline-flex; align-items: center; gap: .45rem; padding: .75rem .9rem; border: 1px solid rgba(255,255,255,.8); border-radius: 12px; color: #27328f; background: rgba(255,255,255,.92); box-shadow: 0 12px 25px rgba(40,50,130,.16); font-size: .82rem; font-weight: 800; opacity: 0; }
-.shop-hero-floating-badge { top: 20%; right: 4%; animation: shopHeroBadgeIn .55s 1.05s ease forwards; }
-.shop-hero-floating-badge i { color: #ec9b35; }
-.shop-hero-floating-note { right: 9%; bottom: 19%; animation: shopHeroBadgeIn .55s 1.25s ease forwards; }
-.shop-hero-floating-note i { color: var(--color-success); }
 .shop-hero-decoration { position: absolute; z-index: 1; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; }
 .shop-hero-decoration-one { right: 31%; top: 8%; width: 130px; height: 130px; }
 .shop-hero-decoration-two { right: 7%; bottom: 6%; width: 90px; height: 90px; border-color: rgba(69,84,199,.18); }
 @keyframes shopHeroRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes shopHeroProductIn { from { opacity: 0; transform: translateX(55px) scale(.94); } to { opacity: 1; transform: translateX(0) scale(1); } }
 @keyframes shopHeroFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-@keyframes shopHeroBadgeIn { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .shop-eyebrow.light { color: var(--color-primary); }
 .shop-trust-row { margin-top: 2.2rem; border: 0; gap: 1rem; overflow: visible; background: transparent; box-shadow: none; }
 .shop-trust-row > div { min-height: 112px; padding: 1.25rem 1.35rem; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); box-shadow: var(--shadow-sm); }
@@ -1328,8 +1321,6 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
     .shop-hero-visual { min-height: 380px; height: 380px; margin: 0; }
     .shop-hero-halo { width: 300px; }
     .shop-hero-product { width: 100%; height: 100%; }
-    .shop-hero-floating-badge { top: 10%; right: 4%; }
-    .shop-hero-floating-note { right: 5%; bottom: 7%; }
     .shop-hero-decoration-one { right: 4%; top: 4%; width: 80px; height: 80px; }
     .shop-hero-decoration-two { right: auto; left: 4%; bottom: 2%; width: 60px; height: 60px; }
     .shop-promo-band { background: #f7efe8; }
@@ -1394,8 +1385,6 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
     object-position: center center;
     filter: none;
 }
-.shop-hero-floating-badge { top: 17%; right: 1%; padding: .85rem 1rem; border-radius: 14px; }
-.shop-hero-floating-note { right: 5%; bottom: 16%; padding: .75rem .95rem; }
 .shop-hero-decoration-one { right: 35%; top: 7%; width: 155px; height: 155px; border-color: rgba(80,96,190,.22); }
 .shop-hero-decoration-two { right: 5%; bottom: 9%; width: 112px; height: 112px; border-color: rgba(80,96,190,.18); }
 .shop-trust-row { position: relative; z-index: 5; margin-top: -64px; gap: 1.1rem; }
@@ -1440,8 +1429,6 @@ body, main, .shop-page, .shop-home { background: var(--color-bg); color: var(--c
     .shop-hero-visual { min-height: 0; height: 380px; margin: 0; padding: 0; }
     .shop-hero-product { width: 100%; height: 100%; }
     .shop-hero-halo { width: 320px; }
-    .shop-hero-floating-badge { top: 8%; right: 3%; }
-    .shop-hero-floating-note { right: 5%; bottom: 5%; }
     .shop-trust-row { margin-top: -24px; gap: .75rem; }
     .shop-trust-row > div { min-height: 108px; padding: 1rem; }
     .shop-category-tile, .shop-category-grid-large .shop-category-tile { min-height: 180px; }
@@ -1868,8 +1855,6 @@ p, h1, h2, h3, h4, h5, h6, a, td, th, label, small, strong, span { overflow-wrap
 
     .shop-hero-halo { width: 70vw; max-width: 300px; }
     .shop-hero-decoration { display: none; }
-    .shop-hero-floating-badge { top: .85rem; right: .85rem; }
-    .shop-hero-floating-note { right: .85rem; bottom: .85rem; }
 
     .shop-hero-blue-shape {
         inset: 0 0 auto;
@@ -1882,7 +1867,6 @@ p, h1, h2, h3, h4, h5, h6, a, td, th, label, small, strong, span { overflow-wrap
 @media (max-width: 390px) {
     .shop-hero-copy { padding-inline: 12px; }
     .shop-hero-proof { padding: .6rem; }
-    .shop-hero-floating-badge, .shop-hero-floating-note { padding: .55rem .65rem; font-size: .7rem; }
 }
 
 /* Local help guide: fixed to the viewport and constrained on narrow screens. */

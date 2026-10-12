@@ -90,7 +90,7 @@ body { overflow-x: clip; }
 }
 
 /* Les titres et actions restent fixes ; seule la courbe se déplace. */
-.shop-hero h1, .shop-hero p, .shop-hero-actions, .shop-hero-proof, .shop-hero-product, .shop-hero-floating-note { animation: none; opacity: 1; transform: none; }
+.shop-hero h1, .shop-hero p, .shop-hero-actions, .shop-hero-proof, .shop-hero-product { animation: none; opacity: 1; transform: none; }
 
 .checkout-number { flex-shrink: 0; min-width: 2rem; white-space: nowrap; }
 .shop-assistant { z-index: 1025; }
