@@ -1,6 +1,7 @@
 """Capture/measure all primary pages on an isolated test database.
 UI_AUDIT_PHASE=before records; after additionally fails on layout defects.
-Artifacts: %TEMP%/gestion-boutique-compact-ui/{before,after}.
+UI_AUDIT_DENSITY=sparse (default) or dense selects fixture volume.
+Artifacts: %TEMP%/gestion-boutique-compact-ui/{phase}-{density}.
 """
 import io
 import json
@@ -30,7 +31,9 @@ WIDTHS = (320, 375, 390, 430, 768, 820, 1024, 1280, 1440, 1920)
 class CompactUIBrowserTests(StaticLiveServerTestCase):
     def test_all_primary_pages(self):
         phase = os.getenv("UI_AUDIT_PHASE", "after")
-        output = Path(tempfile.gettempdir()) / "gestion-boutique-compact-ui" / phase
+        density = os.getenv("UI_AUDIT_DENSITY", "sparse")
+        self.assertIn(density, ("sparse", "dense"))
+        output = Path(tempfile.gettempdir()) / "gestion-boutique-compact-ui" / (phase + "-" + density)
         output.mkdir(parents=True, exist_ok=True)
         media = tempfile.TemporaryDirectory(prefix="boutique-ui-fixtures-")
         self.addCleanup(media.cleanup)
@@ -59,6 +62,38 @@ class CompactUIBrowserTests(StaticLiveServerTestCase):
         delivery = initialiser_livraison(order, users["admin"])
         affecter_livreur(delivery.pk, users["livreur"].pk, users["admin"])
         SecurityEvent.objects.create(kind="login_failed", subject=users["client"], alert=True, detail="Échecs répétés : vérifier le contexte avant toute décision.")
+        if density == "dense":
+            from dashboard.models import Vente
+            from orders.pricing_services import proposer_tarif, decider_tarif
+            categories = [category] + [Category.objects.create(nom=f"Collection maison et accessoires {i}") for i in range(1, 12)]
+            for index in range(48):
+                product = Product.objects.create(categorie=categories[index % 12],
+                    nom=f"Article {index} — accessoires multifonctions pour la maison et les déplacements quotidiens",
+                    prix=12500+index*100, stock=100, description="Description détaillée. "*60)
+                product.image.save(f"dense-{index}.jpg", ContentFile(data.getvalue()))
+                products.append(product)
+                if index < 11:
+                    CartItem.objects.create(panier=cart, produit=product, prix=product.prix, quantite=2)
+            for index in range(30):
+                extra = Order.objects.create(utilisateur=users["client"], statut="confirmee",
+                    adresse_livraison="Immeuble des commerçants, troisième étage, quartier central", ville_livraison="Bamako", frais_livraison=1200)
+                OrderItem.objects.create(commande=extra, produit=products[index], prix=products[index].prix, quantite=2)
+                Payment.objects.create(commande=extra, montant=products[index].prix*2+1200, methode="wave", statut="en_attente")
+                shipment = initialiser_livraison(extra, users["admin"])
+                affecter_livreur(shipment.pk, users["livreur"].pk, users["admin"])
+                offer = proposer_tarif(users["livreur"], "express" if index%2 else "standard", str(1200+index*100), zone="Bamako")
+                if index%3:
+                    decider_tarif(offer.pk, users["admin"], "approuve" if index%3==1 else "refuse", "Décision motivée après examen des conditions et de la zone de livraison. "*5)
+            for index in range(60):
+                SecurityEvent.objects.create(kind="login_failed", subject=users["client"], alert=True,
+                    detail=f"Événement {index} : " + "Vérifier le contexte de connexion avant toute décision. "*8)
+            for index in range(24):
+                Vente.objects.create(vendeur=users["vendeur"], produit=products[index], quantite=1,
+                    prix_unitaire=products[index].prix, montant_total=products[index].prix)
+        (output / "fixtures.json").write_text(json.dumps({"density": density,
+            "products": Product.objects.count(), "categories": Category.objects.count(),
+            "orders": Order.objects.count(), "cart_items": CartItem.objects.count(),
+            "security_events": SecurityEvent.objects.count()}, indent=2), encoding="utf-8")
         routes = [
             ("accueil", "", reverse("home")), ("boutique", "", reverse("product_list")),
             ("categories", "", reverse("category_list")), ("produit", "", reverse("product_detail", args=[products[0].slug])),
@@ -82,21 +117,35 @@ class CompactUIBrowserTests(StaticLiveServerTestCase):
                 context = browser.new_context(service_workers="block", reduced_motion="reduce")
                 page = context.new_page()
                 page.set_default_timeout(15000)
+                js_errors = []
+                page.on("pageerror", lambda error: js_errors.append(str(error)))
                 for width in tuple(map(int, os.getenv("UI_AUDIT_WIDTHS", ",".join(map(str, WIDTHS))).split(","))):
                     page.set_viewport_size({"width": width, "height": 900})
                     for name, role, route in routes:
                         context.clear_cookies()
                         if role:
                             context.add_cookies([{"name": "sessionid", "value": sessions[role], "url": self.live_server_url}])
+                        js_errors.clear()
                         response = page.goto(self.live_server_url+route, wait_until="networkidle")
                         metrics = page.evaluate("""() => {
                             const header=document.querySelector('.site-header'), footer=document.querySelector('.site-footer');
                             const main=document.querySelector('#main-content'), title=main.querySelector('h1,h2');
                             const visible=e=>e.getClientRects().length && getComputedStyle(e).visibility!=='hidden';
                             const overflowing=[...main.querySelectorAll('*')].filter(e=>visible(e)&&e.getBoundingClientRect().right>innerWidth+2&&!e.closest('.table-responsive')&&getComputedStyle(e).position!=='absolute').slice(0,8).map(e=>e.tagName+'.'+String(e.className));
-                            return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,headerCount:document.querySelectorAll('header.site-header').length,footerCount:document.querySelectorAll('footer.site-footer').length,headerHeight:header.getBoundingClientRect().height,titleGap:title?Math.round(title.getBoundingClientRect().top-header.getBoundingClientRect().bottom):null,footerGap:Math.round(footer.getBoundingClientRect().top-main.getBoundingClientRect().bottom),pageHeight:document.documentElement.scrollHeight,overflowing};
+                            const stretchedEmptyPanels=[...main.querySelectorAll('.control-two-col > .control-panel')].filter(e=>e.querySelector('.control-empty')&&e.lastElementChild&&e.getBoundingClientRect().bottom-e.lastElementChild.getBoundingClientRect().bottom>48).map(e=>e.querySelector('h2')?.textContent);
+                            return {stretchedEmptyPanels,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,headerCount:document.querySelectorAll('header.site-header').length,footerCount:document.querySelectorAll('footer.site-footer').length,headerHeight:header.getBoundingClientRect().height,titleGap:title?Math.round(title.getBoundingClientRect().top-header.getBoundingClientRect().bottom):null,footerGap:Math.round(footer.getBoundingClientRect().top-main.getBoundingClientRect().bottom),pageHeight:document.documentElement.scrollHeight,overflowing};
                         }""")
-                        metrics.update(page=name, status=response.status)
+                        metrics.update(page=name, status=response.status, route=route, js_errors=list(js_errors))
+                        if width in (390, 1280):
+                            # Charger les images paresseuses par un vrai parcours de la page.
+                            page.evaluate("""async () => {
+                                for (let y=0; y<document.documentElement.scrollHeight; y+=innerHeight-100) {
+                                    scrollTo({top:y,behavior:'instant'});
+                                    await new Promise(resolve=>setTimeout(resolve,60));
+                                }
+                                scrollTo({top:0,behavior:'instant'});
+                            }""")
+                            page.wait_for_load_state("networkidle")
                         page.screenshot(path=str(output / f"{name}-{width}.png"), full_page=width in (390,1280))
                         page.evaluate("scrollTo({top:500,behavior:'instant'})")
                         page.wait_for_timeout(80)
@@ -111,10 +160,10 @@ class CompactUIBrowserTests(StaticLiveServerTestCase):
                             metrics["menuOverflow"] = page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
                             toggle.click();page.wait_for_timeout(400)
                         report.append(metrics)
-                        if response.status!=200 or metrics['scrollWidth']>width+1 or metrics['headerCount']!=1 or metrics['footerCount']!=1 or (metrics['scrollY']>100 and abs(metrics['stickyTop'])>1) or metrics.get('menuOverflow') or metrics.get('menuVisible') is False:
+                        if metrics['stretchedEmptyPanels'] or js_errors or response.status!=200 or metrics['scrollWidth']>width+1 or metrics['headerCount']!=1 or metrics['footerCount']!=1 or (metrics['scrollY']>100 and abs(metrics['stickyTop'])>1) or metrics.get('menuOverflow') or metrics.get('menuVisible') is False:
                             defects.append(metrics)
-                    (output/('metrics-targeted.json' if selected_pages else 'metrics.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
-                    print(f"{phase.upper()} {width}px: {len(routes)} pages, {len(defects)} layout defects so far",flush=True)
+                    (output/('metrics-targeted.json' if selected_pages or os.getenv('UI_AUDIT_WIDTHS') else 'metrics.json')).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+                    print(f"{phase.upper()} {density} {width}px: {len(routes)} pages, {len(defects)} layout defects so far",flush=True)
             finally:
                 browser.close()
         print(f"ARTIFACTS: {output}",flush=True)
