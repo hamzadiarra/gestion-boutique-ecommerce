@@ -115,3 +115,22 @@ class SecurityTests(TestCase):
         call_command("purge_security_events", stdout=out)
         self.assertIn("1 événements éligibles", out.getvalue())
         self.assertTrue(SecurityEvent.objects.filter(pk=event.pk).exists())
+
+    def test_live_security_hidden_and_denied_to_other_roles(self):
+        self.client.logout()
+        self.assertEqual(self.client.get("/dashboard/security/").status_code, 403)
+        self.assertNotContains(self.client.get("/"), 'href="/dashboard/security/"')
+        for role in ("client", "vendeur", "livreur", "comptable"):
+            with self.subTest(role=role):
+                self.customer.profile.role = role
+                self.customer.profile.save()
+                self.client.force_login(self.customer)
+                self.assertEqual(self.client.get("/dashboard/security/").status_code, 403)
+                self.assertEqual(self.client.post("/dashboard/security/", {"action": "review"}).status_code, 403)
+                self.assertNotContains(self.client.get("/"), 'href="/dashboard/security/"')
+
+    def test_superuser_can_access_live_security(self):
+        self.customer.is_superuser = True
+        self.customer.save()
+        self.client.force_login(self.customer)
+        self.assertEqual(self.client.get("/dashboard/security/").status_code, 200)

@@ -28,7 +28,7 @@ class ResponsiveBrowserTests(StaticLiveServerTestCase):
         for account in (user, admin):
             client = Client(); client.force_login(account)
             sessions[account.pk] = client.session.session_key
-        output = Path("docs/validation")
+        output = Path(os.environ.get("BROWSER_SCREENSHOT_DIR", "docs/validation"))
         output.mkdir(parents=True, exist_ok=True)
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True, channel=os.environ.get("PLAYWRIGHT_CHANNEL", "msedge"))

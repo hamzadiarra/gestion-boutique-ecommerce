@@ -1,5 +1,6 @@
 {% extends "products/product_list.html" %}{% load i18n %}
 {% block title %}{{ categorie.localized_name }} — Gestion Boutique{% endblock %}
 {% block catalogue_intro %}
-<div class="shop-category-hero"><div>{% if categorie.image %}<img src="{{ categorie.image.url }}" alt="{{ categorie.localized_name }}">{% else %}<span class="shop-category-placeholder"><i class="bi bi-tag"></i></span>{% endif %}</div><div><span class="shop-eyebrow">{% trans "Collection" %}</span><h1>{{ categorie.localized_name }}</h1><p>{{ categorie.localized_description|default_if_none:"" }}</p><span class="shop-category-count">{{ product_count }} {% trans "produits" %}</span></div></div>
+<nav class="shop-breadcrumb" aria-label="{% trans "Fil d'Ariane" %}"><a href="{% url 'product_list' %}">{% trans "Boutique" %}</a><i class="bi bi-chevron-right" aria-hidden="true"></i><span>{{ categorie.localized_name }}</span></nav>
+<div class="shop-category-hero"><div>{% if categorie.image %}<img src="{{ categorie.image.url }}" alt="{{ categorie.localized_name }}">{% else %}<span class="shop-category-placeholder"><i class="bi bi-tag"></i></span>{% endif %}</div><div><span class="shop-eyebrow">{% trans "Collection" %}</span><h1>{{ categorie.localized_name }}</h1><p>{% if categorie.localized_description %}{{ categorie.localized_description }}{% else %}{% trans "Une sélection pensée pour vous." %}{% endif %}</p><span class="shop-category-count">{{ product_count }} {% trans "produit" %}{{ product_count|pluralize }}</span></div></div>
 {% endblock %}
