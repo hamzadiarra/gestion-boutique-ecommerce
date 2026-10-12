@@ -99,6 +99,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'accounts.security.SuspensionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -294,3 +295,6 @@ UNFOLD = {
     },
     "STYLES": ["/static/css/admin.css"],
 }
+
+# Contrôle des suspensions temporaires pour toutes les connexions Django.
+AUTHENTICATION_BACKENDS = ["accounts.security.SuspensionBackend"]

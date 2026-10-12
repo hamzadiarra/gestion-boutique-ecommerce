@@ -1,4 +1,4 @@
-const CACHE_NAME = "gestion-boutique-shell-v2-delivery-private";
+const CACHE_NAME = "gestion-boutique-shell-v3-refonte";
 const STATIC_ASSETS = [
   "/",
   "/static/css/style.css",
@@ -45,7 +45,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Financial pages and expense attachments must never enter a shared cache.
-  if (new URL(request.url).pathname.startsWith("/dashboard/comptable/") || ["/orders/", "/dashboard/livreur/", "/dashboard/livraisons/", "/dashboard/vendeur/commandes/"].some(prefix => new URL(request.url).pathname.startsWith(prefix))) {
+  if (new URL(request.url).pathname.startsWith("/dashboard/comptable/") || ["/dashboard/security/", "/products/autocomplete/", "/orders/", "/dashboard/livreur/", "/dashboard/livraisons/", "/dashboard/vendeur/commandes/"].some(prefix => new URL(request.url).pathname.startsWith(prefix))) {
     event.respondWith(fetch(request, { cache: "no-store" }).catch(() =>
       new Response("Cet espace financier nécessite une connexion Internet.", {
         status: 503, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },

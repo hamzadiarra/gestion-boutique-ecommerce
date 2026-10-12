@@ -1,3 +1,4 @@
+from .security_views import security_dashboard
 from django.urls import path
 
 from . import views
@@ -10,6 +11,7 @@ from orders import delivery_views
 
 
 urlpatterns = [
+    path("security/", security_dashboard, name="security_dashboard"),
     path("livreur/", delivery_views.livreur_dashboard, name="livreur_dashboard"),
     path("livraisons/", delivery_views.boutique_livraisons, name="boutique_livraisons"),
     path("comptable/clotures/", cloture_views.liste, name="comptable_clotures"),

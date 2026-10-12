@@ -116,3 +116,6 @@ class Profile(models.Model):
     @property
     def is_comptable(self):
         return self.role == 'comptable'
+
+
+from .security_models import AccountSuspension, SecurityEvent  # noqa: E402,F401
