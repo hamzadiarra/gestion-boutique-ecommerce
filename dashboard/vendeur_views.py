@@ -617,6 +617,11 @@ def confirmer_commande(request, commande_id, action=None):
     if action == "livree":
         from orders.models import Livraison
         delivery = Livraison.objects.filter(commande_id=commande_id).first()
+        if not delivery:
+            historical_order = get_object_or_404(Order, pk=commande_id)
+            if historical_order.est_livrable and historical_order.statut == "expediee":
+                from orders.delivery_services import initialiser_livraison
+                delivery = initialiser_livraison(historical_order, request.user)
         if delivery:
             messages.info(request, gettext("Utilisez les actions du suivi de livraison."))
             return redirect("livraison_detail", livraison_id=delivery.pk)

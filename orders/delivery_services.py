@@ -17,7 +17,7 @@ from .delivery_models import TERMINAUX, MOTIFS
 from .delivery_permissions import peut_gerer_livraison, peut_ecrire_livraison, exiger_acces, role
 
 SUIVANTS = {"affectee": ["acceptee"], "acceptee": ["en_preparation", "prete"],
-            "en_preparation": ["prete"], "prete": ["en_route"], "en_route": ["arrive"], "arrive": ["livree"]}
+            "en_preparation": ["prete"], "prete": ["en_route"], "en_route": ["arrive"], "arrive": ["attente_signature"]}
 BOUTIQUE_ACTIONS = {"en_preparation", "prete", "annulee"}
 DATE_ACTION = {"acceptee": "date_acceptation", "prete": "date_prete", "en_route": "date_depart", "arrive": "date_arrivee", "livree": "date_livraison"}
 
@@ -109,6 +109,10 @@ def affecter_livreur(livraison_id, livreur_id, actor, commentaire="", request=No
         raise ValidationError(gettext("Choisissez un utilisateur actif ayant le rôle livreur."))
     if delivery.livreur_id == driver.pk:
         return delivery
+    from .proof_models import DemandeDerogation
+    models.QuerySet(model=DemandeDerogation).filter(livraison=delivery, decision="attente").update(
+        decision="refusee", motif_decision="Réaffectation : demande précédente invalidée automatiquement.",
+        decided_at=timezone.now())
     old_driver, old = delivery.livreur_id, delivery.statut
     _write(delivery, livreur=driver, statut="affectee", date_affectation=timezone.now(),
         date_acceptation=None, date_prete=None, date_depart=None, date_arrivee=None, date_livraison=None)
@@ -130,7 +134,7 @@ def actions_autorisees(user, delivery):
         return [s for s in SUIVANTS.get(delivery.statut, []) if s in BOUTIQUE_ACTIONS] + ["annulee"]
     if role(user) == "livreur" and user.is_active and delivery.livreur_id == user.pk:
         actions = [s for s in SUIVANTS.get(delivery.statut, []) if s not in BOUTIQUE_ACTIONS]
-        if delivery.statut in {"acceptee", "en_preparation", "prete", "en_route", "arrive"}:
+        if delivery.statut in {"acceptee", "en_preparation", "prete", "en_route", "arrive", "attente_signature"}:
             actions.append("echec")
         return actions
     return []
@@ -144,6 +148,8 @@ def changer_statut_livraison(livraison_id, target, actor, motif="", commentaire=
     permitted_actor = peut_gerer_livraison(actor) if target in BOUTIQUE_ACTIONS else role(actor) == "livreur" and delivery.livreur_id == actor.pk
     if not permitted_actor:
         raise PermissionDenied()
+    if target == "livree":
+        raise ValidationError("Utilisez la confirmation avec signature ou une dérogation administrative.")
     if delivery.statut == target:
         return delivery
     if target not in actions_autorisees(actor, delivery):
@@ -168,7 +174,7 @@ def changer_statut_livraison(livraison_id, target, actor, motif="", commentaire=
         order.save(update_fields=["statut", date_field])
     titres = {"acceptee": "Livraison acceptée", "en_preparation": "Commande en préparation", "prete": "Livraison prête",
               "en_route": "Votre commande est en route", "arrive": "Votre livreur est arrivé", "livree": "Commande livrée",
-              "echec": "Échec de livraison", "annulee": "Livraison annulée"}
+              "echec": "Échec de livraison", "annulee": "Livraison annulée", "attente_signature": "Signature de réception attendue"}
     recipients = participants(delivery) if target in {"acceptee", "livree", "echec", "annulee"} else User.objects.filter(pk=delivery.livreur_id if target == "prete" else order.utilisateur_id)
     _notifier(delivery, recipients, titres[target], actor)
     if target == "annulee":

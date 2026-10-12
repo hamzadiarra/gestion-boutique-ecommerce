@@ -41,6 +41,8 @@ class OrderAdmin(AdminOnlyAdmin):
     ordering = ("-date_creation",)
     list_select_related = ("utilisateur", "vendeur_confirmateur", "payment")
     readonly_fields = (
+        "frais_livraison",
+        "tarif_livraison",
         "date_creation",
         "date_confirmation",
         "date_expedition",
@@ -64,6 +66,6 @@ class OrderAdmin(AdminOnlyAdmin):
         # Les transitions métier (confirmation, expédition, livraison,
         # annulation et leurs dates/stock) restent pilotées par l'espace vendeur.
         # Seul le superuser garde le pouvoir de correction exceptionnelle.
-        if not is_superuser(request.user):
+        if obj and hasattr(obj, "livraison") or not is_superuser(request.user):
             fields.append("statut")
         return tuple(fields)

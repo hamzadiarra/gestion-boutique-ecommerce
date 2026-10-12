@@ -84,7 +84,10 @@ class LivraisonE2ETests(TestCase):
         self.post_action(self.vendor, "prete")
         self.post_action(self.driver, "en_route")
         self.post_action(self.driver, "arrive")
-        response = self.post_action(self.driver, "livree")
+        self.post_action(self.driver, "attente_signature")
+        from .test_delivery_proof import png_signature
+        response = self.client.post(reverse("livraison_signature", args=[self.delivery.pk]), {
+            "receptionnaire": "Fatou", "signature": png_signature(), "information_acceptee": "on"})
         self.assertEqual(response.status_code, 302)
         self.delivery.refresh_from_db()
         self.order.refresh_from_db()

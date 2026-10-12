@@ -1,0 +1,9 @@
+{% extends "orders/delivery/base.html" %}
+{% block delivery_content %}<h1>Tarifs de livraison</h1>
+<p>Les montants approuvés sont proposés aux nouvelles commandes. Une modification nécessite une nouvelle proposition et ne change jamais les commandes acceptées.</p>
+{% if not admin_tarifs %}<section class="delivery-card my-3"><h2>Proposer un tarif</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Soumettre à l’administration</button></form></section>{% endif %}
+<nav><a href="?">Tous</a> · <a href="?statut=propose">Proposés</a> · <a href="?statut=approuve">Approuvés</a> · <a href="?statut=refuse">Refusés</a> · <a href="?statut=desactive">Désactivés</a></nav>
+{% for tarif in page_obj %}<section class="delivery-card my-3"><h2 class="h5">Offre #{{ tarif.pk }} · {{ tarif.livreur.username }}</h2><p>{{ tarif.get_mode_display }} · {{ tarif.zone|default:"Toutes les villes" }} · <strong>{{ tarif.montant }} FCFA</strong> · {{ tarif.get_statut_display }}</p>
+{% if admin_tarifs %}{% if tarif.statut == 'propose' or tarif.statut == 'approuve' %}<form method="post" action="{% url 'livraison_decision_tarif' tarif.pk %}">{% csrf_token %}<label>Motif <input name="motif" required minlength="5" maxlength="1000"></label>{% if tarif.statut == 'propose' %}<button name="statut" value="approuve" class="btn btn-primary">Approuver</button><button name="statut" value="refuse" class="btn btn-outline-danger">Refuser</button>{% else %}<button name="statut" value="desactive" class="btn btn-outline-danger">Désactiver</button>{% endif %}</form>{% endif %}{% endif %}
+<details><summary>Historique</summary>{% for h in tarif.historique.all %}<p>{{ h.created_at|date:"d/m/Y H:i" }} · {{ h.acteur.username }} · {{ h.statut }} : {{ h.motif }}</p>{% endfor %}</details></section>{% empty %}<p>Aucun tarif.</p>{% endfor %}
+{% include "orders/delivery/_pagination_proof.html" %}{% endblock %}

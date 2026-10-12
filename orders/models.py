@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy
 from django.db import models, transaction
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from products.models import Product
@@ -43,6 +44,8 @@ class Order(models.Model):
     code_postal_livraison = models.CharField(max_length=20, blank=True, null=True)
     mode_livraison = models.CharField(max_length=30, default="standard")
     frais_livraison = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    tarif_livraison = models.ForeignKey("orders.TarifLivreur", on_delete=models.PROTECT, null=True, blank=True)
 
     vendeur_confirmateur = models.ForeignKey(
         User,
@@ -90,6 +93,17 @@ class Order(models.Model):
         for field in ("numero_rue", "numero_porte"):
             setattr(self, field, self._meta.get_field(field).clean(getattr(self, field), self))
         with transaction.atomic():
+            if self.pk and not self._state.adding:
+                previous = type(self).objects.select_for_update().get(pk=self.pk)
+                fields = kwargs.get("update_fields")
+                for field in ("frais_livraison", "tarif_livraison_id"):
+                    written = fields is None or field in fields or (field == "tarif_livraison_id" and "tarif_livraison" in fields)
+                    if written and getattr(previous, field) != getattr(self, field):
+                        raise ValidationError("Le prix de livraison accepté est figé. Une correction exige une procédure distincte.")
+                if self.statut == "livree" and previous.statut != "livree" and (fields is None or "statut" in fields):
+                    from .proof_models import PreuveLivraison
+                    if (previous.est_livrable or Livraison.objects.filter(commande_id=self.pk).exists()) and not PreuveLivraison.objects.filter(livraison__commande_id=self.pk).exists():
+                        raise ValidationError("Une preuve de remise est nécessaire pour livrer cette commande.")
             super().save(*args, **kwargs)
             fields = kwargs.get("update_fields")
             if self.statut == "annulee" and (fields is None or "statut" in fields):
@@ -140,3 +154,7 @@ class OrderItem(models.Model):
 
 
 from .delivery_models import Livraison, HistoriqueLivraison, MessageLivraison, LectureLivraison  # noqa: E402,F401
+
+from .proof_models import PreuveLivraison, DemandeDerogation, RetourLivraison, AccesPreuve  # noqa: E402,F401
+
+from .pricing_models import TarifLivreur, HistoriqueTarif  # noqa: E402,F401

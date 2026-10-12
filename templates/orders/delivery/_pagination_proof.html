@@ -1,0 +1,1 @@
+<nav aria-label="Pagination">{% if page_obj.has_previous %}<a href="?statut={{ request.GET.statut|urlencode }}&page={{ page_obj.previous_page_number }}">Précédent</a>{% endif %} {{ page_obj.number }}/{{ page_obj.paginator.num_pages }} {% if page_obj.has_next %}<a href="?statut={{ request.GET.statut|urlencode }}&page={{ page_obj.next_page_number }}">Suivant</a>{% endif %}</nav>

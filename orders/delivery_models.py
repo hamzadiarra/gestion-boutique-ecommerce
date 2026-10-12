@@ -7,10 +7,10 @@ from django.utils import timezone
 
 STATUTS = [("a_affecter", gettext_lazy("À affecter")), ("affectee", gettext_lazy("Affectée")), ("acceptee", gettext_lazy("Acceptée")),
            ("en_preparation", gettext_lazy("En préparation")), ("prete", gettext_lazy("Prête")), ("en_route", gettext_lazy("En route")),
-           ("arrive", gettext_lazy("Arrivé")), ("livree", gettext_lazy("Livrée")), ("echec", gettext_lazy("Échec de livraison")), ("annulee", gettext_lazy("Annulée"))]
+           ("arrive", gettext_lazy("Arrivé")), ("attente_signature", gettext_lazy("Remise en attente de signature")), ("livree", gettext_lazy("Livrée et confirmée")), ("contestee", gettext_lazy("Contestée")), ("echec", gettext_lazy("Échec de livraison")), ("annulee", gettext_lazy("Annulée"))]
 MOTIFS = [("client_absent", gettext_lazy("Client absent")), ("adresse_introuvable", gettext_lazy("Adresse introuvable")),
           ("client_injoignable", gettext_lazy("Client injoignable")), ("refus_client", gettext_lazy("Refus client")), ("autre", gettext_lazy("Autre"))]
-TERMINAUX = {"livree", "echec", "annulee"}
+TERMINAUX = {"livree", "echec", "annulee", "contestee"}
 
 
 class TraceQuerySet(models.QuerySet):

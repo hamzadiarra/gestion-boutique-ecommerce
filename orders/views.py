@@ -5,6 +5,7 @@ import uuid
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -112,6 +113,13 @@ def create_order(request):
                 return render(request, "orders/checkout.html", _checkout_context(request, panier, errors, 2, values))
 
             delivery = DELIVERY_OPTIONS[values["mode_livraison"]]
+            tarif, fee = None, delivery["fee"]
+            if request.POST.get("tarif_livraison") or request.POST.get("devis_livraison"):
+                from .pricing_services import verifier_devis
+                tarif, fee = verifier_devis(request.POST.get("devis_livraison", ""), request.user,
+                    values["mode_livraison"], values["ville"], lock=True)
+                if str(tarif.pk) != request.POST.get("tarif_livraison"):
+                    raise ValidationError("L'offre sélectionnée ne correspond pas au devis.")
             commande = Order.objects.create(
                 utilisateur=request.user,
                 note=values["note"] or None,
@@ -119,7 +127,8 @@ def create_order(request):
                 ville_livraison=values["ville"],
                 code_postal_livraison=values["code_postal"] or None,
                 mode_livraison=values["mode_livraison"],
-                frais_livraison=delivery["fee"],
+                frais_livraison=fee,
+                tarif_livraison=tarif,
                 **adresse_form.cleaned_data,
             )
             for article in articles:
@@ -141,6 +150,8 @@ def create_order(request):
             from .delivery_services import initialiser_livraison
             initialiser_livraison(commande, request.user, checkout=True)
             request.session["last_checkout_order_id"] = commande.id
+    except ValidationError as exc:
+        return render(request, "orders/checkout.html", _checkout_context(request, panier, exc.messages, 2, values), status=409)
     except Product.DoesNotExist:
         messages.error(request, gettext("Un produit de votre panier n'est plus disponible."))
         return redirect("cart_detail")

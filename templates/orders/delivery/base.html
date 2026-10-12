@@ -2,5 +2,6 @@
 {% block extra_head %}<link rel="stylesheet" href="{% static 'css/delivery.css' %}">{% endblock %}
 {% block content %}<main class="delivery-shell container py-4">
 <p class="text-muted small">{% trans "Suivi et discussion en ligne uniquement. Actualisez la page pour recevoir les nouveautés." %}</p>
+<nav class="d-flex flex-wrap gap-3 mb-3"><a href="{% url 'my_orders' %}">Mes commandes</a>{% if user.profile.role == 'livreur' %}<a href="{% url 'livreur_dashboard' %}">Mes livraisons</a><a href="{% url 'livraison_tarifs' %}">Mes tarifs</a>{% endif %}{% if user.is_superuser or user.profile.role == 'admin' %}<a href="{% url 'livraison_supervision' %}">Preuves et confirmations</a><a href="{% url 'livraison_tarifs' %}">Gestion des tarifs</a>{% endif %}</nav>
 {% block delivery_content %}{% endblock %}
 </main>{% endblock %}

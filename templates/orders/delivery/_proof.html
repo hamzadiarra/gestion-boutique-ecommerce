@@ -1,0 +1,21 @@
+{% load static %}
+{% if peut_signer %}
+<section class="delivery-card my-3"><h2 class="h4">Signature de réception</h2>
+<p id="signature-notice">Votre signature prouve la réception de cette livraison. Elle sera conservée {{ retention_days }} jours dans un espace privé, accessible à vous-même et aux administrateurs autorisés. Elle ne vaut pas validation du paiement ni renonciation à signaler un problème.</p>
+<form method="post" action="{% url 'livraison_signature' livraison.pk %}" id="signature-form">{% csrf_token %}
+<p>{{ signature_form.receptionnaire.label_tag }} {{ signature_form.receptionnaire }}</p>
+<canvas id="signature-canvas" width="600" height="240" aria-label="Zone de signature tactile" aria-describedby="signature-notice" style="width:100%;max-width:600px;height:240px;border:2px solid #495057;border-radius:8px;background:white;touch-action:none">Signature tactile indisponible : demandez une dérogation.</canvas>
+{{ signature_form.signature }}
+<p><button type="button" class="btn btn-outline-secondary" id="signature-clear">Effacer et recommencer</button></p>
+<p>{{ signature_form.information_acceptee }} {{ signature_form.information_acceptee.label_tag }}</p>
+<p id="signature-error" role="alert"></p>
+<button class="btn btn-primary">Confirmer la signature et la remise</button>
+</form><script src="{% static 'js/delivery-signature.js' %}" defer></script>
+<details class="mt-3"><summary>Impossible de recueillir la signature</summary><p>La remise restera non confirmée jusqu’à une décision administrative motivée.</p>
+<form method="post" action="{% url 'livraison_derogation' livraison.pk %}">{% csrf_token %}{{ derogation_form.as_p }}<button class="btn btn-outline-dark">Demander une dérogation</button></form></details>
+</section>{% endif %}
+{% if livraison.preuve %}<section class="delivery-card my-3"><h2 class="h5">Preuve de remise</h2><p>Enregistrée le {{ livraison.preuve.created_at|date:"d/m/Y H:i" }}.</p>
+{% if livraison.preuve.exceptionnelle %}<p>Remise exceptionnelle autorisée par l’administration, sans signature.</p>{% elif peut_voir_preuve %}<a class="btn btn-outline-primary" href="{% url 'livraison_preuve' livraison.pk %}">Consulter ma preuve privée</a>{% endif %}</section>{% endif %}
+{% if est_proprietaire and retour_possible %}<section class="delivery-card my-3"><h2 class="h5">Votre réception</h2><p>Confirmez après réception, ou décrivez un problème. Note facultative de 1 à 5. Ne communiquez pas d’informations sensibles dans le commentaire.</p>
+<form method="post" action="{% url 'livraison_retour' livraison.pk %}">{% csrf_token %}{{ retour_form.as_p }}<button class="btn btn-primary">Enregistrer mon retour</button></form></section>{% endif %}
+{% if retours %}<section class="delivery-card my-3"><h2 class="h5">Retours du client</h2>{% for retour in retours %}<article><strong>{{ retour.get_type_display }}</strong> · {{ retour.created_at|date:"d/m/Y H:i" }}{% if retour.note %} · {{ retour.note }}/5{% endif %}<p>{{ retour.commentaire|linebreaksbr }}</p></article>{% endfor %}</section>{% endif %}

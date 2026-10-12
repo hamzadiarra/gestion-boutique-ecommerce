@@ -16,6 +16,8 @@ from django.views.decorators.http import require_GET, require_POST
 
 from accounts.decorators import livreur_required
 from .models import Livraison, Order
+from .proof_forms import SignatureForm, DerogationForm, RetourForm
+from .proof_services import est_admin, retention_days
 from .delivery_forms import AffectationForm, ActionLivraisonForm, MessageLivraisonForm, FiltreLivraisonForm
 from .delivery_permissions import peut_gerer_livraison, peut_ecrire_livraison, exiger_acces
 from .delivery_services import (affecter_livreur, changer_statut_livraison, envoyer_message_livraison,
@@ -68,7 +70,7 @@ def _liste(request, driver=False):
         elif section == "a_affecter":
             deliveries = deliveries.filter(statut="a_affecter")
         elif section == "en_cours":
-            deliveries = deliveries.filter(statut__in=["acceptee", "en_preparation", "prete", "en_route", "arrive"])
+            deliveries = deliveries.filter(statut__in=["acceptee", "en_preparation", "prete", "en_route", "arrive", "attente_signature"])
         elif section == "terminees":
             deliveries = deliveries.filter(statut__in=["livree", "annulee"])
         elif section == "echecs":
@@ -104,8 +106,22 @@ def detail(request, livraison_id):
     if items:
         marquer_lu(delivery.pk, request.user, max(m.pk for m in items))
     token = signing.dumps({"user": request.user.pk, "livraison": delivery.pk, "key": str(uuid.uuid4())}, salt="delivery-message")
+    retour_form = RetourForm()
+    existing_returns = set(delivery.retours.values_list("type", flat=True))
+    return_choices = []
+    if delivery.statut == "livree" and "confirmation" not in existing_returns:
+        return_choices.append(("confirmation", "Je confirme la réception"))
+    if delivery.statut in {"en_route", "arrive", "attente_signature", "livree", "echec"} and "probleme" not in existing_returns:
+        return_choices.append(("probleme", "Je signale un problème"))
+    retour_form.fields["type"].choices = return_choices
     return render(request, "orders/delivery/detail.html", {
         "livraison": delivery, "commande": delivery.commande,
+        "signature_form": SignatureForm(), "derogation_form": DerogationForm(auto_id="derogation_%s"), "retour_form": retour_form, "retour_possible": bool(return_choices),
+        "peut_signer": delivery.livreur_id == request.user.pk and delivery.statut == "attente_signature",
+        "est_proprietaire": delivery.commande.utilisateur_id == request.user.pk,
+        "peut_voir_preuve": est_admin(request.user) or delivery.commande.utilisateur_id == request.user.pk,
+        "retention_days": retention_days(),
+        "retours": delivery.retours.all(),
         "gerer": peut_gerer_livraison(request.user, delivery), "ecrire": peut_ecrire_livraison(request.user, delivery),
         "actions": [(a, dict(Livraison.STATUTS)[a]) for a in actions_autorisees(request.user, delivery)],
         "affectation_form": AffectationForm(), "action_form": ActionLivraisonForm(),
