@@ -1,4 +1,4 @@
-{% load i18n %}{% load static %}
+{% load i18n %}{% load static navigation %}
 <!DOCTYPE html>
 {% get_current_language as current_language %}<html lang="{{ current_language }}" data-theme="light">
 <head>
@@ -14,9 +14,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/refonte.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
-<body data-user-id="{% if user.is_authenticated %}{{ user.id }}{% endif %}" data-user-authenticated="{% if user.is_authenticated %}1{% else %}0{% endif %}" data-user-role="{% if user.is_authenticated and user.profile %}{{ user.profile.role }}{% else %}guest{% endif %}">
+<body data-search-endpoint="{% url 'product_autocomplete' %}" data-user-id="{% if user.is_authenticated %}{{ user.id }}{% endif %}" data-user-authenticated="{% if user.is_authenticated %}1{% else %}0{% endif %}" data-user-role="{% if user.is_authenticated and user.profile %}{{ user.profile.role }}{% else %}guest{% endif %}">
     <div id="offline-status-banner" class="offline-status-banner d-none" aria-live="polite" role="status" hidden></div>
     <div id="particles-container" class="particles-container" aria-hidden="true"></div>
 
@@ -28,7 +29,7 @@
                     <span class="site-brand-copy"><strong>{% trans "Gestion Boutique" %}</strong><small>{% trans "Votre sélection, simplement." %}</small></span>
                 </a>
 
-                <button class="navbar-toggler site-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-label="{% trans "Ouvrir le menu" %}">
+                <button class="navbar-toggler site-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="{% trans "Ouvrir le menu" %}">
                     <i class="bi bi-list"></i>
                 </button>
 
@@ -47,19 +48,20 @@
 
                         {% if user.is_authenticated %}
                             {% if user.profile.role == 'client' or user.profile.role == 'admin' %}
-                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'my_orders' %}"><i class="bi bi-box-seam"></i><span>{% trans "Commandes" %}</span></a></li>
-                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'wishlist' %}"><i class="bi bi-heart"></i><span>{% trans "Favoris" %}</span></a></li>
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'my_orders' %}" aria-label="{% trans 'Commandes' %}"><i class="bi bi-box-seam"></i><span>{% trans "Commandes" %}</span></a></li>
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'wishlist' %}" aria-label="{% trans 'Favoris' %}"><i class="bi bi-heart"></i><span>{% trans "Favoris" %}</span></a></li>
                             {% endif %}
                             {% if user.profile.role == 'vendeur' or user.profile.role == 'admin' %}
-                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'vendeur_dashboard' %}"><i class="bi bi-shop"></i><span>{% trans "Vendeur" %}</span></a></li>
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'vendeur_dashboard' %}" aria-label="{% trans 'Vendeur' %}"><i class="bi bi-shop"></i><span>{% trans "Vendeur" %}</span></a></li>
                             {% endif %}
                             {% if user.profile.role == 'comptable' or user.profile.role == 'admin' %}
-                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'comptable_dashboard' %}"><i class="bi bi-bar-chart-line"></i><span>{% trans "Finance" %}</span></a></li>
+                                <li class="nav-item site-role-link"><a class="nav-link" href="{% url 'comptable_dashboard' %}" aria-label="{% trans 'Finance' %}"><i class="bi bi-bar-chart-line"></i><span>{% trans "Finance" %}</span></a></li>
                             {% endif %}
                             {% if user.profile.role == 'livreur' %}<li class="nav-item"><a class="nav-link" href="{% url 'livreur_dashboard' %}">{% trans "Mes livraisons" %}</a></li>{% elif user.is_superuser or user.profile.role == 'admin' or user.profile.role == 'vendeur' %}<li class="nav-item"><a class="nav-link" href="{% url 'boutique_livraisons' %}">{% trans "Livraisons" %}</a></li>{% endif %}<li class="nav-item site-notification-link"><a class="nav-link" href="{% url 'notification_list' %}" aria-label="{% trans "Notifications" %}"><i class="bi bi-bell"></i>{% if unread_notifications_count > 0 %}<b class="site-count-badge site-notification-badge">{{ unread_notifications_count }}</b>{% endif %}</a></li>
                             <li class="nav-item dropdown site-account-menu">
                                 <a class="nav-link dropdown-toggle site-account-link" href="#" data-bs-toggle="dropdown" aria-expanded="false"><span class="site-avatar">{% if user.profile.photo %}<img src="{{ user.profile.photo.url }}" alt="{% blocktrans with username=user.username %}Photo de {{ username }}{% endblocktrans %}">{% elif user.first_name or user.last_name %}{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}{% else %}{{ user.username|first|upper }}{% endif %}</span><span class="d-none d-xxl-inline">{{ user.username }}</span></a>
                                 <ul class="dropdown-menu dropdown-menu-end site-dropdown">
+                                    {% if user.is_superuser or user.profile.role == 'admin' %}<li><a class="dropdown-item" href="{% url 'security_dashboard' %}"><i class="bi bi-shield-check"></i>Live Security</a></li>{% endif %}
                                     <li class="site-dropdown-heading"><strong><i class="bi bi-person me-1" aria-hidden="true"></i>{% trans "Mon profil" %}</strong><small>{{ user.username }}</small></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person"></i>{% trans "Mon profil" %}</a></li>
@@ -96,6 +98,7 @@
         </div>
     {% endif %}
 
+    {% back_navigation %}
     <main id="main-content">{% block content %}{% endblock %}</main>
     <aside class="shop-assistant" id="shopAssistant" data-endpoint="{% url 'assistant_ask' %}" aria-label="{% trans 'Assistant Boutique' %}">
         <button class="shop-assistant-toggle" id="shopAssistantToggle" type="button" aria-controls="shopAssistantPanel" aria-expanded="false">?</button>
@@ -111,8 +114,8 @@
         <div class="container">
             <div class="row g-4 align-items-start">
                 <div class="col-lg-5"><a class="site-brand site-brand-footer" href="{% url 'home' %}"><span class="site-brand-mark">{% if boutique_settings.logo %}<img src="{{ boutique_settings.logo.url }}" alt="{% trans "Logo de la boutique" %}">{% else %}<span aria-hidden="true">GB</span>{% endif %}</span><span class="site-brand-copy"><strong>{% trans "Gestion Boutique" %}</strong><small>{% trans "Une expérience d'achat plus simple." %}</small></span></a><p class="site-footer-intro">{% trans "Une sélection pensée pour vos envies, avec un service clair du premier clic au suivi de votre commande." %}</p></div>
-                <div class="col-6 col-lg-2"><h6>{% trans "Boutique" %}</h6><a href="{% url 'product_list' %}">{% trans "Tous les produits" %}</a><a href="{% url 'category_list' %}">{% trans "Catégories" %}</a><a href="{% url 'wishlist' %}">{% trans "Favoris" %}</a></div>
-                <div class="col-6 col-lg-2"><h6>{% trans "Compte" %}</h6>{% if user.is_authenticated %}<a href="{% url 'profile' %}">{% trans "Mon profil" %}</a><a href="{% url 'my_orders' %}">{% trans "Mes commandes" %}</a>{% else %}<a href="{% url 'login' %}">{% trans "Connexion" %}</a><a href="{% url 'register' %}">{% trans "Inscription" %}</a>{% endif %}<a href="{% url 'cart_detail' %}">{% trans "Panier" %}</a></div>
+                <div class="col-6 col-lg-2"><h6>{% trans "Boutique" %}</h6><a href="{% url 'product_list' %}">{% trans "Tous les produits" %}</a><a href="{% url 'category_list' %}">{% trans "Catégories" %}</a><a href="{% url 'wishlist' %}" aria-label="{% trans 'Favoris' %}">{% trans "Favoris" %}</a></div>
+                <div class="col-6 col-lg-2"><h6>{% trans "Compte" %}</h6>{% if user.is_authenticated %}<a href="{% url 'profile' %}">{% trans "Mon profil" %}</a><a href="{% url 'my_orders' %}" aria-label="{% trans 'Commandes' %}">{% trans "Mes commandes" %}</a>{% else %}<a href="{% url 'login' %}">{% trans "Connexion" %}</a><a href="{% url 'register' %}">{% trans "Inscription" %}</a>{% endif %}<a href="{% url 'cart_detail' %}">{% trans "Panier" %}</a></div>
                 <div class="col-lg-3"><h6>{% trans "Besoin d'aide ?" %}</h6><p class="small">{% trans "Notre équipe est disponible pour vous accompagner." %}</p><a class="site-footer-contact" href="mailto:contact@gestionboutique.ml"><i class="bi bi-envelope"></i>{% trans "contact@gestionboutique.ml" %}</a><a class="site-footer-contact" href="https://api.whatsapp.com/send?phone=22392331429" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp"></i>{% trans "Écrire sur WhatsApp" %}</a></div>
             </div>
             <div class="site-footer-bottom"><span>{% trans "© 2026 Gestion Boutique" %}</span><span>{% trans "Une boutique pensée pour vous." %}</span></div>
@@ -124,6 +127,7 @@
     {% include '_offline_i18n.html' %}
     <script src="{% static 'js/offline-manager.js' %}"></script>
     <script src="{% static 'js/assistant.js' %}"></script>
+    <script src="{% static 'js/refonte.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

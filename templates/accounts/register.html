@@ -1130,6 +1130,7 @@
         </form>
 
 
+        <p class="small text-body-secondary">{% trans "Les événements de connexion sont journalisés pour protéger votre compte. Aucune capture d’écran ni surveillance des pages consultées. Les journaux de connexion sont éligibles à une purge après 90 jours ; les décisions administratives restent auditées." %}</p>
         <p class="account-login-link">
 
             {% trans "Vous avez déjà un compte ?" %}
@@ -1625,78 +1626,25 @@
     /* Robustesse mot de passe */
 
     function updatePasswordStrength() {
-
-        if (!password1) {
-            return;
-        }
-
-
-        const value =
-            password1.value;
-
-
-        const checks = [
-            value.length >= 8,
-            /[A-Za-z]/.test(value),
-            /\d/.test(value),
-            /[^A-Za-z\d]/.test(value)
-        ];
-
-
-        const score =
-            checks.filter(Boolean).length;
-
-
-        document
-            .querySelectorAll(
-                ".account-password-meter span"
-            )
-            .forEach(
-                (bar, index) => {
-
-                    bar.style.background =
-                        index < score
-                            ? "var(--color-primary)"
-                            : "var(--color-border)";
-
-                }
-            );
-
-
-        if (!passwordFeedback) {
-            return;
-        }
-
-
-        if (!value) {
-
-            passwordFeedback.textContent =
-                "Utilisez un mot de passe suffisamment robuste.";
-
-        } else if (score <= 1) {
-
-            passwordFeedback.textContent =
-                "Mot de passe faible.";
-
-        } else if (score === 2) {
-
-            passwordFeedback.textContent =
-                "Mot de passe moyen.";
-
-        } else if (score === 3) {
-
-            passwordFeedback.textContent =
-                "Bon mot de passe.";
-
-        } else {
-
-            passwordFeedback.textContent =
-                "Mot de passe robuste.";
-
-        }
-
+        if (!password1) return;
+        const value = password1.value;
+        const classes = [/[a-z]/.test(value), /[A-Z]/.test(value), /\d/.test(value), /[^A-Za-z\d]/.test(value)].filter(Boolean).length;
+        const personal = ["id_first_name", "id_last_name", "id_email"].map(id => document.getElementById(id)?.value.split("@")[0].toLowerCase()).filter(x => x && x.length >= 3);
+        const predictable = /^(.)\1+$/.test(value) || /^(password|motdepasse|azerty|qwerty|123456)/i.test(value) || personal.some(part => value.toLowerCase().includes(part));
+        let score = !value ? 0 : 1;
+        if (value.length >= 8 && classes >= 2) score = 2;
+        if (value.length >= 10 && classes >= 3) score = 3;
+        if ((value.length >= 14 && classes >= 3) || (value.length >= 20 && classes >= 2)) score = 4;
+        if (predictable) score = Math.min(score, 1);
+        const colors = ["var(--color-border)", "#dc3545", "#e0a800", "#198754", "#0d6efd"];
+        const labels = ["Saisissez un mot de passe long et unique.", "Très faible — évitez les suites et vos informations personnelles.", "Moyen ou insuffisant — ajoutez longueur et variété.", "Bon — allongez-le pour renforcer sa robustesse.", "Robuste — utilisez-le uniquement pour cette boutique."];
+        document.querySelectorAll(".account-password-meter span").forEach((bar, index) => { bar.style.background = index < score ? colors[score] : colors[0]; });
+        const meter = document.querySelector(".account-password-meter");
+        meter.setAttribute("role", "progressbar"); meter.setAttribute("aria-label", "Robustesse du mot de passe");
+        meter.setAttribute("aria-valuemin", "0"); meter.setAttribute("aria-valuemax", "4"); meter.setAttribute("aria-valuenow", String(score)); meter.setAttribute("aria-valuetext", labels[score]);
+        if (passwordFeedback) { passwordFeedback.textContent = labels[score]; passwordFeedback.setAttribute("aria-live", "polite"); }
     }
-
+    updatePasswordStrength();
 
     password1?.addEventListener(
         "input",

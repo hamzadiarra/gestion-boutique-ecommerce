@@ -2,6 +2,8 @@ const CACHE_NAME = "gestion-boutique-shell-v3-refonte";
 const STATIC_ASSETS = [
   "/",
   "/static/css/style.css",
+  "/static/css/refonte.css",
+  "/static/js/refonte.js",
   "/static/js/animations.js",
   "/static/js/offline-manager.js",
   "/static/manifest.webmanifest",

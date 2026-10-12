@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render
 from django.db.models import BooleanField, Case, Count, Value, When
 from django.utils import timezone
@@ -126,14 +127,14 @@ def _serialize_notification(notification):
 
 
 def home(request):
-    produits_actifs = Product.objects.filter(actif=True).select_related("categorie").annotate(
+    produits_actifs = Product.objects.filter(actif=True, categorie__active=True).select_related("categorie").annotate(
         is_new=Case(
             When(date_creation__gte=timezone.now() - timedelta(days=30), then=Value(True)),
             default=Value(False), output_field=BooleanField(),
         )
     )
     produits_vedette = produits_actifs.filter(vedette=True)[:6]
-    categories = Category.objects.filter(active=True).annotate(product_count=Count("products"))[:6]
+    categories = Category.objects.filter(active=True).annotate(product_count=Count("products", filter=Q(products__actif=True)))[:6]
     nouveautes = produits_actifs.order_by("-date_creation")[:4]
     meilleures_ventes = produits_actifs.order_by("-quantite_vendue", "-date_creation")[:4]
     promotions = produits_actifs.filter(prix_promotion__isnull=False).order_by("-date_creation")[:4]
@@ -152,11 +153,11 @@ def offline_sync_payload(request):
     user = request.user if request.user.is_authenticated else None
     categories = list(
         Category.objects.filter(active=True)
-        .annotate(product_count=Count("products"))
+        .annotate(product_count=Count("products", filter=Q(products__actif=True)))
         .order_by("nom")[:200]
     )
     products = list(
-        Product.objects.filter(actif=True)
+        Product.objects.filter(actif=True, categorie__active=True)
         .select_related("categorie")
         .order_by("-date_modification")[:500]
     )
