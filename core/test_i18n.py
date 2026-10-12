@@ -75,6 +75,15 @@ class InternationalisationTests(TestCase):
         self.assertContains(response, 'id="offline-i18n"')
         self.assertContains(response, "Cette action nécessite une connexion Internet.")
 
+    def test_language_menu_has_two_decorative_flags_and_preserves_query(self):
+        response = self.client.get(reverse("product_list") + "?q=test&tri=prix_asc")
+        self.assertContains(response, 'images/flags/fr.svg')
+        self.assertContains(response, 'images/flags/en.svg')
+        self.assertContains(response, 'name="next" value="/products/?q=test&amp;tri=prix_asc"')
+        self.assertContains(response, 'name="language" value="fr"', count=1)
+        self.assertContains(response, 'name="language" value="en"', count=1)
+        self.assertNotContains(response, 'name="language" value="bm"')
+
     def test_technical_choices_are_identical_across_locales(self):
         for model in (Order, Payment):
             with translation.override("fr"):
