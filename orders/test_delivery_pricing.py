@@ -121,3 +121,73 @@ class PricingTests(TestCase):
         self.assertIn("no-store", response["Cache-Control"])
         self.client.force_login(self.admin)
         self.assertEqual(self.client.get("/orders/livraisons/tarifs/").status_code, 200)
+
+    def test_driver_has_clear_proposal_button_and_identity(self):
+        self.client.force_login(self.driver)
+        response = self.client.get("/orders/livraisons/tarifs/")
+        self.assertContains(response, 'href="#proposer-tarif"')
+        self.assertContains(response, "Espace livreur")
+        self.assertContains(response, "courier")
+
+    def test_admin_empty_state_explains_proposal_permissions(self):
+        self.client.force_login(self.admin)
+        response = self.client.get("/orders/livraisons/tarifs/")
+        self.assertContains(response, "Les livreurs proposent")
+        self.assertNotContains(response, 'id="proposer-tarif"')
+        self.assertEqual(self.client.post("/orders/livraisons/tarifs/", {"mode": "express", "montant": "1200"}).status_code, 403)
+
+    def test_invalid_proposal_preserves_form_and_input(self):
+        self.client.force_login(self.driver)
+        response = self.client.post("/orders/livraisons/tarifs/", {"mode": "express", "zone": "Bamako", "montant": "-1"})
+        self.assertEqual(response.status_code, 400)
+        self.assertTemplateUsed(response, "orders/delivery/tarifs.html")
+        self.assertContains(response, 'value="Bamako"', status_code=400)
+        self.assertTrue(response.context["form"].errors)
+
+    def test_role_scoping_and_filter_counters(self):
+        item = self.proposal()
+        other = User.objects.create_user("other-courier")
+        other.profile.role = "livreur"; other.profile.save()
+        from .pricing_services import proposer_tarif
+        proposer_tarif(other, "standard", "900")
+        self.client.force_login(self.driver)
+        response = self.client.get("/orders/livraisons/tarifs/")
+        self.assertEqual(list(response.context["page_obj"]), [item])
+        self.assertEqual(response.context["tarif_filtres"][0]["count"], 1)
+        self.client.force_login(self.admin)
+        self.assertEqual(self.client.get("/orders/livraisons/tarifs/").context["page_obj"].paginator.count, 2)
+        for role in ("client", "vendeur", "comptable"):
+            self.customer.profile.role = role; self.customer.profile.save()
+            self.client.force_login(self.customer)
+            self.assertEqual(self.client.get("/orders/livraisons/tarifs/").status_code, 403)
+
+    def test_http_refusal_records_actor_reason_date_and_excludes_checkout(self):
+        item = self.proposal()
+        self.client.force_login(self.admin)
+        response = self.client.post(f"/orders/livraisons/tarifs/{item.pk}/decision/", {"statut": "refuse", "motif": "Montant trop élevé"})
+        self.assertEqual(response.status_code, 302)
+        item.refresh_from_db()
+        self.assertEqual(item.statut, "refuse")
+        event = item.historique.get(statut="refuse")
+        self.assertEqual(event.acteur, self.admin)
+        self.assertEqual(event.motif, "Montant trop élevé")
+        self.assertIsNotNone(event.created_at)
+        self.client.force_login(self.customer)
+        self.assertEqual(self.client.get("/orders/livraisons/offres/", {"mode": "express", "ville": "Bamako"}).json()["offres"], [])
+
+    def test_invalid_admin_decision_keeps_inline_errors(self):
+        item = self.proposal()
+        self.client.force_login(self.admin)
+        response = self.client.post(f"/orders/livraisons/tarifs/{item.pk}/decision/", {"statut": "approuve", "motif": "Non"})
+        self.assertEqual(response.status_code, 400)
+        self.assertTemplateUsed(response, "orders/delivery/tarifs.html")
+        self.assertTrue(list(response.context["page_obj"])[0].decision_form.errors)
+        item.refresh_from_db()
+        self.assertEqual(item.statut, "propose")
+
+    def test_invalid_decision_filters_return_to_list(self):
+        item = self.proposal()
+        self.client.force_login(self.admin)
+        response = self.client.post(f"/orders/livraisons/tarifs/{item.pk}/decision/", {"statut": "approuve", "motif": "x"})
+        self.assertContains(response, 'href="/orders/livraisons/tarifs/?statut=approuve"', status_code=400)
+        self.assertEqual(self.client.get("/orders/livraisons/tarifs/?statut=approuve").status_code, 200)

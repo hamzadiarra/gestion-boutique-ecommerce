@@ -19,6 +19,12 @@ class RetourForm(forms.Form):
 
 
 class TarifForm(forms.Form):
-    mode = forms.ChoiceField(choices=[("standard", "Standard"), ("express", "Express")])
-    zone = forms.CharField(label="Ville (vide pour toutes les villes)", max_length=100, required=False)
-    montant = forms.DecimalField(label="Montant en FCFA", min_value=0, max_value=99999999.99, max_digits=10, decimal_places=2)
+    mode = forms.ChoiceField(label="Type de livraison", choices=[("standard", "Standard"), ("express", "Express")], widget=forms.Select(attrs={"class": "form-select"}))
+    zone = forms.CharField(label="Ville ou zone de livraison", max_length=100, required=False, help_text="Saisissez la ville du checkout (ex. Bamako). Laissez vide pour toutes les villes.", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Ex. Bamako"}))
+    montant = forms.DecimalField(label="Montant en FCFA", min_value=0, max_value=99999999.99, max_digits=10, decimal_places=2, widget=forms.NumberInput(attrs={"class": "form-control", "inputmode": "decimal", "placeholder": "Ex. 1500"}))
+
+
+class DecisionTarifForm(forms.Form):
+    statut = forms.ChoiceField(choices=[("approuve", "Approuver"), ("refuse", "Refuser"), ("desactive", "Désactiver")])
+    motif = forms.CharField(label="Motif de la décision", min_length=5, max_length=1000,
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Expliquez votre décision"}))

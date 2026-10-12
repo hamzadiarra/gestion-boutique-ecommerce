@@ -1,9 +1,42 @@
 {% extends "orders/delivery/base.html" %}
-{% block delivery_content %}<h1>Tarifs de livraison</h1>
-<p>Les montants approuvés sont proposés aux nouvelles commandes. Une modification nécessite une nouvelle proposition et ne change jamais les commandes acceptées.</p>
-{% if not admin_tarifs %}<section class="delivery-card my-3"><h2>Proposer un tarif</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Soumettre à l’administration</button></form></section>{% endif %}
-<nav><a href="?">Tous</a> · <a href="?statut=propose">Proposés</a> · <a href="?statut=approuve">Approuvés</a> · <a href="?statut=refuse">Refusés</a> · <a href="?statut=desactive">Désactivés</a></nav>
-{% for tarif in page_obj %}<section class="delivery-card my-3"><h2 class="h5">Offre #{{ tarif.pk }} · {{ tarif.livreur.username }}</h2><p>{{ tarif.get_mode_display }} · {{ tarif.zone|default:"Toutes les villes" }} · <strong>{{ tarif.montant }} FCFA</strong> · {{ tarif.get_statut_display }}</p>
-{% if admin_tarifs %}{% if tarif.statut == 'propose' or tarif.statut == 'approuve' %}<form method="post" action="{% url 'livraison_decision_tarif' tarif.pk %}">{% csrf_token %}<label>Motif <input name="motif" required minlength="5" maxlength="1000"></label>{% if tarif.statut == 'propose' %}<button name="statut" value="approuve" class="btn btn-primary">Approuver</button><button name="statut" value="refuse" class="btn btn-outline-danger">Refuser</button>{% else %}<button name="statut" value="desactive" class="btn btn-outline-danger">Désactiver</button>{% endif %}</form>{% endif %}{% endif %}
-<details><summary>Historique</summary>{% for h in tarif.historique.all %}<p>{{ h.created_at|date:"d/m/Y H:i" }} · {{ h.acteur.username }} · {{ h.statut }} : {{ h.motif }}</p>{% endfor %}</details></section>{% empty %}<p>Aucun tarif.</p>{% endfor %}
-{% include "orders/delivery/_pagination_proof.html" %}{% endblock %}
+{% block delivery_content %}
+<header class="delivery-heading pricing-heading">
+  <div><p class="shop-eyebrow">{% if admin_tarifs %}Espace administrateur{% else %}Espace livreur{% endif %} · {{ user.username }}</p><h1>Tarifs de livraison</h1></div>
+  {% if not admin_tarifs %}<a class="btn btn-primary" href="#proposer-tarif"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Proposer un tarif</a>{% endif %}
+</header>
+<p class="text-muted pricing-intro">{% if admin_tarifs %}Les livreurs proposent leurs tarifs. Vous approuvez ou refusez chaque proposition avec un motif.{% else %}Proposez votre grille tarifaire. L’administration doit l’approuver avant sa publication au checkout.{% endif %} Les commandes déjà acceptées conservent leur montant.</p>
+<div class="pricing-layout{% if admin_tarifs %} pricing-layout-admin{% endif %}">
+  <section aria-label="Propositions de tarifs" class="pricing-list">
+    <nav class="pricing-filters" aria-label="Statut des tarifs">
+      {% for filtre in tarif_filtres %}<a href="{% url 'livraison_tarifs' %}?{% if filtre.value %}statut={{ filtre.value }}{% endif %}" class="pricing-filter{% if filtre_actif == filtre.value %} active{% endif %}"{% if filtre_actif == filtre.value %} aria-current="page"{% endif %}>{{ filtre.label }} <span>{{ filtre.count }}</span></a>{% endfor %}
+    </nav>
+    {% for tarif in page_obj %}
+    <article class="delivery-card pricing-offer" id="tarif-{{ tarif.pk }}">
+      <header><h2 class="h5 mb-0">{{ tarif.get_mode_display }} · {{ tarif.zone|default:"Toutes les villes" }}</h2><span class="pricing-status pricing-status-{{ tarif.statut }}">{{ tarif.get_statut_display }}</span></header>
+      <p class="pricing-amount">{{ tarif.montant }} <small>FCFA</small></p>
+      <p class="text-muted small">Offre #{{ tarif.pk }} · {{ tarif.livreur.username }} · {{ tarif.created_at|date:"d/m/Y H:i" }}</p>
+      {% if admin_tarifs %}
+        {{ tarif.decision_form.non_field_errors }}{{ tarif.decision_form.statut.errors }}
+        {% if tarif.statut == 'propose' or tarif.statut == 'approuve' %}
+        <form method="post" action="{% url 'livraison_decision_tarif' tarif.pk %}" class="pricing-decision">
+          {% csrf_token %}
+          <label for="{{ tarif.decision_form.motif.id_for_label }}">Motif de la décision</label>{{ tarif.decision_form.motif }}{{ tarif.decision_form.motif.errors }}
+          <div class="d-flex flex-wrap gap-2 mt-2">{% if tarif.statut == 'propose' %}<button name="statut" value="approuve" class="btn btn-primary">Approuver</button><button name="statut" value="refuse" class="btn btn-outline-danger">Refuser</button>{% else %}<button name="statut" value="desactive" class="btn btn-outline-danger">Désactiver</button>{% endif %}</div>
+        </form>
+        {% endif %}
+      {% endif %}
+      <details class="pricing-history"><summary>Historique des décisions</summary><ol>{% for h in tarif.historique.all %}<li><strong>{% if h.statut == 'propose' %}Proposé{% elif h.statut == 'approuve' %}Approuvé{% elif h.statut == 'refuse' %}Refusé{% elif h.statut == 'desactive' %}Désactivé{% else %}{{ h.statut }}{% endif %}</strong> · {{ h.created_at|date:"d/m/Y H:i" }} · {{ h.acteur.username }}<p>{{ h.motif|default:"Proposition envoyée à l’administration." }}</p></li>{% empty %}<li>Aucune décision enregistrée.</li>{% endfor %}</ol></details>
+    </article>
+    {% empty %}<div class="delivery-card pricing-empty"><h2 class="h5">{% if filtre_actif %}Aucun tarif dans ce statut{% else %}Aucun tarif proposé{% endif %}</h2><p class="mb-0 text-muted">{% if admin_tarifs %}Les propositions des livreurs apparaîtront ici pour examen.{% else %}Utilisez le formulaire « Proposer un tarif » pour envoyer votre première proposition.{% endif %}</p></div>{% endfor %}
+    {% url 'livraison_tarifs' as tarifs_url %}{% include "orders/delivery/_pagination_proof.html" with pagination_url=tarifs_url %}
+  </section>
+  {% if not admin_tarifs %}<section id="proposer-tarif" class="delivery-card pricing-proposal" aria-labelledby="proposal-title">
+    <h2 id="proposal-title" class="h4">Proposer un tarif</h2><p class="small text-muted">Les frais sont exprimés en FCFA, par livraison.</p>
+    <form method="post" action="{% url 'livraison_tarifs' %}#proposer-tarif">
+      {% csrf_token %}{{ form.non_field_errors }}
+      {% for field in form %}<div class="pricing-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<div id="{{ field.auto_id }}_helptext" class="form-text">{{ field.help_text }}</div>{% endif %}{{ field.errors }}</div>{% endfor %}
+      <button class="btn btn-primary w-100" type="submit">Soumettre à l’administration</button>
+    </form>
+  </section>{% endif %}
+</div>
+{% endblock %}

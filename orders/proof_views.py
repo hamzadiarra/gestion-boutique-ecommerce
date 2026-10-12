@@ -1,4 +1,5 @@
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.contrib import messages
 from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -10,7 +11,7 @@ from .delivery_permissions import role
 from .models import Livraison
 from .proof_models import PreuveLivraison, DemandeDerogation, RetourLivraison, AccesPreuve
 from .pricing_models import TarifLivreur
-from .proof_forms import SignatureForm, DerogationForm, RetourForm, TarifForm
+from .proof_forms import SignatureForm, DerogationForm, RetourForm, TarifForm, DecisionTarifForm
 from .proof_services import confirmer_signature, demander_derogation, decider_derogation, retour_client, est_admin
 from .pricing_services import proposer_tarif, decider_tarif, creer_devis, normaliser_zone
 
@@ -82,25 +83,53 @@ def retour(request, livraison_id):
     return redirect("livraison_detail", livraison_id=livraison_id)
 
 
+def _tarifs_page(request, form=None, decision_id=None, decision_form=None, status=200):
+    admin = est_admin(request.user)
+    qs = TarifLivreur.objects.select_related("livreur").prefetch_related("historique__acteur")
+    if not admin:
+        qs = qs.filter(livreur=request.user)
+    counts = {row["statut"]: row["total"] for row in qs.values("statut").annotate(total=Count("pk"))}
+    filters = [("", "Tous")] + list(TarifLivreur._meta.get_field("statut").choices)
+    plural_labels = {"propose": "Proposés", "approuve": "Approuvés", "refuse": "Refusés", "desactive": "Désactivés"}
+    selected = request.GET.get("statut", "")
+    if selected not in dict(filters):
+        selected = ""
+    if selected:
+        qs = qs.filter(statut=selected)
+    page = Paginator(qs, 20).get_page(request.GET.get("page"))
+    if decision_id and not any(item.pk == decision_id for item in page):
+        # Always show the errored offer rather than losing feedback on pagination/filter changes.
+        page = Paginator(qs.model.objects.filter(pk=decision_id).select_related("livreur").prefetch_related("historique__acteur"), 20).get_page(1)
+    for item in page:
+        item.decision_form = decision_form if item.pk == decision_id else DecisionTarifForm(auto_id=f"decision_{item.pk}_%s")
+    return render(request, "orders/delivery/tarifs.html", {
+        "page_obj": page, "form": form if form is not None else TarifForm(), "admin_tarifs": admin,
+        "filtre_actif": selected,
+        "tarif_filtres": [{"value": value, "label": plural_labels.get(value, label),
+            "count": counts.get(value, 0) if value else sum(counts.values())} for value, label in filters],
+    }, status=status)
+
+
 @private_delivery
 @require_http_methods(["GET", "POST"])
 def tarifs(request):
     admin = est_admin(request.user)
     if not request.user.is_active or not (admin or role(request.user) == "livreur"):
         raise PermissionDenied()
-    form = TarifForm(request.POST or None)
     if request.method == "POST":
-        if not form.is_valid():
-            return form_error(form)
-        proposer_tarif(request.user, **form.cleaned_data)
-        return redirect("livraison_tarifs")
-    qs = TarifLivreur.objects.select_related("livreur").prefetch_related("historique__acteur")
-    if not admin:
-        qs = qs.filter(livreur=request.user)
-    statut = request.GET.get("statut", "")
-    if statut in {"propose", "approuve", "refuse", "desactive"}:
-        qs = qs.filter(statut=statut)
-    return render(request, "orders/delivery/tarifs.html", {"page_obj": Paginator(qs, 20).get_page(request.GET.get("page")), "form": form, "admin_tarifs": admin})
+        if admin:
+            raise PermissionDenied()
+        form = TarifForm(request.POST)
+        if form.is_valid():
+            try:
+                proposer_tarif(request.user, **form.cleaned_data)
+            except ValidationError as exc:
+                form.add_error(None, exc)
+            else:
+                messages.success(request, "Votre proposition a été envoyée à l’administration.")
+                return redirect("livraison_tarifs")
+        return _tarifs_page(request, form=form, status=400)
+    return _tarifs_page(request)
 
 
 @private_delivery
@@ -109,7 +138,15 @@ def decision_tarif(request, tarif_id):
     if not est_admin(request.user):
         raise PermissionDenied()
     get_object_or_404(TarifLivreur, pk=tarif_id)
-    decider_tarif(tarif_id, request.user, request.POST.get("statut"), request.POST.get("motif", ""))
+    form = DecisionTarifForm(request.POST, auto_id=f"decision_{tarif_id}_%s")
+    if not form.is_valid():
+        return _tarifs_page(request, decision_id=tarif_id, decision_form=form, status=400)
+    try:
+        item = decider_tarif(tarif_id, request.user, **form.cleaned_data)
+    except ValidationError as exc:
+        form.add_error(None, exc)
+        return _tarifs_page(request, decision_id=tarif_id, decision_form=form, status=409)
+    messages.success(request, f"Offre #{item.pk} : {item.get_statut_display().lower()}. Décision enregistrée.")
     return redirect("livraison_tarifs")
 
 

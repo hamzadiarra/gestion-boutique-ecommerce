@@ -361,7 +361,8 @@
     bindConnectivity();
     blockOfflineWrites();
     bindLogoutHooks();
-    showOfflineBanner(navigator.onLine);
+    // Ne pas déplacer toute la page à chaque chargement en ligne.
+    if (!navigator.onLine) showOfflineBanner(false);
 
     if (navigator.onLine) {
       await syncNow();
