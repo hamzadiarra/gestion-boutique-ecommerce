@@ -1,9 +1,25 @@
 (() => {
   const select = document.getElementById("security-event");
-  select.addEventListener("change", () => { document.getElementById("security-user").value = select.selectedOptions[0]?.dataset.user || ""; });
+  const user = document.getElementById("security-user");
+  if (select && user) {
+    const syncUser = () => { user.value = select.selectedOptions[0]?.dataset.user || ""; };
+    select.addEventListener("change", syncUser);
+    syncUser();
+  }
   const button = document.getElementById("security-refresh");
+  if (!button) return;
   let enabled = true, dirty = false;
-  document.querySelectorAll("form").forEach(form => form.addEventListener("input", () => { dirty = true; }));
-  button.addEventListener("click", () => { enabled = !enabled; button.setAttribute("aria-pressed", String(enabled)); button.textContent = enabled ? "Actualisation : 30 s" : "Actualisation en pause"; });
-  setInterval(() => { if (enabled && !dirty && !document.hidden && !document.activeElement.closest("form")) location.reload(); }, 30000);
+  const updateButton = () => {
+    button.setAttribute("aria-pressed", String(enabled));
+    button.textContent = dirty ? "Pause : formulaire en cours" : (enabled ? "Actualisation : 30 s" : "Actualisation en pause");
+  };
+  document.querySelectorAll("form[data-security-form]").forEach(form => {
+    const preserveDraft = () => { dirty = true; updateButton(); };
+    form.addEventListener("input", preserveDraft);
+    form.addEventListener("change", preserveDraft);
+  });
+  button.addEventListener("click", () => { enabled = !enabled; updateButton(); });
+  setInterval(() => {
+    if (enabled && !dirty && !document.hidden && !document.activeElement?.closest("form")) location.reload();
+  }, 30000);
 })();

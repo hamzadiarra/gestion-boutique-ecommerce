@@ -1,13 +1,104 @@
-{% extends "base.html" %}{% load static %}
+{% extends "base.html" %}
+{% load static %}
 {% block title %}Live Security — Gestion Boutique{% endblock %}
-{% block content %}<section class="shop-page"><div class="container">
-<div class="shop-page-intro"><div><span class="shop-eyebrow">Administration</span><h1>Live Security</h1><p>Examinez le contexte avant toute action. Une alerte ne constitue pas une preuve de fraude.</p></div><button class="btn btn-outline-primary" id="security-refresh" type="button" aria-pressed="true">Actualisation : 30 s</button></div>
-<p class="small text-body-secondary">Journal des connexions et interventions administratives. Aucune capture d'écran, aucun suivi des pages consultées. Sessions affichées : non expirées, sans garantie de présence actuelle. La suspension est manuelle, temporaire et révocable.</p>
-<div class="security-layout"><section class="security-card"><h2>Événements et alertes</h2><p><a href="?">Tous les événements</a> · <a href="?alerts=1">Alertes uniquement</a></p><div id="security-events">
-{% for event in events %}<article class="security-event"><strong>#{{ event.pk }} · {{ event.kind }}</strong>{% if event.alert %} <span class="badge text-bg-warning">À examiner</span>{% endif %}<p>{{ event.subject.username|default:"Identifiant non reconnu" }} · {{ event.created_at|date:"d/m/Y H:i" }}</p><p>{{ event.detail }}</p>{% if event.actor %}<small>Action par {{ event.actor.username }}</small>{% endif %}
-{% if event.alert %}{% if event.reviewed_at %}<p class="small">Consultée par {{ event.reviewed_by.username }} le {{ event.reviewed_at|date:"d/m/Y H:i" }}</p>{% endif %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="review"><input type="hidden" name="event_id" value="{{ event.pk }}"><button class="btn btn-sm btn-outline-primary">Marquer comme examinée</button></form>{% endif %}</article>{% empty %}<p>Aucun événement enregistré.</p>{% endfor %}
-<nav class="d-flex flex-wrap gap-3 mt-3" aria-label="Pagination des événements">{% if events.has_previous %}<a href="?page={{ events.previous_page_number }}&alerts={{ request.GET.alerts }}">Précédent</a>{% endif %}<span>Page {{ events.number }} / {{ events.paginator.num_pages }}</span>{% if events.has_next %}<a href="?page={{ events.next_page_number }}&alerts={{ request.GET.alerts }}">Suivant</a>{% endif %}</nav></div></section>
-<div><section class="security-card mb-4"><h2>Suspension temporaire</h2><p class="small">Examinez une alerte, vérifiez l'identité du client et expliquez votre décision. Plusieurs échecs peuvent provenir d'un oubli de mot de passe.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="suspend"><label class="form-label" for="security-event">Alerte examinée par vous dans les dernières 24 h</label><select class="form-select mb-3" id="security-event" name="event_id" required><option value="">Choisir une alerte</option>{% for alert in reviewed_alerts %}<option value="{{ alert.pk }}" data-user="{{ alert.subject_id }}">#{{ alert.pk }} — {{ alert.subject.username }}</option>{% endfor %}</select><input type="hidden" name="user_id" id="security-user"><label for="security-duration" class="form-label">Durée</label><select id="security-duration" name="hours" class="form-select mb-3"><option value="1">1 heure</option><option value="6">6 heures</option><option value="24">24 heures</option><option value="72">3 jours</option><option value="168">7 jours</option></select><label class="form-label" for="security-reason">Motif obligatoire (sans donnée sensible)</label><textarea id="security-reason" name="reason" minlength="5" maxlength="500" required class="form-control mb-3" rows="3"></textarea><button class="btn btn-warning">Suspendre et fermer les sessions</button></form></section>
-<section class="security-card mb-4"><h2>Suspensions en cours</h2>{% for suspension in suspensions %}<div class="security-event"><strong>{{ suspension.user.username }}</strong><p>{{ suspension.reason }}</p><p>Jusqu'au {{ suspension.until|date:"d/m/Y H:i" }}</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reactivate"><input type="hidden" name="user_id" value="{{ suspension.user_id }}"><label for="reactivate-{{ suspension.pk }}">Motif de réactivation</label><input id="reactivate-{{ suspension.pk }}" name="reason" class="form-control mb-2" required minlength="5" maxlength="500"><button class="btn btn-outline-success">Réactiver</button></form></div>{% empty %}<p>Aucune suspension active.</p>{% endfor %}</section>
-<section class="security-card"><h2>Sessions non expirées</h2><p class="small">100 sessions au maximum. Aucune clé de session exposée.</p><ul>{% for session in sessions %}<li>{{ session.username }} — expiration {{ session.expires|date:"d/m/Y H:i" }}</li>{% empty %}<li>Aucune session authentifiée.</li>{% endfor %}</ul></section></div></div></div></section>{% endblock %}
+{% block content %}
+<section class="shop-page">
+  <div class="container">
+    <div class="shop-page-intro">
+      <div>
+        <span class="shop-eyebrow">Administration · Démonstration locale</span>
+        <h1>Live Security</h1>
+        <p>Examinez le contexte avant toute action. Une alerte ne constitue pas une preuve de fraude.</p>
+      </div>
+      <button class="btn btn-outline-primary" id="security-refresh" type="button" aria-pressed="true" aria-describedby="security-refresh-help">Actualisation : 30 s</button>
+    </div>
+    <p class="small text-body-secondary">Journal des connexions et interventions administratives. Aucune capture d'écran, aucune conversation privée, aucun suivi des pages consultées. Sessions affichées : non expirées, sans garantie de présence actuelle. La suspension est manuelle, temporaire et révocable.</p>
+    <p class="small text-body-secondary" id="security-refresh-help">L'actualisation s'interrompt pendant la saisie d'un formulaire et lorsque cet onglet est masqué. Rechargez la page après avoir abandonné une saisie.</p>
+    <div class="security-layout">
+      <section class="security-card">
+        <h2>Événements et alertes</h2>
+        <p><a href="?">Tous les événements</a> · <a href="?alerts=1">Alertes uniquement</a></p>
+        <div id="security-events">
+          {% for event in events %}
+          <article class="security-event">
+            <strong>#{{ event.pk }} · {{ event.kind }}</strong>
+            {% if event.alert %}
+              {% if event.reviewed_at %}<span class="badge text-bg-secondary">Examinée</span>{% else %}<span class="badge text-bg-warning">À examiner</span>{% endif %}
+            {% endif %}
+            <p>{{ event.subject.username|default:"Identifiant non reconnu" }} · {{ event.created_at|date:"d/m/Y H:i" }}</p>
+            <p>{{ event.detail }}</p>
+            {% if event.actor %}<small>Action par {{ event.actor.username }}</small>{% endif %}
+            {% if event.alert %}
+              {% if event.reviewed_at %}<p class="small">Consultée par {{ event.reviewed_by.username|default:"Compte supprimé" }} le {{ event.reviewed_at|date:"d/m/Y H:i" }}</p>{% endif %}
+              <form method="post" data-security-form>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="review">
+                <input type="hidden" name="event_id" value="{{ event.pk }}">
+                <button class="btn btn-sm btn-outline-primary" type="submit">{% if event.reviewed_at %}Confirmer mon examen{% else %}Marquer comme examinée{% endif %}</button>
+              </form>
+            {% endif %}
+          </article>
+          {% empty %}<p>Aucun événement enregistré.</p>{% endfor %}
+          <nav class="d-flex flex-wrap gap-3 mt-3" aria-label="Pagination des événements">
+            {% if events.has_previous %}<a href="?page={{ events.previous_page_number }}&amp;alerts={{ request.GET.alerts|urlencode }}">Précédent</a>{% endif %}
+            <span>Page {{ events.number }} / {{ events.paginator.num_pages }}</span>
+            {% if events.has_next %}<a href="?page={{ events.next_page_number }}&amp;alerts={{ request.GET.alerts|urlencode }}">Suivant</a>{% endif %}
+          </nav>
+        </div>
+      </section>
+      <div>
+        <section class="security-card mb-4">
+          <h2>Suspension temporaire</h2>
+          <p class="small">Examinez une alerte, vérifiez l'identité du client et expliquez votre décision. Plusieurs échecs peuvent provenir d'un oubli de mot de passe. Les comptes administratifs sont protégés.</p>
+          {% if not reviewed_alerts %}<p>Aucune alerte examinée ne permet actuellement une suspension.</p>{% endif %}
+          <noscript><p>Activez JavaScript pour associer l'alerte sélectionnée au compte à suspendre.</p></noscript>
+          <form method="post" data-security-form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="suspend">
+            <label class="form-label" for="security-event">Alerte examinée par vous dans les dernières 24 h</label>
+            <select class="form-select mb-3" id="security-event" name="event_id" required{% if not reviewed_alerts %} disabled{% endif %}>
+              <option value="">Choisir une alerte</option>
+              {% for alert in reviewed_alerts %}<option value="{{ alert.pk }}" data-user="{{ alert.subject_id }}">#{{ alert.pk }} — {{ alert.subject.username }}</option>{% endfor %}
+            </select>
+            <input type="hidden" name="user_id" id="security-user">
+            <label for="security-duration" class="form-label">Durée</label>
+            <select id="security-duration" name="hours" class="form-select mb-3">
+              <option value="1">1 heure</option><option value="6">6 heures</option><option value="24">24 heures</option><option value="72">3 jours</option><option value="168">7 jours</option>
+            </select>
+            <label class="form-label" for="security-reason">Motif obligatoire (sans donnée sensible)</label>
+            <textarea id="security-reason" name="reason" minlength="5" maxlength="500" required class="form-control mb-3" rows="3"></textarea>
+            <button class="btn btn-warning" type="submit"{% if not reviewed_alerts %} disabled{% endif %}>Suspendre et fermer les sessions</button>
+          </form>
+        </section>
+        <section class="security-card mb-4">
+          <h2>Suspensions en cours</h2>
+          <p class="small">À l'expiration, la connexion redevient possible si le compte est actif. Les anciennes sessions restent fermées.</p>
+          {% for suspension in suspensions %}
+          <div class="security-event">
+            <strong>#{{ suspension.pk }} · {{ suspension.user.username }}</strong>
+            <p>{{ suspension.reason }}</p>
+            <p>Jusqu'au {{ suspension.until|date:"d/m/Y H:i" }}</p>
+            <p class="small">Décidée par {{ suspension.actor.username|default:"Compte supprimé" }}</p>
+            {% if not suspension.user.is_active %}<p class="small">Ce compte est aussi désactivé. Lever la suspension ne modifiera pas cette désactivation.</p>{% endif %}
+            <form method="post" data-security-form>
+              {% csrf_token %}
+              <input type="hidden" name="action" value="reactivate">
+              <input type="hidden" name="user_id" value="{{ suspension.user_id }}">
+              <label for="reactivate-{{ suspension.pk }}">Motif de réactivation</label>
+              <input id="reactivate-{{ suspension.pk }}" name="reason" class="form-control mb-2" required minlength="5" maxlength="500">
+              <button class="btn btn-outline-success" type="submit">Réactiver — lever la suspension</button>
+            </form>
+          </div>
+          {% empty %}<p>Aucune suspension active.</p>{% endfor %}
+        </section>
+        <section class="security-card">
+          <h2>Sessions non expirées</h2>
+          <p class="small">100 sessions au maximum. Aucune clé de session exposée.</p>
+          <ul>{% for session in sessions %}<li>{{ session.username }} — expiration {{ session.expires|date:"d/m/Y H:i" }}</li>{% empty %}<li>Aucune session authentifiée.</li>{% endfor %}</ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
 {% block extra_js %}<script src="{% static 'js/security.js' %}" defer></script>{% endblock %}

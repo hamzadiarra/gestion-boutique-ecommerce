@@ -3,6 +3,7 @@ from .settings import *  # noqa: F403
 from django.core.exceptions import ImproperlyConfigured
 
 DEBUG = False
+LIVE_SECURITY_ENABLED = False
 if not os.getenv("DJANGO_SECRET_KEY") or len(SECRET_KEY) < 50 or SECRET_KEY.startswith("django-insecure-"):
     raise ImproperlyConfigured("Production requires a strong DJANGO_SECRET_KEY supplied outside Git.")
 if not os.getenv("DJANGO_ALLOWED_HOSTS") or "*" in ALLOWED_HOSTS:

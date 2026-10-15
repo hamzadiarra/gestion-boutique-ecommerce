@@ -45,7 +45,7 @@ class SecurityHardeningTests(TestCase):
         self.assertNotContains(self.client.get(reverse('home')),'Live Security')
         self.assertNotContains(self.client.get(reverse('admin_dashboard')),'Live Security')
 
-    @override_settings(LIVE_SECURITY_ENABLED=True)
+    @override_settings(DEBUG=True, LIVE_SECURITY_ENABLED=True)
     def test_live_security_enabled_still_checks_all_roles(self):
         for role in ('client','vendeur','livreur','comptable'):
             user=User.objects.create_user('access-'+role)
