@@ -22,7 +22,6 @@ html { scroll-padding-top: calc(var(--header-height) + 1rem); }
 .shop-cart-layout, .checkout-layout { align-items: start; }
 .shop-order-summary, .checkout-summary { position: sticky; top: calc(var(--header-height) + 16px); align-self: start; max-height: calc(100dvh - var(--header-height) - 32px); overflow-y: auto; }
 .shop-cart-items, .checkout-main, .shop-cart-info { min-width: 0; }
-.shop-product-media img { object-fit: contain; }
 .shop-filter-fields > *, .shop-price-fields { min-width: 0; }
 .shop-cart-actions, .shop-summary-line, .shop-summary-total { flex-wrap: wrap; gap: .65rem; }
 .shop-summary-total strong { overflow-wrap: anywhere; }
