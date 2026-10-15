@@ -304,7 +304,7 @@ def answer_question(message, language="fr", authenticated=False, context=None, s
     state = state if isinstance(state, dict) else {}
     continuation = _is_continuation(message)
     previous_intent = state.get("intent") if continuation else None
-    if previous_intent not in {"MOT_DE_PASSE_OUBLIE", "PRIX_PRODUIT", "RECHERCHER_PRODUIT", "SUIVRE_COMMANDE"} | PAYMENT_INTENTS:
+    if previous_intent not in {"MOT_DE_PASSE_OUBLIE", "PRIX_PRODUIT", "STOCK_PRODUIT", "RECHERCHER_PRODUIT", "SUIVRE_COMMANDE"} | PAYMENT_INTENTS:
         previous_intent = None
     parts = [part.strip() for part in re.split(r"[\n?;]+|\b(?:et|and|puis|then)\b", str(message), flags=re.I) if part.strip()]
     part_codes = {previous_intent or detect_intent(part, context, state)[0] for part in parts}
@@ -315,6 +315,9 @@ def answer_question(message, language="fr", authenticated=False, context=None, s
         result["suggestions"] = [{"label": part[:80], "message": part[:MAX_MESSAGE_LENGTH]} for part in parts[:3]]
         return result
     code, score = (previous_intent, 10) if previous_intent else detect_intent(message, context, state)
+    if request and (code == "STOCK_PRODUIT" or (state.get("intent") == "STOCK_PRODUIT" and code == "AIDE_GENERALE" and set(tokenize(message)) & ORDINAL_WORDS)):
+        from .assistant_stock import stock_answer
+        return stock_answer(message, language, state, context)
     if request and code in {"RECHERCHER_PRODUIT", "PRIX_PRODUIT", "AIDE_GENERALE"}:
         catalog = _catalog_answer(message, language, state, context, code, continuation)
         if catalog is not None:
@@ -363,6 +366,7 @@ def answer_question(message, language="fr", authenticated=False, context=None, s
 # These semantic checks precede scoring: negation and completion are not
 # independent keywords, and "online" alone never establishes a payment intent.
 INTENTS.update({
+    "STOCK_PRODUIT": {"phrases": (), "concepts": (), "fr": "De quel produit souhaitez-vous vérifier le stock ? Précisez son nom ou sa position dans les résultats.", "en": "Which product should I check stock for? Give its name or position in the results.", "actions": ()},
     "PAIEMENT_REFUSE": {"phrases": (), "concepts": (), "fr": "Vous pouvez continuer à consulter les produits. Je ne déclenche aucun paiement. Si vous souhaitez annuler une commande, vérifiez les options proposées dans Mes commandes.", "en": "You can keep browsing products. I do not initiate payments. To cancel an order, check the options shown in My orders.", "actions": (("product_list", "Voir les produits", "View products"),)},
     "PAIEMENT_EFFECTUE": {"phrases": (), "concepts": (), "fr": "Pour vérifier votre paiement, ouvrez votre commande et consultez son statut de paiement. Votre message seul ne permet pas de vérifier la réception du paiement.", "en": "To check your payment, open your order and review its payment status. Your message alone cannot verify that payment was received.", "actions": (("my_orders", "Mes commandes", "My orders"),), "auth_required": True},
     "PAIEMENT_LIVRAISON": {"phrases": (), "concepts": (), "fr": "Le moyen Espèces est proposé lors de la commande. Vérifiez les conditions de règlement avec la boutique pour savoir si vous pouvez payer à la livraison.", "en": "Cash is offered as a payment method at checkout. Check the payment terms with the shop to find out whether you can pay on delivery.", "actions": (("cart_detail", "Voir mon panier", "View cart"),), "auth_required": True},
@@ -397,6 +401,13 @@ def _semantic_intent(question):
             return "PAIEMENT_EN_LIGNE"
         if not_paid or words & {"payment", "paiement"} and words & {"works", "fonctionne", "marche"}:
             return "PAIEMENT"
+    from .assistant_stock import is_stock_question
+    if is_stock_question(question) and words & {"paiement", "paiements", "payment", "payments"}:
+        return "PAIEMENT"
+    if is_stock_question(question) and words & {"livraison", "delivery", "shipping", "shipment"}:
+        return "LIVRAISON"
+    if is_stock_question(question):
+        return "STOCK_PRODUIT"
     if words & PRICE_WORDS or _phrase_in_question("how much", question):
         if words & {"livraison", "delivery", "shipping", "shipment"}:
             return "LIVRAISON"
@@ -487,11 +498,19 @@ def _product_ids(state):
     return [pk for pk in ids[:5] if type(pk) is int and 0 < pk <= 9223372036854775807]
 
 
+def _ordinal_position(message):
+    words = set(tokenize(message))
+    normalized = normalize_question(message)
+    return next((index for index, labels in enumerate(ORDINALS)
+                 if words & {label for label in labels if not label.isdigit()}
+                 or normalized in {label for label in labels if label.isdigit()}), None)
+
+
 def _price_answer(message, language, state, context):
     result = {"intent": "PRIX_PRODUIT", "score": 20, "answer": INTENTS["PRIX_PRODUIT"][language], "actions": [], "state": {}}
     ids = _product_ids(state)
     words = set(tokenize(message))
-    position = next((index for index, labels in enumerate(ORDINALS) if words & labels), None)
+    position = _ordinal_position(message)
     product = None
     if position is not None:
         if position < len(ids):
@@ -500,7 +519,7 @@ def _price_answer(message, language, state, context):
             result["answer"] = "Ce produit n'est plus disponible dans les résultats. Relancez la recherche." if language == "fr" else "That product is not available in the results. Please search again."
             return result
     else:
-        terms = [term for term in _search_terms(message) if term not in PRICE_WORDS | ORDINAL_WORDS | {"much", "one", "ones", "its", "actuel", "current", "tell"}]
+        terms = [term for term in _search_terms(message) if term not in PRICE_WORDS | {word for word in ORDINAL_WORDS if not word.isdigit()} | {"and", "much", "one", "ones", "its", "actuel", "current", "tell"}]
         if terms:
             named = list(_search_catalog(_public_products(), terms).order_by("nom", "pk")[:2])
             if len(named) == 1:
@@ -539,7 +558,7 @@ def _catalog_answer(message, language, state, context, code, continuation):
     if code == "PRIX_PRODUIT" or (state.get("intent") == "PRIX_PRODUIT" and (set(tokenize(message)) & ORDINAL_WORDS)):
         return _price_answer(message, language, state, context)
     terms = _search_terms(message)
-    previous = state.get("intent") in {"RECHERCHER_PRODUIT", "PRIX_PRODUIT"}
+    previous = state.get("intent") in {"RECHERCHER_PRODUIT", "PRIX_PRODUIT", "STOCK_PRODUIT"}
     category_id, terms = _category_for_terms(terms)
     if code == "AIDE_GENERALE" and not previous and not category_id:
         # Unknown prose is not silently converted into an arbitrary catalog query.
