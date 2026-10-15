@@ -4,11 +4,9 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from decimal import Decimal
-from pathlib import Path
 from threading import Barrier
 from unittest.mock import patch
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import close_old_connections, connections, IntegrityError, models, transaction
@@ -537,9 +535,7 @@ class FinanceTests(TestCase):
         self.adjust(motif="Secret financier unique")
         response = self.client.get("/offline/sync/")
         self.assertNotIn(b"Secret financier unique", response.content)
-        worker = (Path(settings.BASE_DIR) / "static/service-worker.js").read_text(encoding="utf-8")
-        self.assertIn('pathname.startsWith("/dashboard/comptable/")', worker)
-        self.assertIn('cache: "no-store"', worker)
+        # Worker behavior is exercised by service-worker-security.test.cjs.
 
 
 def _access_test(role, route, detail=False):

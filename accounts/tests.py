@@ -183,6 +183,9 @@ class AccountFlowTests(TestCase):
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class PasswordResetFlowTests(TestCase):
     def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+        self.addCleanup(cache.clear)
         self.user = get_user_model().objects.create_user(
             username="reset_user",
             email="reset@example.com",

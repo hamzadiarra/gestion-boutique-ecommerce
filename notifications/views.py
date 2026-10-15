@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Notification
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 @login_required
@@ -33,7 +34,9 @@ def mark_as_read(request, notification_id):
     notification.save()
 
     referer = request.META.get('HTTP_REFERER')
-    if referer:
+    if referer and url_has_allowed_host_and_scheme(
+        referer, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
         return redirect(referer)
     return redirect("notification_list")
 
@@ -47,6 +50,8 @@ def mark_all_as_read(request):
     messages.success(request, gettext("Toutes les notifications ont été marquées comme lues."))
 
     referer = request.META.get('HTTP_REFERER')
-    if referer:
+    if referer and url_has_allowed_host_and_scheme(
+        referer, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
         return redirect(referer)
     return redirect("notification_list")

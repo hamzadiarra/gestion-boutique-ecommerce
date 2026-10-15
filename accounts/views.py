@@ -8,6 +8,9 @@ from django.contrib.auth import (
     logout,
     update_session_auth_hash,
 )
+from django.contrib.auth.views import PasswordResetView
+from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -20,6 +23,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from .forms import ProfileForm, validate_profile_photo
 from .models import Profile
+from .security import auth_rate_key, increment_rate_counter
 from orders.models import Order
 from products.models import Wishlist
 
@@ -435,6 +439,7 @@ def login_view(request):
 # DECONNEXION
 # ==========================
 
+@require_POST
 def logout_view(request):
 
     logout(request)
@@ -651,3 +656,17 @@ def change_password(request):
         request,
         "accounts/change_password.html"
     )
+
+
+class RateLimitedPasswordResetView(PasswordResetView):
+    """Bound mail requests per source without globally locking an email address."""
+
+    def post(self, request, *args, **kwargs):
+        key = auth_rate_key("password-reset", request)
+        count = increment_rate_counter(
+            key, getattr(settings, "AUTH_PASSWORD_RESET_WINDOW_SECONDS", 300)
+        )
+        if count > getattr(settings, "AUTH_PASSWORD_RESET_MAX_REQUESTS", 5):
+            # Same response as an accepted request; no account-existence disclosure.
+            return HttpResponseRedirect(self.get_success_url())
+        return super().post(request, *args, **kwargs)

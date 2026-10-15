@@ -150,38 +150,39 @@
   }
 
   function dbClearStoreByScope(db, storeName, scope) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (!db.objectStoreNames.contains(storeName)) {
         resolve();
         return;
       }
-
       const tx = db.transaction(storeName, "readwrite");
       const store = tx.objectStore(storeName);
       const req = store.openCursor();
-
       req.onsuccess = () => {
         const cursor = req.result;
         if (!cursor) return;
-        if (!scope || cursor.value.scopeKey === scope) {
-          store.delete(cursor.key);
-        }
+        if (!scope || cursor.value.scopeKey === scope) store.delete(cursor.key);
         cursor.continue();
       };
-      req.onerror = () => resolve();
+      req.onerror = () => reject(req.error);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
       tx.oncomplete = () => resolve();
     });
   }
 
-  function clearPrivateUserData() {
-    if (!state.userId) return Promise.resolve();
-
-    return withIndexedDB()
-      .then((db) => Promise.all([
+  async function clearPrivateUserData() {
+    if (!state.userId) return;
+    const db = await withIndexedDB();
+    try {
+      await Promise.all([
         dbClearStoreByScope(db, STORES.orders, String(state.userId)),
         dbClearStoreByScope(db, STORES.notifications, String(state.userId)),
         dbClearStoreByScope(db, STORES.seller_orders, String(state.userId)),
-      ]).then(() => db.close()));
+      ]);
+    } finally {
+      db.close();
+    }
   }
 
   function clearAllPublicCache() {
@@ -314,12 +315,24 @@
   }
 
   function bindLogoutHooks() {
-    document.querySelectorAll('a[href$="/logout/"]').forEach((link) => {
-      link.addEventListener("click", () => {
-        if (state.isAuthenticated) {
-          clearPrivateUserData();
-        } else {
-          clearAllPublicCache();
+    document.querySelectorAll('form[action$="/logout/"]').forEach((form) => {
+      let submitting = false;
+      form.addEventListener("submit", async (event) => {
+        const canSubmit = state.isOnline && !event.defaultPrevented;
+        event.preventDefault();
+        if (submitting) return;
+        submitting = true;
+        try {
+          if (state.isAuthenticated) await clearPrivateUserData();
+        } catch (_error) {
+          // Storage failure must not keep the authenticated server session open.
+        } finally {
+          if (canSubmit) {
+            // Native submit preserves the POST/CSRF form and does not fire this hook again.
+            HTMLFormElement.prototype.submit.call(form);
+          } else {
+            submitting = false;
+          }
         }
       });
     });

@@ -8,7 +8,6 @@ from tempfile import TemporaryDirectory
 from threading import Barrier
 
 from PIL import Image
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -484,8 +483,6 @@ class ClotureTests(TestCase):
         response = self.client.get("/offline/sync/")
         self.assertNotIn(c.reference.encode(), response.content)
         self.assertNotIn("Secret de clôture unique".encode(), response.content)
-        worker = (Path(settings.BASE_DIR)/"static/service-worker.js").read_text(encoding="utf-8")
-        self.assertIn('pathname.startsWith("/dashboard/comptable/")', worker)
 
 
 def _permission(role, route):

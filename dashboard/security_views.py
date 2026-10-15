@@ -1,4 +1,6 @@
 from datetime import timedelta
+from django.http import Http404
+from core.security_flags import live_security_enabled
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -75,6 +77,8 @@ def security_action(request):
 def security_dashboard(request):
     if not authorized(request.user):
         return HttpResponseForbidden("Espace réservé aux administrateurs autorisés.")
+    if not live_security_enabled():
+        raise Http404
     if request.method == "POST":
         return security_action(request)
     events = SecurityEvent.objects.select_related("subject", "actor", "reviewed_by")

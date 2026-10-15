@@ -5,7 +5,7 @@ from django.test import TestCase, Client, override_settings
 from django.utils import timezone
 
 
-@override_settings(PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
+@override_settings(LIVE_SECURITY_ENABLED=True, PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
 class SecurityTests(TestCase):
     def setUp(self):
         self.admin = User.objects.create_user("security-admin", password="Test-Admin-482!")

@@ -2,6 +2,7 @@ from django.utils.translation import gettext
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 from products.models import Product
 from .models import Cart, CartItem
@@ -9,6 +10,7 @@ from .models import Cart, CartItem
 
 
 @login_required
+@require_POST
 def add_to_cart(request, product_id):
 
     produit = get_object_or_404(
@@ -89,6 +91,7 @@ def cart_detail(request):
 
 
 @login_required
+@require_POST
 def increase_quantity(request, item_id):
 
     article = get_object_or_404(
@@ -114,6 +117,7 @@ def increase_quantity(request, item_id):
 
 
 @login_required
+@require_POST
 def decrease_quantity(request, item_id):
 
     article = get_object_or_404(
@@ -137,6 +141,7 @@ def decrease_quantity(request, item_id):
 
 
 @login_required
+@require_POST
 def remove_from_cart(request, item_id):
 
     article = get_object_or_404(

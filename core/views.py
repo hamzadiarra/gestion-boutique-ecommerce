@@ -9,6 +9,10 @@ from notifications.models import Notification
 from orders.models import Order
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
+from django.conf import settings
+from django.core.exceptions import RequestDataTooBig
+from accounts.security import auth_rate_key, increment_rate_counter
 import json
 from .assistant import MAX_MESSAGE_LENGTH, answer_question
 from django.utils.timezone import localtime
@@ -23,12 +27,28 @@ def _safe_image_url(request, field):
         return None
 
 
+@never_cache
 @require_POST
 def assistant_ask(request):
     """Return a safe, local guide answer; it never performs a business action."""
+    max_bytes = getattr(settings, "ASSISTANT_MAX_BODY_BYTES", 4096)
     try:
-        payload = json.loads(request.body.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
+        if int(request.META.get("CONTENT_LENGTH") or 0) > max_bytes:
+            return JsonResponse({"error": "Requête trop volumineuse."}, status=413)
+        body = request.body
+    except (ValueError, RequestDataTooBig):
+        return JsonResponse({"error": "Requête trop volumineuse."}, status=413)
+    if len(body) > max_bytes:
+        return JsonResponse({"error": "Requête trop volumineuse."}, status=413)
+    window = getattr(settings, "ASSISTANT_WINDOW_SECONDS", 60)
+    count = increment_rate_counter(auth_rate_key("assistant", request), window)
+    if count > getattr(settings, "ASSISTANT_MAX_REQUESTS", 60):
+        response = JsonResponse({"error": "Veuillez patienter avant une nouvelle question."}, status=429)
+        response["Retry-After"] = str(window)
+        return response
+    try:
+        payload = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
         return JsonResponse({"error": "Message invalide."}, status=400)
     message = payload.get("message", "") if isinstance(payload, dict) else ""
     if not isinstance(message, str) or not message.strip() or len(message) > MAX_MESSAGE_LENGTH:
@@ -149,6 +169,7 @@ def home(request):
     return render(request, 'home.html', context)
 
 
+@never_cache
 def offline_sync_payload(request):
     user = request.user if request.user.is_authenticated else None
     categories = list(

@@ -79,7 +79,7 @@ class StabilisationE2ETests(TestCase):
         })
         self.assertRedirects(response, reverse("profile"))
         buyer = User.objects.get(email="e2e-customer@example.com")
-        self.client.get(reverse("logout"))
+        self.client.post(reverse("logout"))
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertRedirects(self.client.post(reverse("login"), {
             "username": buyer.username, "password": "E2ePassword!42",
