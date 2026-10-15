@@ -58,3 +58,5 @@ Thumbs.db
 # Local validation notes
 A_VALIDER_BAMANANKAN.md
 .venv/
+
+.venv-security/
