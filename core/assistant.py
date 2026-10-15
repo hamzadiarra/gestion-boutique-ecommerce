@@ -5,8 +5,7 @@ import re
 import unicodedata
 
 from django.conf import settings
-from django.db.models import Q
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 
 MAX_MESSAGE_LENGTH = 500
 MIN_SCORE = 5
@@ -14,13 +13,13 @@ AMBIGUITY_MARGIN = 2
 CONTINUATION_MESSAGES = {
     "aide moi", "aider moi", "aide moi alors", "aider moi alors", "oui",
     "d accord", "ok", "continue", "comment", "montre moi", "vas y", "fais voir",
-    "comment faire alors",
+    "comment faire alors", "yes", "okay", "continue please", "show me", "how then",
 }
 STOP_WORDS = {"a", "au", "aux", "avec", "ce", "cette", "comment", "dans", "de", "des", "du", "en", "est", "et", "je", "la", "le", "les", "ma", "me", "mes", "mon", "ne", "ou", "pour", "que", "quel", "quelle", "quels", "quelles", "sa", "se", "son", "sur", "un", "une", "veut", "veux", "voir", "ici", "m", "j", "ai", "mais", "quelque", "chose", "vous", "ceci", "cette", "i", "am", "an", "the", "this", "is", "it", "my", "me", "do", "does", "how", "can", "could", "what", "where", "when", "for", "to", "here", "your", "a", "something"}
 
 
 def normalize_question(value):
-    value = unicodedata.normalize("NFKD", str(value or "")).encode("ascii", "ignore").decode("ascii")
+    value = unicodedata.normalize("NFKD", str(value or "").replace("’", "'")).encode("ascii", "ignore").decode("ascii")
     value = value.lower().replace("’", "'").replace("'", " ").replace("-", " ")
     return re.sub(r"[^a-z0-9]+", " ", value).strip()
 
@@ -158,7 +157,7 @@ def _phrase_in_question(phrase, question):
 
 def _fuzzy_concept(tokens):
     hits = set()
-    vocabulary = {word for words in CONCEPTS.values() for word in words if len(word) > 3}
+    vocabulary = sorted({word for words in CONCEPTS.values() for word in words if len(word) > 3})
     for token in tokens:
         match = difflib.get_close_matches(token, vocabulary, n=1, cutoff=0.82)
         if match:
@@ -197,6 +196,9 @@ def explain_detection(message, context=None, state=None):
 
 def detect_intent(message, context=None, state=None):
     question = normalize_question(message)
+    semantic = _semantic_intent(question)
+    if semantic:
+        return semantic, 20
     if state and state.get("intent") == "SUIVRE_COMMANDE" and state.get("step") == "ASK_ORDER_NUMBER" and re.fullmatch(r"\d+", question):
         return "SUIVRE_COMMANDE", 10
     if not question:
@@ -211,8 +213,6 @@ def detect_intent(message, context=None, state=None):
         follow_words = {"suivre", "suivi", "statut", "attends", "route", "avance", "avancement", "progression", "etat", "track", "status", "moving", "progress", "journey", "update"}
         allow_follow_concepts = code != "SUIVRE_COMMANDE" or bool(set(tokens) & follow_words)
         score += sum(5 for concept in intent["concepts"] if allow_follow_concepts and (set(tokens) & CONCEPTS.get(concept, set()) or concept in fuzzy))
-        if code == "PAIEMENT_EN_LIGNE" and ("online" in question or "en ligne" in question):
-            score += 5
         has_payment = bool(set(tokens) & CONCEPTS["PAYMENT"]) or "PAYMENT" in fuzzy
         if code == "PAIEMENT" and has_payment:
             score += 3
@@ -274,8 +274,6 @@ def detect_intent(message, context=None, state=None):
             scores.append((score, code))
     if not scores:
         return "AIDE_GENERALE", 0
-    if "en ligne" in question or "online" in question:
-        return "PAIEMENT_EN_LIGNE", max(next((score for score, code in scores if code == "PAIEMENT_EN_LIGNE"), 0), MIN_SCORE)
     score, code = sorted(scores, reverse=True)[0]
     return (code, score) if score >= MIN_SCORE else ("AIDE_GENERALE", score)
 
@@ -294,40 +292,33 @@ def _continuation_state(code, message, result):
     """Keep only actionable conversation context for a later short reply."""
     if code == "SUIVRE_COMMANDE" and result.get("state", {}).get("step") == "ASK_ORDER_NUMBER":
         return result["state"]
-    if code in {"MOT_DE_PASSE_OUBLIE", "PAIEMENT"}:
+    if code in {"MOT_DE_PASSE_OUBLIE", "PRIX_PRODUIT"} | PAYMENT_INTENTS:
         return {"intent": code, "step": "CONTINUE"}
     if code == "RECHERCHER_PRODUIT" and (result.get("results") or result.get("actions")):
-        return {"intent": code, "step": "CONTINUE", "search_message": message}
+        return {"intent": code, "step": "CONTINUE", "search_query": " ".join(_search_terms(message))[:100], "product_ids": []}
     return {}
-
-
-def _product_results(message):
-    terms = [token for token in tokenize(message) if token not in {"cherche", "chercher", "recherche", "rechercher", "trouve", "trouver", "produit", "produi", "produt", "article", "find"}]
-    if not terms and "lait" in normalize_question(message):
-        terms = ["lait"]
-    if not terms:
-        return []
-    query = Q()
-    for term in terms:
-        query |= Q(nom__icontains=term) | Q(nom_en__icontains=term) | Q(description__icontains=term) | Q(description_en__icontains=term) | Q(categorie__nom__icontains=term)
-    from products.models import Product
-    return [{"name": product.localized_name, "url": reverse("product_detail", args=[product.slug])} for product in Product.objects.filter(query, actif=True).select_related("categorie")[:5]]
 
 
 def answer_question(message, language="fr", authenticated=False, context=None, state=None, request=None):
     language = "en" if str(language).lower().startswith("en") else "fr"
-    state = state or {}
+    state = state if isinstance(state, dict) else {}
     continuation = _is_continuation(message)
     previous_intent = state.get("intent") if continuation else None
-    if previous_intent not in {"MOT_DE_PASSE_OUBLIE", "PAIEMENT", "RECHERCHER_PRODUIT", "SUIVRE_COMMANDE"}:
+    if previous_intent not in {"MOT_DE_PASSE_OUBLIE", "PRIX_PRODUIT", "RECHERCHER_PRODUIT", "SUIVRE_COMMANDE"} | PAYMENT_INTENTS:
         previous_intent = None
-    parts = [part.strip() for part in re.split(r"[\n?]+", str(message)) if part.strip()]
+    parts = [part.strip() for part in re.split(r"[\n?;]+|\b(?:et|and|puis|then)\b", str(message), flags=re.I) if part.strip()]
     part_codes = {previous_intent or detect_intent(part, context, state)[0] for part in parts}
-    if len(parts) >= 2 and len(part_codes - {"AIDE_GENERALE"}) >= 2:
+    part_codes -= {"AIDE_GENERALE", "SALUTATION", "MERCI", "NEEDS_CLARIFICATION"}
+    if len(parts) >= 2 and len(part_codes) >= 2:
         intent = INTENTS["MULTIPLE_QUESTIONS"]
         result = {"intent": "MULTIPLE_QUESTIONS", "score": 10, "answer": intent[language], "actions": _actions(intent, language, authenticated), "state": {}}
+        result["suggestions"] = [{"label": part[:80], "message": part[:MAX_MESSAGE_LENGTH]} for part in parts[:3]]
         return result
     code, score = (previous_intent, 10) if previous_intent else detect_intent(message, context, state)
+    if request and code in {"RECHERCHER_PRODUIT", "PRIX_PRODUIT", "AIDE_GENERALE"}:
+        catalog = _catalog_answer(message, language, state, context, code, continuation)
+        if catalog is not None:
+            return catalog
     intent = INTENTS[code]
     result = {"intent": code, "score": score, "answer": intent[language], "actions": _actions(intent, language, authenticated), "state": {}}
     if code == "MOT_DE_PASSE_OUBLIE" and continuation:
@@ -355,14 +346,235 @@ def answer_question(message, language="fr", authenticated=False, context=None, s
             result["answer"] = "Je ne trouve pas cette commande dans votre compte." if language == "fr" else "I cannot find that order in your account."
         else:
             result["state"] = {"intent": "SUIVRE_COMMANDE", "step": "ASK_ORDER_NUMBER"}
-    if code == "RECHERCHER_PRODUIT" and request:
-        result["results"] = _product_results(state.get("search_message", message) if continuation else message)
-        if not result["results"]:
-            result["answer"] = "Je n'ai trouvé aucun produit correspondant. Essayez un autre terme." if language == "fr" else "I could not find a matching product. Try another term."
     if code == "PAIEMENT":
         from payments.models import Payment
-        methods = [str(label) for value, label in Payment.METHODES if value != "online" or (settings.PAYMENT_PROVIDER and settings.PAYMENT_SECRET_KEY)]
+        from django.utils.translation import override
+        with override(language):
+            methods = [str(label) for value, label in Payment.METHODES if value != "online" or _online_available()]
         result["methods"] = methods
         result["answer"] += " " + ("Moyens disponibles : " if language == "fr" else "Available methods: ") + ", ".join(methods) + "."
+    if code == "PAIEMENT_EN_LIGNE" and not _online_available():
+        result["answer"] = ("Le paiement en ligne n'est pas disponible actuellement. Consultez les autres moyens de paiement lors de la finalisation de votre commande."
+                            if language == "fr" else "Online payment is not available currently. Check the other payment methods at checkout.")
     result["state"] = _continuation_state(code, message, result)
+    return result
+
+
+# These semantic checks precede scoring: negation and completion are not
+# independent keywords, and "online" alone never establishes a payment intent.
+INTENTS.update({
+    "PAIEMENT_REFUSE": {"phrases": (), "concepts": (), "fr": "Vous pouvez continuer à consulter les produits. Je ne déclenche aucun paiement. Si vous souhaitez annuler une commande, vérifiez les options proposées dans Mes commandes.", "en": "You can keep browsing products. I do not initiate payments. To cancel an order, check the options shown in My orders.", "actions": (("product_list", "Voir les produits", "View products"),)},
+    "PAIEMENT_EFFECTUE": {"phrases": (), "concepts": (), "fr": "Pour vérifier votre paiement, ouvrez votre commande et consultez son statut de paiement. Votre message seul ne permet pas de vérifier la réception du paiement.", "en": "To check your payment, open your order and review its payment status. Your message alone cannot verify that payment was received.", "actions": (("my_orders", "Mes commandes", "My orders"),), "auth_required": True},
+    "PAIEMENT_LIVRAISON": {"phrases": (), "concepts": (), "fr": "Le moyen Espèces est proposé lors de la commande. Vérifiez les conditions de règlement avec la boutique pour savoir si vous pouvez payer à la livraison.", "en": "Cash is offered as a payment method at checkout. Check the payment terms with the shop to find out whether you can pay on delivery.", "actions": (("cart_detail", "Voir mon panier", "View cart"),), "auth_required": True},
+    "PRIX_PRODUIT": {"phrases": (), "concepts": (), "fr": "De quel produit souhaitez-vous connaître le prix ? Précisez son nom ou sa position dans les résultats.", "en": "Which product would you like the price of? Give its name or position in the results.", "actions": ()},
+})
+CONCEPTS["PAYMENT"].update({"pay", "paid", "cash", "especes"})
+PAYMENT_INTENTS = {code for code in INTENTS if code.startswith("PAIEMENT")}
+
+
+def _semantic_intent(question):
+    words = set(question.split())
+    payment = bool(words & CONCEPTS["PAYMENT"]) or "PAYMENT" in _fuzzy_concept(words)
+    if payment:
+        online = bool(words & {"online"}) or _phrase_in_question("en ligne", question)
+        refusal = bool(re.search(r"(?:veux|veut|souhaite|souhaites|voudrais) (?:pas|plus) (?:payer|regler)|(?:do not|don t|dont) want to pay|refuse (?:de |to )?(?:payer|pay)", question))
+        if refusal:
+            return "PAIEMENT" if online else "PAIEMENT_REFUSE"
+        not_paid = bool(re.search(r"(?:pas|not|never|jamais|haven t|hasn t).{0,20}(?:paye|paid)|(?:paye|paid).{0,10}(?:pas|not)", question))
+        if not not_paid and (words & {"deja", "already"}) and words & {"paye", "paid", "regle"}:
+            return "PAIEMENT_EFFECTUE"
+        failed = bool(words & {"echoue", "echouee", "refuse", "refusee", "failed", "declined", "rejected"})
+        failed = failed or bool(re.search(r"(?:ne |does not |doesn t |not |no longer ).{0,12}(?:marche|fonctionne|passe|work|working)|(?:marche|fonctionne|passe).{0,6}(?:pas|plus)", question))
+        if failed:
+            if re.search(r"(?:pas|not).{0,8}(?:echoue|refuse|failed|declined)", question):
+                return "PAIEMENT"
+            return "PAIEMENT_ECHOUE"
+        if words & {"especes", "cash"} or re.search(r"(?:a la|on|upon|at) (?:livraison|delivery)", question):
+            return "PAIEMENT_LIVRAISON"
+        if online and not not_paid:
+            if re.search(r"(?:pas|not|sans|without).{0,14}(?:en ligne|online)", question):
+                return "PAIEMENT"
+            return "PAIEMENT_EN_LIGNE"
+        if not_paid or words & {"payment", "paiement"} and words & {"works", "fonctionne", "marche"}:
+            return "PAIEMENT"
+    if words & PRICE_WORDS or _phrase_in_question("how much", question):
+        if words & {"livraison", "delivery", "shipping", "shipment"}:
+            return "LIVRAISON"
+        return "PRIX_PRODUIT"
+    return None
+
+
+def _online_available():
+    if settings.PAYMENT_PROVIDER == "cinetpay":
+        return bool(settings.CINETPAY_API_KEY and settings.CINETPAY_SITE_ID and settings.CINETPAY_SECRET_KEY)
+    return bool(settings.PAYMENT_PROVIDER and settings.PAYMENT_SECRET_KEY)
+
+
+# A small bilingual vocabulary helps find actual category names; it never
+# supplies a product, price, brand or availability that is absent from the DB.
+CATALOG_SYNONYMS = (
+    {"chaussure", "chaussures", "shoe", "shoes", "basket", "baskets", "sneaker", "sneakers"},
+    {"vetement", "vetements", "clothing", "clothes", "apparel"},
+    {"telephone", "telephones", "phone", "phones", "smartphone", "smartphones"},
+    {"lait", "milk"},
+)
+PRICE_WORDS = {"prix", "price", "cost", "coute", "coutent", "combien", "tarif"}
+ORDINALS = ({"premier", "premiere", "first", "1", "1er", "1st"}, {"second", "seconde", "deuxieme", "2", "2e", "2nd"}, {"troisieme", "third", "3", "3e", "3rd"}, {"quatrieme", "fourth", "4", "4e", "4th"}, {"cinquieme", "fifth", "5", "5e", "5th"}, {"sixieme", "sixth", "6"}, {"septieme", "seventh", "7"}, {"huitieme", "eighth", "8"}, {"neuvieme", "ninth", "9"}, {"dixieme", "tenth", "10"})
+ORDINAL_WORDS = set().union(*ORDINALS)
+SEARCH_FILLER = STOP_WORDS | {
+    "cherche", "chercher", "recherche", "rechercher", "trouve", "trouver", "produit", "produits", "produi", "produt", "article", "articles",
+    "find", "search", "look", "looking", "locate", "product", "products", "item", "items", "some", "please", "want", "need", "would", "like",
+    "voudrais", "souhaite", "souhaiterais", "aimerais", "besoin", "montre", "montrez", "show", "avez", "have", "has", "y", "t", "il", "s", "im", "moi", "meme", "plutot", "only", "just", "seulement", "uniquement",
+}
+
+
+def _search_terms(message):
+    return [word for word in tokenize(message) if word not in SEARCH_FILLER][:8]
+
+
+def _category_for_terms(terms):
+    from categories.models import Category
+    for category in Category.objects.filter(active=True).only("id", "nom", "nom_en").order_by("id")[:100]:
+        names = set(tokenize(category.nom + " " + category.nom_en))
+        expanded = set(names)
+        for family in CATALOG_SYNONYMS:
+            if names & family:
+                expanded.update(family)
+        matching = {term for term in terms if term in expanded or (len(term) >= 4 and difflib.get_close_matches(term, sorted(expanded), n=1, cutoff=.84))}
+        if matching:
+            return category.pk, [term for term in terms if term not in matching]
+    return None, terms
+
+
+def _public_products():
+    from products.models import Product
+    return Product.objects.filter(actif=True, categorie__active=True).select_related("categorie")
+
+
+def _search_catalog(queryset, terms):
+    from products.search import search_products
+    for term in terms[:8]:
+        queryset = search_products(queryset, term)
+    return queryset
+
+
+def _serialize_product(product, language):
+    return {
+        "id": product.pk,
+        "name": product.nom_en.strip() if language == "en" and product.nom_en.strip() else product.nom,
+        "url": reverse("product_detail", args=[product.slug]),
+        "price": str(product.prix_promotion or product.prix), "currency": "XOF",
+        "stock": product.stock, "available": product.stock > 0,
+    }
+
+
+def _page_product(context):
+    if not isinstance(context, str) or not context.startswith("/") or context.startswith("//") or len(context) > 300:
+        return None
+    try:
+        route = resolve(context)
+    except Resolver404:
+        return None
+    if route.url_name == "product_detail":
+        return _public_products().filter(slug=route.kwargs.get("slug")).first()
+    return None
+
+
+def _product_ids(state):
+    ids = state.get("product_ids", [])
+    if not isinstance(ids, list):
+        return []
+    return [pk for pk in ids[:5] if type(pk) is int and 0 < pk <= 9223372036854775807]
+
+
+def _price_answer(message, language, state, context):
+    result = {"intent": "PRIX_PRODUIT", "score": 20, "answer": INTENTS["PRIX_PRODUIT"][language], "actions": [], "state": {}}
+    ids = _product_ids(state)
+    words = set(tokenize(message))
+    position = next((index for index, labels in enumerate(ORDINALS) if words & labels), None)
+    product = None
+    if position is not None:
+        if position < len(ids):
+            product = _public_products().filter(pk=ids[position]).first()
+        if product is None:
+            result["answer"] = "Ce produit n'est plus disponible dans les résultats. Relancez la recherche." if language == "fr" else "That product is not available in the results. Please search again."
+            return result
+    else:
+        terms = [term for term in _search_terms(message) if term not in PRICE_WORDS | ORDINAL_WORDS | {"much", "one", "ones", "its", "actuel", "current", "tell"}]
+        if terms:
+            named = list(_search_catalog(_public_products(), terms).order_by("nom", "pk")[:2])
+            if len(named) == 1:
+                product = named[0]
+        else:
+            product = _page_product(context)
+            selected = state.get("selected_product_id")
+            if product is None and type(selected) is int and selected in ids:
+                product = _public_products().filter(pk=selected).first()
+            if product is None and len(ids) == 1:
+                product = _public_products().filter(pk=ids[0]).first()
+    if product is None:
+        # Keep only validated compact context so a following ordinal can answer.
+        if ids:
+            result["state"] = _retain_search_context({"intent": "PRIX_PRODUIT", "step": "SELECT_PRODUCT", "product_ids": ids}, state)
+        return result
+    item = _serialize_product(product, language)
+    result["results"] = [item]
+    result["answer"] = f"{item['name']} : {item['price']} FCFA."
+    result["actions"] = [{"label": "Voir le produit" if language == "fr" else "View product", "url": item["url"]}]
+    result["state"] = _retain_search_context({"intent": "PRIX_PRODUIT", "step": "CONTINUE", "product_ids": ids if product.pk in ids else [product.pk], "selected_product_id": product.pk}, state)
+    return result
+
+
+def _retain_search_context(next_state, previous):
+    query = previous.get("search_query")
+    category_id = previous.get("category_id")
+    if isinstance(query, str):
+        next_state["search_query"] = query[:100]
+    if type(category_id) is int and 0 < category_id <= 9223372036854775807:
+        next_state["category_id"] = category_id
+    return next_state
+
+
+def _catalog_answer(message, language, state, context, code, continuation):
+    if code == "PRIX_PRODUIT" or (state.get("intent") == "PRIX_PRODUIT" and (set(tokenize(message)) & ORDINAL_WORDS)):
+        return _price_answer(message, language, state, context)
+    terms = _search_terms(message)
+    previous = state.get("intent") in {"RECHERCHER_PRODUIT", "PRIX_PRODUIT"}
+    category_id, terms = _category_for_terms(terms)
+    if code == "AIDE_GENERALE" and not previous and not category_id:
+        # Unknown prose is not silently converted into an arbitrary catalog query.
+        if len(terms) != 1:
+            return None
+    old_query = state.get("search_query", "")
+    old_query = old_query[:100] if isinstance(old_query, str) else ""
+    if previous and category_id is None and (continuation or code == "AIDE_GENERALE"):
+        old_category = state.get("category_id")
+        if type(old_category) is int and 0 < old_category <= 9223372036854775807:
+            category_id = old_category
+        prior_terms = _search_terms(old_query)
+        if not continuation and terms and _public_products().filter(marque__iexact=" ".join(terms)).exists():
+            # A different explicit real brand replaces the previous brand,
+            # while the selected category remains a constraint.
+            if prior_terms and _public_products().filter(marque__iexact=" ".join(prior_terms)).exists():
+                prior_terms = []
+        terms = prior_terms + ([] if continuation else terms)
+    terms = list(dict.fromkeys(terms))[:8]
+    query = " ".join(terms)[:100]
+    queryset = _public_products()
+    if category_id:
+        queryset = queryset.filter(categorie_id=category_id)
+    if not terms and not category_id:
+        if code == "AIDE_GENERALE":
+            return None
+        products = []
+    else:
+        products = list(_search_catalog(queryset, terms).order_by("nom", "pk")[:5])
+    if not products and code == "AIDE_GENERALE" and not previous and not category_id:
+        return None
+    result = {"intent": "RECHERCHER_PRODUIT", "score": 15, "answer": INTENTS["RECHERCHER_PRODUIT"][language], "actions": _actions(INTENTS["RECHERCHER_PRODUIT"], language, True), "results": [_serialize_product(product, language) for product in products]}
+    result["state"] = {"intent": "RECHERCHER_PRODUIT", "step": "CONTINUE", "search_query": query, "product_ids": [product.pk for product in products]}
+    if category_id:
+        result["state"]["category_id"] = category_id
+    if not products:
+        result["answer"] = ("Précisez un produit, une catégorie ou une marque." if not terms and not category_id else "Je n'ai trouvé aucun produit correspondant. Essayez un autre terme.") if language == "fr" else ("Please give a product, category or brand." if not terms and not category_id else "I could not find a matching product. Try another term.")
     return result

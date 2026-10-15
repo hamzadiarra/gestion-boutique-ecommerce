@@ -53,28 +53,9 @@ def assistant_ask(request):
     message = payload.get("message", "") if isinstance(payload, dict) else ""
     if not isinstance(message, str) or not message.strip() or len(message) > MAX_MESSAGE_LENGTH:
         return JsonResponse({"error": "La question doit contenir entre 1 et 500 caractères."}, status=400)
-    from django.utils.translation import get_language
-    state = request.session.get("assistant_state", {})
-    result = answer_question(message, get_language(), request.user.is_authenticated, context=request.path, state=state, request=request)
-    if result.get("state"):
-        request.session["assistant_state"] = result["state"]
-    else:
-        request.session.pop("assistant_state", None)
-    if result["intent"] == "AIDE_GENERALE":
-        failures = request.session.get("assistant_failures", 0) + 1
-        request.session["assistant_failures"] = failures
-        if failures >= 3:
-            result["answer"] = "Je n'arrive pas à résoudre votre demande automatiquement. Contactez la boutique avec les coordonnées affichées." if get_language() != "en" else "I cannot resolve your request automatically. Please contact the shop using the displayed contact details."
-            from dashboard.models import BoutiqueSettings
-            boutique = BoutiqueSettings.objects.first()
-            if boutique and boutique.email:
-                result["actions"] = [{"label": "Contacter le support" if get_language() != "en" else "Contact support", "url": "mailto:" + boutique.email}]
-            elif boutique and boutique.whatsapp:
-                result["actions"] = [{"label": "Contacter le support" if get_language() != "en" else "Contact support", "url": "https://api.whatsapp.com/send?phone=" + boutique.whatsapp}]
-    else:
-        request.session.pop("assistant_failures", None)
-    request.session.modified = True
-    return JsonResponse(result)
+    from .assistant_session import conversation_response
+    return conversation_response(request, payload, answer_question)
+
 
 
 def _serialize_category(request, categorie):
