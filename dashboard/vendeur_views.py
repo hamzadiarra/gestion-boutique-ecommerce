@@ -8,7 +8,8 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
 from django.utils.dateparse import parse_date
-from PIL import Image
+from django.core.exceptions import ValidationError
+from core.image_uploads import normalize_image_upload
 
 from accounts.decorators import vendeur_required
 from products.models import Product
@@ -19,33 +20,12 @@ from cart.models import Cart, CartItem
 from .models import Vente, BoutiqueSettings, log_activity
 
 
-MAX_PRODUCT_IMAGE_BYTES = 5 * 1024 * 1024
-ALLOWED_PRODUCT_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-
-
 def _filter_date(value):
     try:
         parsed = parse_date(value)
     except (TypeError, ValueError):
         parsed = None
     return parsed.isoformat() if parsed else ""
-
-
-def _validate_product_image(uploaded_image):
-    """Valide une image vendeur avant de la confier à ImageField."""
-    if not uploaded_image:
-        return None
-    if uploaded_image.size > MAX_PRODUCT_IMAGE_BYTES:
-        return "L'image doit peser 5 Mo maximum."
-    if getattr(uploaded_image, "content_type", "") not in ALLOWED_PRODUCT_IMAGE_TYPES:
-        return "Format non accepté. Utilisez une image JPG, PNG ou WebP."
-    try:
-        with Image.open(uploaded_image) as image:
-            image.verify()
-        uploaded_image.seek(0)
-    except (OSError, Image.UnidentifiedImageError):
-        return "Le fichier envoyé n'est pas une image valide."
-    return None
 
 
 def _product_form_context(request, categories, produit=None, form_errors=None):
@@ -956,8 +936,11 @@ def vendeur_ajouter_produit(request):
         vedette = request.POST.get("vedette") == "on"
         image = request.FILES.get("image")
 
-        image_error = _validate_product_image(image)
-        if image_error:
+        try:
+            if image:
+                image = normalize_image_upload(image)
+        except ValidationError as exc:
+            image_error = "; ".join(exc.messages)
             messages.error(request, image_error)
             return render(request, "dashboard/vendeur_ajouter_produit.html", _product_form_context(
                 request, categories, form_errors={"image": image_error}
@@ -1089,8 +1072,11 @@ def vendeur_modifier_produit(request, produit_id):
         vedette = request.POST.get("vedette") == "on"
         image = request.FILES.get("image")
 
-        image_error = _validate_product_image(image)
-        if image_error:
+        try:
+            if image:
+                image = normalize_image_upload(image)
+        except ValidationError as exc:
+            image_error = "; ".join(exc.messages)
             messages.error(request, image_error)
             return render(request, "dashboard/vendeur_modifier_produit.html", _product_form_context(
                 request, categories, produit, {"image": image_error}

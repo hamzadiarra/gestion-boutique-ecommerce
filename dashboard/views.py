@@ -18,7 +18,8 @@ from .models import Vente, JournalActivite, BoutiqueSettings, log_activity
 from .vendeur_views import confirmer_commande, _filter_date
 import json
 from datetime import timedelta
-from PIL import Image
+from django.core.exceptions import ValidationError
+from core.image_uploads import normalize_image_upload
 
 
 @admin_required
@@ -680,23 +681,10 @@ def admin_parametres(request):
             return render(request, "dashboard/admin_parametres.html", {"settings": settings})
         logo = request.FILES.get("logo")
         if logo:
-            if logo.size > 5 * 1024 * 1024 or getattr(logo, "content_type", "") not in {"image/jpeg", "image/png", "image/webp"}:
-                messages.error(request, gettext("Le logo doit être une image JPG, PNG ou WebP de 5 Mo maximum."))
-                return render(request, "dashboard/admin_parametres.html", {"settings": settings})
             try:
-                with Image.open(logo) as image:
-                    image.verify()
-                    image_format = image.format
-                logo.seek(0)
-                allowed_formats = {
-                    "image/jpeg": {"JPEG"},
-                    "image/png": {"PNG"},
-                    "image/webp": {"WEBP"},
-                }
-                if image_format not in allowed_formats.get(getattr(logo, "content_type", ""), set()):
-                    raise ValueError("MIME mismatch")
-            except (OSError, ValueError, Image.UnidentifiedImageError):
-                messages.error(request, gettext("Le fichier du logo n'est pas une image valide."))
+                logo = normalize_image_upload(logo)
+            except ValidationError as exc:
+                messages.error(request, "; ".join(exc.messages))
                 return render(request, "dashboard/admin_parametres.html", {"settings": settings})
             settings.logo = logo
         settings.save()
