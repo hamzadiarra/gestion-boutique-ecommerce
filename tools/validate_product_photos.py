@@ -19,7 +19,7 @@ from cart.models import Cart, CartItem
 class ProductPhotoBrowserTests(StaticLiveServerTestCase):
     def test_product_photos(self):
         phase=os.getenv('PRODUCT_UI_PHASE','after')
-        output=Path(tempfile.gettempdir())/'gestion-boutique-product-photos'/phase
+        output=Path(tempfile.gettempdir())/'gestion-boutique-product-cards'/phase
         output.mkdir(parents=True,exist_ok=True)
         sources=sorted((Path(settings.MEDIA_ROOT)/'products').glob('*.jpg'))
         self.assertTrue(sources)
@@ -55,17 +55,35 @@ class ProductPhotoBrowserTests(StaticLiveServerTestCase):
                         page.locator('img[loading="lazy"]').evaluate_all("els=>els.forEach(e=>e.loading='eager')")
                         page.locator('.shop-product-media img,.shop-detail-image img,.shop-cart-image img').evaluate_all("imgs=>Promise.all(imgs.map(i=>i.decode().catch(()=>null)))")
                         page.wait_for_load_state('networkidle')
-                        metrics=page.evaluate("""() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,images:[...document.querySelectorAll('.shop-product-media,.shop-detail-image,.shop-cart-image')].map(e=>{const r=e.getBoundingClientRect(),i=e.querySelector('img');return {kind:e.className,width:r.width,height:r.height,loaded:!i||i.complete&&i.naturalWidth>0,fit:i?getComputedStyle(i).objectFit:null}})})""")
+                        metrics=page.evaluate("""() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,images:[...document.querySelectorAll('.shop-product-media,.shop-detail-image,.shop-cart-image')].map(e=>{const r=e.getBoundingClientRect(),i=e.querySelector('img');return {kind:e.className,width:r.width,height:r.height,loaded:!i||i.complete&&i.naturalWidth>0,fit:i?getComputedStyle(i).objectFit:null,naturalRatio:i?i.naturalWidth/i.naturalHeight:null}})})""")
                         metrics['page']=name;report.append(metrics)
                         page.screenshot(path=str(output/f'{name}-{width}.png'),full_page=True)
+                        if name=='accueil':
+                            heading=page.get_by_role('heading',name='Les nouveautés',exact=True)
+                            heading.evaluate("e=>e.scrollIntoView({block:'start',behavior:'instant'})")
+                            metrics['headingGap']=heading.evaluate("e=>e.getBoundingClientRect().top-document.querySelector('.site-header').getBoundingClientRect().bottom")
+                            page.screenshot(path=str(output/f'nouveautes-{width}.png'))
+                            if phase=='after':
+                                page.goto(self.live_server_url+reverse('home')+'#nouveautes',wait_until='networkidle')
+                                self.assertGreaterEqual(heading.evaluate("e=>e.getBoundingClientRect().top-document.querySelector('.site-header').getBoundingClientRect().bottom"),48)
+                            if phase=='after':
+                                self.assertGreaterEqual(metrics['headingGap'],48)
+                                eyebrow=heading.locator('..').locator('.shop-eyebrow')
+                                self.assertGreaterEqual(eyebrow.evaluate("e=>e.getBoundingClientRect().top-document.querySelector('.site-header').getBoundingClientRect().bottom"),8)
                         if phase=='after':
                             self.assertLessEqual(metrics['scrollWidth'],width+1)
                             for image in metrics['images']:
                                 self.assertTrue(image['loaded'])
-                                ratio=4/5 if image['kind']=='shop-product-media' else 1
+                                ratio=1
                                 self.assertAlmostEqual(image['width']/image['height'],ratio,places=2)
                                 if image['fit']:
-                                    self.assertEqual(image['fit'],'contain')
+                                    if image['kind']=='shop-product-media':
+                                        retained=min(image['naturalRatio'],1/image['naturalRatio'])
+                                        self.assertEqual(image['fit'],'cover' if retained>=0.75 else 'contain')
+                                        if image['fit']=='cover':
+                                            self.assertGreaterEqual(min(image['naturalRatio'],1/image['naturalRatio']),0.75)
+                                    else:
+                                        self.assertEqual(image['fit'],'contain')
                     print(f'{phase}: {width}px, 7 pages',flush=True)
                 (output/'metrics.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
                 browser.close()
